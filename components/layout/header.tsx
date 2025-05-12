@@ -13,7 +13,9 @@ import {
   Home, 
   Film, 
   Upload, 
-  Settings
+  Settings,
+  Radio,
+  PlayCircle
 } from "lucide-react";
 
 const Header = () => {
@@ -36,7 +38,9 @@ const Header = () => {
 
   const navLinks = [
     { name: "Home", href: "/", icon: <Home className="h-4 w-4 mr-2" /> },
+    { name: "Shows", href: "/shows", icon: <PlayCircle className="h-4 w-4 mr-2" /> },
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
+    { name: "Live TV", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true },
   ];
   
   // Only show these links when signed in
@@ -71,6 +75,8 @@ const Header = () => {
                 className={`flex items-center text-sm font-medium transition-colors hover:text-primary ${
                   isActive(link.href) 
                     ? "text-primary" 
+                    : link.highlight
+                    ? "bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90"
                     : "text-foreground/60"
                 }`}
               >
@@ -124,6 +130,8 @@ const Header = () => {
                   className={`flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                     isActive(link.href) 
                       ? "bg-secondary text-primary" 
+                      : link.highlight
+                      ? "bg-primary text-primary-foreground"
                       : "hover:bg-secondary/50"
                   }`}
                   onClick={() => setMenuOpen(false)}
