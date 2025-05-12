@@ -84,6 +84,12 @@ const schoolDetails = {
   }
 };
 
+export function generateStaticParams() {
+  return Object.keys(schoolDetails).map((school) => ({
+    school: school
+  }));
+}
+
 export default function SchoolPage() {
   const router = useRouter();
   const params = useParams();
