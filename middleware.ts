@@ -4,12 +4,14 @@ export default authMiddleware({
   // These routes are accessible without authentication
   publicRoutes: [
     "/",
-    "/pricing",
-    "/videos",
-    "/videos/(.*)",
     "/sign-in",
     "/sign-up",
-    "/api/webhooks(.*)"
+    "/api/webhooks(.*)",
+    "/creators",
+    "/creators/(.*)",
+    "/corporate",
+    "/corporate/(.*)",
+    "/sponsors"
   ],
   
   // Routes that can always be accessed, and have
@@ -20,7 +22,5 @@ export default authMiddleware({
 });
  
 export const config = {
-  // Protects all routes, including api/trpc.
-  // Keep this in sync with middleware.ts
   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };
