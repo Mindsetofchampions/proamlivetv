@@ -2,10 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { SignUpButton } from '@clerk/nextjs';
+import { SignUpButton, SignInButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
-import { PlayCircle, ChevronRight } from 'lucide-react';
+import { PlayCircle, ChevronRight, UserPlus, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 const Hero = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -54,35 +60,74 @@ const Hero = () => {
             PRO AM LIVE TV provides a professional platform for youth talent to create, publish, and monetize their content.
           </motion.p>
           
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
+            className="max-w-lg mx-auto"
           >
-            <SignUpButton mode="modal">
-              <Button 
-                size="lg" 
-                className="text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                Start Your Free Trial
-                <motion.div
-                  animate={{ x: isHovered ? 5 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronRight className="ml-2 h-5 w-5" />
-                </motion.div>
-              </Button>
-            </SignUpButton>
-            
-            <Link href="/videos">
-              <Button variant="outline" size="lg" className="text-lg h-14 px-8 rounded-full border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10">
-                <PlayCircle className="mr-2 h-5 w-5" />
-                Browse Videos
-              </Button>
-            </Link>
+            <Tabs defaultValue="student" className="mb-8">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="student">Student Creator</TabsTrigger>
+                <TabsTrigger value="viewer">Viewer</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="student" className="space-y-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                  <h3 className="text-lg font-semibold mb-2 text-white">Start Your Creator Journey</h3>
+                  <p className="text-gray-300 mb-4">Join our community of student creators and start sharing your talent.</p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <SignUpButton mode="modal">
+                      <Button 
+                        size="lg" 
+                        className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
+                      >
+                        <UserPlus className="mr-2 h-5 w-5" />
+                        Create Account
+                      </Button>
+                    </SignUpButton>
+                    <SignInButton mode="modal">
+                      <Button 
+                        variant="outline" 
+                        size="lg" 
+                        className="w-full sm:w-auto text-lg h-14 px-8 rounded-full border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10"
+                      >
+                        <LogIn className="mr-2 h-5 w-5" />
+                        Sign In
+                      </Button>
+                    </SignInButton>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="viewer" className="space-y-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                  <h3 className="text-lg font-semibold mb-2 text-white">Watch Amazing Content</h3>
+                  <p className="text-gray-300 mb-4">Discover and support the next generation of content creators.</p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <SignUpButton mode="modal">
+                      <Button 
+                        size="lg" 
+                        className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
+                      >
+                        <UserPlus className="mr-2 h-5 w-5" />
+                        Join Free
+                      </Button>
+                    </SignUpButton>
+                    <Link href="/videos" className="w-full sm:w-auto">
+                      <Button 
+                        variant="outline" 
+                        size="lg" 
+                        className="w-full text-lg h-14 px-8 rounded-full border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10"
+                      >
+                        <PlayCircle className="mr-2 h-5 w-5" />
+                        Browse Videos
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </motion.div>
         </div>
       </div>
