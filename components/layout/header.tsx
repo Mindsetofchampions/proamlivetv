@@ -17,7 +17,6 @@ import {
   Radio,
   PlayCircle,
   Users,
-  Sparkles,
   ShoppingBag
 } from "lucide-react";
 
