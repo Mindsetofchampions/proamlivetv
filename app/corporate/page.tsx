@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Building2, Users, GraduationCap, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Building2, Users, GraduationCap, ArrowRight, CheckCircle2, X, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,6 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const benefits = [
   {
@@ -29,45 +39,6 @@ const benefits = [
     icon: <GraduationCap className="h-12 w-12 text-primary" />,
     title: "Talent Pipeline",
     description: "Connect with emerging talent for internships and future opportunities"
-  }
-];
-
-const tiers = [
-  {
-    name: "Gold Partner",
-    price: "Contact for pricing",
-    features: [
-      "Homepage logo placement",
-      "Custom co-branded show",
-      "Quarterly strategy meetings",
-      "First access to talent pool",
-      "VIP event access",
-      "Custom content creation"
-    ]
-  },
-  {
-    name: "Silver Partner",
-    price: "Contact for pricing",
-    features: [
-      "Footer logo placement",
-      "Sponsor highlight reel",
-      "Bi-annual strategy meetings",
-      "Talent pool access",
-      "Event invitations",
-      "Content collaboration"
-    ]
-  },
-  {
-    name: "Community Partner",
-    price: "Contact for pricing",
-    features: [
-      "Guest speaking slots",
-      "Social media shoutouts",
-      "Annual strategy meeting",
-      "Community events access",
-      "Brand mentions",
-      "Basic reporting"
-    ]
   }
 ];
 
@@ -90,11 +61,77 @@ const steps = [
   }
 ];
 
+const tiers = [
+  {
+    id: "gold",
+    name: "Gold Partner",
+    price: "Contact for pricing",
+    features: [
+      "Homepage logo placement",
+      "Custom co-branded show",
+      "Quarterly strategy meetings",
+      "First access to talent pool",
+      "VIP event access",
+      "Custom content creation"
+    ]
+  },
+  {
+    id: "silver",
+    name: "Silver Partner",
+    price: "Contact for pricing",
+    features: [
+      "Footer logo placement",
+      "Sponsor highlight reel",
+      "Bi-annual strategy meetings",
+      "Talent pool access",
+      "Event invitations",
+      "Content collaboration"
+    ]
+  },
+  {
+    id: "community",
+    name: "Community Partner",
+    price: "Contact for pricing",
+    features: [
+      "Guest speaking slots",
+      "Social media shoutouts",
+      "Annual strategy meeting",
+      "Community events access",
+      "Brand mentions",
+      "Basic reporting"
+    ]
+  }
+];
+
+const comparisonFeatures = [
+  { name: "Brand Visibility", category: "Marketing" },
+  { name: "Logo Placement", category: "Marketing" },
+  { name: "Content Creation", category: "Marketing" },
+  { name: "Social Media Promotion", category: "Marketing" },
+  { name: "Strategy Meetings", category: "Support" },
+  { name: "Talent Pool Access", category: "Recruitment" },
+  { name: "Event Access", category: "Networking" },
+  { name: "Custom Shows", category: "Content" },
+  { name: "Analytics Reports", category: "Support" },
+  { name: "Direct Creator Access", category: "Networking" }
+];
+
+const tierFeatures = {
+  gold: [true, "Homepage", "Custom", "Weekly", "Quarterly", "Priority", "VIP", true, "Weekly", true],
+  silver: [true, "Footer", "Basic", "Monthly", "Bi-annual", "Standard", "Regular", false, "Monthly", false],
+  community: [true, "None", "None", "Quarterly", "Annual", "Basic", "Basic", false, "Quarterly", false]
+};
+
 export default function CorporatePage() {
+  const [selectedTier, setSelectedTier] = useState<string | null>(null);
+
+  const handleScheduleCall = () => {
+    window.open('https://calendly.com/proamtv/partnership', '_blank');
+  };
+
   return (
     <div className="pt-24 pb-16">
       <div className="container mx-auto px-4">
-        {/* Hero Section */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-8 md:p-16 mb-16">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.2),transparent_50%)] mix-blend-overlay"></div>
           <motion.div
@@ -121,7 +158,6 @@ export default function CorporatePage() {
           </motion.div>
         </div>
 
-        {/* Benefits Section */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-12">Why Partner With Us?</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -144,7 +180,6 @@ export default function CorporatePage() {
           </div>
         </div>
 
-        {/* How It Works */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
           <div className="relative">
@@ -172,7 +207,6 @@ export default function CorporatePage() {
           </div>
         </div>
 
-        {/* Partnership Tiers */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-12">Partnership Tiers</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -184,29 +218,100 @@ export default function CorporatePage() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="relative h-full">
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-6">{tier.price}</p>
-                    <ul className="space-y-3">
-                      {tier.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center text-sm">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button className="w-full mt-6" variant={index === 0 ? "default" : "outline"}>
-                      Select {tier.name}
-                    </Button>
-                  </div>
-                </Card>
+                <Link href={`/corporate/${tier.id}`}>
+                  <Card className="relative h-full hover:shadow-lg transition-shadow">
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-6">{tier.price}</p>
+                      <ul className="space-y-3">
+                        {tier.features.map((feature, featureIndex) => (
+                          <li key={featureIndex} className="flex items-center text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                      <Button 
+                        className="w-full mt-6" 
+                        variant={index === 0 ? "default" : "outline"}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedTier(tier.id);
+                          handleScheduleCall();
+                        }}
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        Schedule a Call
+                      </Button>
+                    </div>
+                  </Card>
+                </Link>
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Contact Form */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-12">Features Comparison</h2>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[200px]">Feature</TableHead>
+                  <TableHead>Gold Partner</TableHead>
+                  <TableHead>Silver Partner</TableHead>
+                  <TableHead>Community Partner</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {comparisonFeatures.map((feature, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">
+                      {feature.name}
+                      <span className="text-xs text-muted-foreground block">
+                        {feature.category}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {typeof tierFeatures.gold[index] === 'boolean' ? (
+                        tierFeatures.gold[index] ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-red-500" />
+                        )
+                      ) : (
+                        <span className="font-medium text-primary">{tierFeatures.gold[index]}</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {typeof tierFeatures.silver[index] === 'boolean' ? (
+                        tierFeatures.silver[index] ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-red-500" />
+                        )
+                      ) : (
+                        <span>{tierFeatures.silver[index]}</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {typeof tierFeatures.community[index] === 'boolean' ? (
+                        tierFeatures.community[index] ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-red-500" />
+                        )
+                      ) : (
+                        <span>{tierFeatures.community[index]}</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
         <div id="contact-form" className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Get Started</h2>
           <Card>
