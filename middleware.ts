@@ -4,6 +4,9 @@ export default authMiddleware({
   // These routes are accessible without authentication
   publicRoutes: [
     "/",
+    "/pricing",
+    "/videos",
+    "/videos/(.*)",
     "/sign-in",
     "/sign-up",
     "/api/webhooks(.*)",
@@ -11,7 +14,9 @@ export default authMiddleware({
     "/creators/(.*)",
     "/corporate",
     "/corporate/(.*)",
-    "/sponsors"
+    "/sponsors",
+    "/shop",
+    "/advertise"
   ],
   
   // Routes that can always be accessed, and have
