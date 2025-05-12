@@ -1,7 +1,6 @@
 import { authMiddleware } from "@clerk/nextjs";
  
 export default authMiddleware({
-  // These routes are accessible without authentication
   publicRoutes: [
     "/",
     "/pricing",
@@ -9,18 +8,19 @@ export default authMiddleware({
     "/videos/(.*)",
     "/sign-in",
     "/sign-up",
-    "/api/webhooks(.*)",
+    "/api/webhooks/(.*)",
     "/creators",
     "/creators/(.*)",
     "/corporate",
     "/corporate/(.*)",
     "/sponsors",
     "/shop",
-    "/advertise"
+    "/advertise",
+    "/shows",
+    "/shows/(.*)",
+    "/live"
   ],
   
-  // Routes that can always be accessed, and have
-  // client-side authentication logic rendered in the page
   ignoredRoutes: [
     "/api/webhooks/(.*)"
   ],
