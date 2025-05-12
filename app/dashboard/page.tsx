@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { EarningsAnalytics } from '@/components/dashboard/earnings-analytics';
 
 // Mock data for dashboard
 const mockVideos = [
@@ -124,79 +125,16 @@ export default function DashboardPage() {
             </Link>
           </div>
         </div>
-        
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-              <Eye className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {mockStats.total_views.toLocaleString()}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-500">+{mockStats.views_change}%</span> from last {timeRange}
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Subscribers</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {mockStats.subscribers.toLocaleString()}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-500">+{mockStats.new_subscribers_week}</span> new this {timeRange}
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Watch Time</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {Math.floor(mockStats.watch_time / 60).toLocaleString()} hours
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Across {mockStats.videos} videos
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Earnings</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                ${mockStats.monthly_revenue.toFixed(2)}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Estimated earnings this month
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Performance Tab */}
+          {/* Main Content Area */}
           <div className="lg:col-span-2">
-            <Tabs defaultValue="videos">
+            <Tabs defaultValue="earnings">
               <div className="flex justify-between items-center mb-4">
                 <TabsList>
+                  <TabsTrigger value="earnings">Earnings</TabsTrigger>
                   <TabsTrigger value="videos">My Videos</TabsTrigger>
                   <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                  <TabsTrigger value="comments">Comments</TabsTrigger>
                 </TabsList>
                 
                 <Select value={timeRange} onValueChange={setTimeRange}>
@@ -211,6 +149,10 @@ export default function DashboardPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              <TabsContent value="earnings">
+                <EarningsAnalytics />
+              </TabsContent>
               
               <TabsContent value="videos">
                 <Card>
@@ -316,24 +258,6 @@ export default function DashboardPage() {
                       <BarChart3 className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                       <p className="text-muted-foreground">
                         Advanced analytics will be available once you have more content and viewer data.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="comments">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Comments</CardTitle>
-                    <CardDescription>
-                      Manage feedback from your audience
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="h-[300px] flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-muted-foreground">
-                        No comments yet. Comments will appear here as viewers engage with your content.
                       </p>
                     </div>
                   </CardContent>
