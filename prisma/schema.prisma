@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique
+  email         String    @unique
+  username      String?   @unique
+  firstName     String?
+  lastName      String?
+  role          UserRole  @default(VIEWER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  videos        Video[]
+  subscriptions Subscription[]
+  likes         Like[]
+  events        Event[]
+  channels      Channel[]
+}
+
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  url         String
+  thumbnailUrl String?
+  duration    Int?     // Duration in seconds
+  status      VideoStatus @default(PROCESSING)
+  visibility  Visibility @default(PUBLIC)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+  creator     User     @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  likes       Like[]
+  views       Int      @default(0)
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  videos      Video[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Subscription {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  stripeId   String   @unique
+  status     SubscriptionStatus
+  plan       Plan
+  startDate  DateTime
+  endDate    DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  startTime   DateTime
+  endTime     DateTime
+  price       Float?    // null for free events
+  creator     User      @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  status      EventStatus @default(SCHEDULED)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Channel {
+  id          String    @id @default(cuid())
+  name        String
+  description String?   @db.Text
+  streamKey   String    @unique
+  creator     User      @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  isLive      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  video     Video    @relation(fields: [videoId], references: [id])
+  videoId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, videoId])
+}
+
+enum UserRole {
+  ADMIN
+  CREATOR
+  COACH
+  VIEWER
+}
+
+enum VideoStatus {
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+  UNLISTED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
+
+enum Plan {
+  BASIC
+  PREMIUM
+}
+
+enum EventStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+  CANCELED
+}
