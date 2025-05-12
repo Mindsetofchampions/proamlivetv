@@ -12,11 +12,13 @@ import {
   Calendar,
   User,
   Clock,
-  Shield
+  Shield,
+  Lock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { SignUpButton } from '@clerk/nextjs';
 import Link from 'next/link';
 
 interface VideoClientProps {
@@ -63,14 +65,17 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
       {showSubscribeModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-card rounded-lg shadow-lg max-w-md w-full p-6 mx-auto">
+            <div className="bg-primary/10 p-3 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-6 h-6 text-primary" />
+            </div>
             <h3 className="text-xl font-bold mb-2">Subscribe to Continue Watching</h3>
             <p className="text-muted-foreground mb-6">
               Get unlimited access to all videos on PRO AM LIVE TV.
             </p>
             <div className="space-y-4">
-              <Button className="w-full" onClick={() => router.push('/pricing')}>
-                See Subscription Plans
-              </Button>
+              <SignUpButton mode="modal">
+                <Button className="w-full">Sign Up Now</Button>
+              </SignUpButton>
               <Button variant="outline" className="w-full" onClick={() => setShowSubscribeModal(false)}>
                 Continue Preview (Limited Time)
               </Button>
