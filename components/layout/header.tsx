@@ -15,7 +15,9 @@ import {
   Upload, 
   Settings,
   Radio,
-  PlayCircle
+  PlayCircle,
+  Users,
+  Sparkles
 } from "lucide-react";
 
 const Header = () => {
@@ -24,7 +26,6 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   
-  // Handle scroll for transparent to solid header transition
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -40,10 +41,10 @@ const Header = () => {
     { name: "Home", href: "/", icon: <Home className="h-4 w-4 mr-2" /> },
     { name: "Shows", href: "/shows", icon: <PlayCircle className="h-4 w-4 mr-2" /> },
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
+    { name: "Creators", href: "/creators", icon: <Users className="h-4 w-4 mr-2" /> },
     { name: "Live TV", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true },
   ];
   
-  // Only show these links when signed in
   const authLinks = isSignedIn ? [
     { name: "Upload", href: "/dashboard/upload", icon: <Upload className="h-4 w-4 mr-2" /> },
     { name: "Dashboard", href: "/dashboard", icon: <Settings className="h-4 w-4 mr-2" /> },
