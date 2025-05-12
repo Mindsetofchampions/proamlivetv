@@ -11,7 +11,8 @@ import {
   Users,
   ArrowRight,
   GraduationCap,
-  School
+  School,
+  MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@clerk/nextjs';
@@ -185,24 +186,32 @@ const careerPaths = [
 
 const participatingSchools = [
   {
+    id: 'lincoln-high-school',
     name: "Lincoln High School",
     location: "San Francisco, CA",
-    programs: ["Broadcasting", "Digital Media"]
+    programs: ["Broadcasting", "Digital Media"],
+    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg"
   },
   {
+    id: 'roosevelt-academy',
     name: "Roosevelt Academy",
     location: "Chicago, IL",
-    programs: ["Film Production", "Sports Commentary"]
+    programs: ["Film Production", "Sports Commentary"],
+    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg"
   },
   {
+    id: 'washington-tech',
     name: "Washington Tech",
     location: "Seattle, WA",
-    programs: ["Media Technology", "Live Production"]
+    programs: ["Media Technology", "Live Production"],
+    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg"
   },
   {
+    id: 'jefferson-arts',
     name: "Jefferson Arts",
     location: "New York, NY",
-    programs: ["Creative Media", "Performance Arts"]
+    programs: ["Creative Media", "Performance Arts"],
+    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg"
   }
 ];
 
@@ -318,24 +327,35 @@ export default function CreatorsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-card border rounded-xl p-6"
               >
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-lg">
-                    <School className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1">{school.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{school.location}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {school.programs.map((program, programIndex) => (
-                        <Badge key={programIndex} variant="secondary">
-                          {program}
-                        </Badge>
-                      ))}
+                <Link href={`/creators/${school.id}`}>
+                  <div className="bg-card border rounded-xl overflow-hidden group hover:border-primary transition-colors">
+                    <div className="relative aspect-video">
+                      <img 
+                        src={school.image}
+                        alt={school.name}
+                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-4 left-4 right-4 text-white">
+                        <h3 className="text-xl font-semibold mb-1">{school.name}</h3>
+                        <div className="flex items-center text-sm mb-2">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          {school.location}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex flex-wrap gap-2">
+                        {school.programs.map((program, programIndex) => (
+                          <Badge key={programIndex} variant="secondary">
+                            {program}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </motion.div>
             ))}
           </div>
