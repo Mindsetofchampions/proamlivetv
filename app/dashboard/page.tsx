@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import {
-  BarChart3,
-  Layers,
-  Upload,
-  Users,
-  Settings,
+import { useUser } from '@clerk/nextjs';
+import { 
+  BarChart3, 
+  Layers, 
+  Upload, 
+  Users, 
+  Settings, 
   Video,
   Eye,
   Heart,
@@ -39,8 +38,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EarningsAnalytics } from '@/components/dashboard/earnings-analytics';
+import { StudentProfile } from '@/components/dashboard/student-profile';
 
 // Mock data for dashboard
 const mockVideos = [
@@ -77,23 +76,11 @@ const mockVideos = [
   }
 ];
 
-const mockStats = {
-  total_views: 47523,
-  total_likes: 3245,
-  subscribers: 1432,
-  videos: 12,
-  watch_time: 437892,
-  new_subscribers_week: 127,
-  views_change: +12.5,
-  monthly_revenue: 372.50
-};
-
 export default function DashboardPage() {
   const { isSignedIn, user } = useUser();
   const router = useRouter();
   const [timeRange, setTimeRange] = useState("week");
   
-  // Ensure user is signed in
   if (!isSignedIn) {
     router.push('/sign-in');
     return null;
@@ -111,18 +98,18 @@ export default function DashboardPage() {
           </div>
           
           <div className="flex gap-3">
-            <Link href="/dashboard/upload">
-              <Button>
+            <Button asChild>
+              <Link href="/dashboard/upload">
                 <Upload className="h-4 w-4 mr-2" />
                 Upload New Video
-              </Button>
-            </Link>
-            <Link href="/dashboard/settings">
-              <Button variant="outline">
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/dashboard/settings">
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
 
@@ -214,31 +201,25 @@ export default function DashboardPage() {
                             
                             <div className="flex gap-2 mt-3">
                               {video.status === "published" && (
-                                <Link href={`/videos/${video.id}`}>
-                                  <Button size="sm" variant="outline">
-                                    <Play className="h-3 w-3 mr-1" />
-                                    Watch
-                                  </Button>
-                                </Link>
-                              )}
-                              <Link href={`/dashboard/videos/${video.id}`}>
                                 <Button size="sm" variant="outline">
-                                  <Settings className="h-3 w-3 mr-1" />
-                                  Manage
+                                  <Play className="h-3 w-3 mr-1" />
+                                  Watch
                                 </Button>
-                              </Link>
+                              )}
+                              <Button size="sm" variant="outline">
+                                <Settings className="h-3 w-3 mr-1" />
+                                Manage
+                              </Button>
                             </div>
                           </div>
                         </div>
                       ))}
                       
                       <div className="text-center pt-2">
-                        <Link href="/dashboard/videos">
-                          <Button variant="link">
-                            View All Videos
-                            <ChevronRight className="h-4 w-4 ml-1" />
-                          </Button>
-                        </Link>
+                        <Button variant="link">
+                          View All Videos
+                          <ChevronRight className="h-4 w-4 ml-1" />
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
@@ -266,73 +247,9 @@ export default function DashboardPage() {
             </Tabs>
           </div>
           
-          {/* Account Info */}
+          {/* Student Profile Sidebar */}
           <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Creator Profile</CardTitle>
-                <CardDescription>
-                  Manage your account and subscription
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-4 mb-6">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage src={user?.imageUrl} />
-                    <AvatarFallback>{user?.firstName?.[0]}{user?.lastName?.[0]}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-medium">{user?.fullName}</h3>
-                    <p className="text-sm text-muted-foreground">{user?.primaryEmailAddress?.emailAddress}</p>
-                    <span className="inline-block mt-1 px-2 py-0.5 bg-primary/20 text-primary text-xs rounded-full">
-                      Creator
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Subscription Plan</h4>
-                    <div className="bg-secondary/30 rounded-lg p-3">
-                      <div className="flex justify-between mb-1">
-                        <span className="font-medium">Premium Creator</span>
-                        <span className="text-green-500">Active</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        Renews on April 15, 2025
-                      </p>
-                      <Link href="/dashboard/billing">
-                        <Button size="sm" variant="outline" className="w-full">
-                          Manage Subscription
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Quick Links</h4>
-                    <div className="space-y-2">
-                      <Link href="/dashboard/upload" className="flex items-center p-2 hover:bg-secondary/50 rounded-lg transition-colors">
-                        <Upload className="h-4 w-4 mr-2" />
-                        <span className="text-sm">Upload New Video</span>
-                      </Link>
-                      <Link href="/dashboard/videos" className="flex items-center p-2 hover:bg-secondary/50 rounded-lg transition-colors">
-                        <Layers className="h-4 w-4 mr-2" />
-                        <span className="text-sm">Manage Videos</span>
-                      </Link>
-                      <Link href="/dashboard/analytics" className="flex items-center p-2 hover:bg-secondary/50 rounded-lg transition-colors">
-                        <BarChart3 className="h-4 w-4 mr-2" />
-                        <span className="text-sm">View Analytics</span>
-                      </Link>
-                      <Link href="/dashboard/settings" className="flex items-center p-2 hover:bg-secondary/50 rounded-lg transition-colors">
-                        <Settings className="h-4 w-4 mr-2" />
-                        <span className="text-sm">Account Settings</span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <StudentProfile user={user} />
           </div>
         </div>
       </div>
