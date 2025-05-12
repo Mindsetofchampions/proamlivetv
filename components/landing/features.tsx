@@ -184,39 +184,37 @@ const Features = () => {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>{feature.details.title}</DialogTitle>
-                <DialogDescription>
-                  <div className="mt-4">
-                    {feature.details.steps && (
-                      <ol className="list-decimal pl-4 space-y-2">
-                        {feature.details.steps.map((step, i) => (
-                          <li key={i}>{step}</li>
-                        ))}
-                      </ol>
-                    )}
-                    {feature.details.features && (
-                      <ul className="list-disc pl-4 space-y-2">
-                        {feature.details.features.map((item, i) => (
-                          <li key={i}>{item}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {feature.details.options && (
-                      <ul className="list-disc pl-4 space-y-2">
-                        {feature.details.options.map((option, i) => (
-                          <li key={i}>{option}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {feature.details.tools && (
-                      <ul className="list-disc pl-4 space-y-2">
-                        {feature.details.tools.map((tool, i) => (
-                          <li key={i}>{tool}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </DialogDescription>
               </DialogHeader>
+              <div className="mt-4">
+                {feature.details.steps && (
+                  <ol className="list-decimal pl-4 space-y-2">
+                    {feature.details.steps.map((step, i) => (
+                      <li key={i}>{step}</li>
+                    ))}
+                  </ol>
+                )}
+                {feature.details.features && (
+                  <ul className="list-disc pl-4 space-y-2">
+                    {feature.details.features.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                )}
+                {feature.details.options && (
+                  <ul className="list-disc pl-4 space-y-2">
+                    {feature.details.options.map((option, i) => (
+                      <li key={i}>{option}</li>
+                    ))}
+                  </ul>
+                )}
+                {feature.details.tools && (
+                  <ul className="list-disc pl-4 space-y-2">
+                    {feature.details.tools.map((tool, i) => (
+                      <li key={i}>{tool}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </DialogContent>
           </Dialog>
         ))}
