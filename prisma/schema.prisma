@@ -21,10 +21,10 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   videos        Video[]
-  subscriptions Subscription[]
-  likes         Like[]
-  events        Event[]
-  channels      Channel[]
+  products      Product[]
+  orders        Order[]
+  earnings      Earning[]
+  sponsorships  Sponsorship[]
 }
 
 model Video {
@@ -41,76 +41,88 @@ model Video {
   publishedAt DateTime?
   creator     User     @relation(fields: [creatorId], references: [id])
   creatorId   String
-  category    Category @relation(fields: [categoryId], references: [id])
-  categoryId  String
-  likes       Like[]
-  views       Int      @default(0)
+  sponsorships Sponsorship[]
+  impressions Int      @default(0)
+  earnings    Earning[]
 }
 
-model Category {
+model Product {
   id          String   @id @default(cuid())
-  name        String   @unique
-  slug        String   @unique
-  description String?
-  videos      Video[]
+  title       String
+  description String?  @db.Text
+  price       Float
+  imageUrl    String?
+  inventory   Int      @default(0)
+  creator     User     @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  status      ProductStatus @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      OrderItem[]
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  items       OrderItem[]
+  total       Float
+  status      OrderStatus @default(PENDING)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model Subscription {
-  id         String   @id @default(cuid())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String
-  stripeId   String   @unique
-  status     SubscriptionStatus
-  plan       Plan
-  startDate  DateTime
-  endDate    DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model OrderItem {
+  id          String   @id @default(cuid())
+  order       Order    @relation(fields: [orderId], references: [id])
+  orderId     String
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   String
+  quantity    Int
+  price       Float
 }
 
-model Event {
-  id          String    @id @default(cuid())
-  title       String
-  description String?   @db.Text
-  startTime   DateTime
-  endTime     DateTime
-  price       Float?    // null for free events
-  creator     User      @relation(fields: [creatorId], references: [id])
-  creatorId   String
-  status      EventStatus @default(SCHEDULED)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-
-model Channel {
-  id          String    @id @default(cuid())
+model Sponsor {
+  id          String   @id @default(cuid())
   name        String
-  description String?   @db.Text
-  streamKey   String    @unique
-  creator     User      @relation(fields: [creatorId], references: [id])
-  creatorId   String
-  isLive      Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  logoUrl     String
+  website     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  sponsorships Sponsorship[]
 }
 
-model Like {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  video     Video    @relation(fields: [videoId], references: [id])
-  videoId   String
-  createdAt DateTime @default(now())
+model Sponsorship {
+  id          String   @id @default(cuid())
+  sponsor     Sponsor  @relation(fields: [sponsorId], references: [id])
+  sponsorId   String
+  video       Video    @relation(fields: [videoId], references: [id])
+  videoId     String
+  creator     User     @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  status      SponsorshipStatus @default(PENDING)
+  amount      Float
+  startDate   DateTime
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
-  @@unique([userId, videoId])
+model Earning {
+  id          String   @id @default(cuid())
+  creator     User     @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  video       Video    @relation(fields: [videoId], references: [id])
+  videoId     String
+  amount      Float
+  type        EarningType
+  createdAt   DateTime @default(now())
 }
 
 enum UserRole {
   ADMIN
   CREATOR
-  COACH
+  SPONSOR
   VIEWER
 }
 
@@ -118,6 +130,9 @@ enum VideoStatus {
   PROCESSING
   READY
   FAILED
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
 }
 
 enum Visibility {
@@ -126,20 +141,31 @@ enum Visibility {
   UNLISTED
 }
 
-enum SubscriptionStatus {
+enum ProductStatus {
+  DRAFT
   ACTIVE
-  CANCELED
-  EXPIRED
+  SOLD_OUT
+  ARCHIVED
 }
 
-enum Plan {
-  BASIC
-  PREMIUM
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }
 
-enum EventStatus {
-  SCHEDULED
-  LIVE
-  ENDED
-  CANCELED
+enum SponsorshipStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  REJECTED
+}
+
+enum EarningType {
+  SPONSORSHIP
+  PRODUCT_SALE
+  VIDEO_IMPRESSION
+  TIP
 }
