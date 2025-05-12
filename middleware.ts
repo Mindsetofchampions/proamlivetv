@@ -1,6 +1,7 @@
 import { authMiddleware } from "@clerk/nextjs";
  
 export default authMiddleware({
+  // Public routes that don't require authentication
   publicRoutes: [
     "/",
     "/pricing",
@@ -21,6 +22,7 @@ export default authMiddleware({
     "/live"
   ],
   
+  // Routes that can be accessed without authentication
   ignoredRoutes: [
     "/api/webhooks/(.*)"
   ],
