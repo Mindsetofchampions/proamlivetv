@@ -17,7 +17,8 @@ import {
   Radio,
   PlayCircle,
   Users,
-  Sparkles
+  Sparkles,
+  ShoppingBag
 } from "lucide-react";
 
 const Header = () => {
@@ -41,6 +42,7 @@ const Header = () => {
     { name: "Home", href: "/", icon: <Home className="h-4 w-4 mr-2" /> },
     { name: "Shows", href: "/shows", icon: <PlayCircle className="h-4 w-4 mr-2" /> },
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
+    { name: "Shop", href: "/shop", icon: <ShoppingBag className="h-4 w-4 mr-2" /> },
     { name: "Creators", href: "/creators", icon: <Users className="h-4 w-4 mr-2" /> },
     { name: "Live TV", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true },
   ];

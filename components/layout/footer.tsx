@@ -7,8 +7,8 @@ const Footer = () => {
   return (
     <footer className="bg-secondary/20 border-t py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="col-span-1 md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+          <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-4">
               <Tv className="h-6 w-6 text-primary" />
               <span className="font-bold text-xl">PRO AM TV</span>
@@ -27,6 +27,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/shop" className="text-muted-foreground hover:text-primary transition-colors">
+                  Shop
+                </Link>
+              </li>
+              <li>
                 <Link href="/pricing" className="text-muted-foreground hover:text-primary transition-colors">
                   Pricing
                 </Link>
@@ -40,21 +45,21 @@ const Footer = () => {
           </div>
           
           <div className="col-span-1">
-            <h3 className="font-semibold mb-4">Company</h3>
+            <h3 className="font-semibold mb-4">Business</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
-                  About Us
+                <Link href="/sponsors" className="text-muted-foreground hover:text-primary transition-colors">
+                  Sponsors
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">
-                  Contact
+                <Link href="/corporate" className="text-muted-foreground hover:text-primary transition-colors">
+                  Corporate
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-muted-foreground hover:text-primary transition-colors">
-                  Careers
+                <Link href="/advertise" className="text-muted-foreground hover:text-primary transition-colors">
+                  Advertise
                 </Link>
               </li>
             </ul>
