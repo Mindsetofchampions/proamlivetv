@@ -1,14 +1,11 @@
 "use client";
 
-import { ClerkProvider } from '@clerk/nextjs/app-beta';
+import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-      frontendApi={process.env.NEXT_PUBLIC_CLERK_FRONTEND_API!}
-    >
+    <ClerkProvider>
       <ThemeProvider
         attribute="class"
         defaultTheme="dark"
