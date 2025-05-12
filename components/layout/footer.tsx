@@ -28,7 +28,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link href="/shop" className="text-muted-foreground hover:text-primary transition-colors">
-                  Shop
+                  Student Marketplace
                 </Link>
               </li>
               <li>
@@ -59,7 +59,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link href="/advertise" className="text-muted-foreground hover:text-primary transition-colors">
-                  Advertise
+                  Advertiser Portal
                 </Link>
               </li>
             </ul>
