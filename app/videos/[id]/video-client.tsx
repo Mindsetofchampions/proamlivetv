@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import ReactPlayer from 'react-player';
 import { 
@@ -18,7 +17,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { SignUpButton } from '@clerk/nextjs';
 import Link from 'next/link';
 
 interface VideoClientProps {
@@ -27,7 +25,11 @@ interface VideoClientProps {
 }
 
 export default function VideoClient({ video, relatedVideos }: VideoClientProps) {
-  const { isSignedIn, user } = useUser();
+  const isSignedIn = true;
+  const user = {
+    imageUrl: 'https://avatars.githubusercontent.com/u/1',
+    firstName: 'Demo',
+  };
   const router = useRouter();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -73,9 +75,9 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
               Get unlimited access to all videos on PRO AM LIVE TV.
             </p>
             <div className="space-y-4">
-              <SignUpButton mode="modal">
+              <Link href="/sign-up">
                 <Button className="w-full">Sign Up Now</Button>
-              </SignUpButton>
+              </Link>
               <Button variant="outline" className="w-full" onClick={() => setShowSubscribeModal(false)}>
                 Continue Preview (Limited Time)
               </Button>
@@ -185,8 +187,8 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
                 <div>
                   <div className="flex space-x-4">
                     <Avatar>
-                      <AvatarImage src={user?.imageUrl} />
-                      <AvatarFallback>{user?.firstName?.[0]}</AvatarFallback>
+                      <AvatarImage src={user.imageUrl} />
+                      <AvatarFallback>{user.firstName[0]}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                       <textarea 

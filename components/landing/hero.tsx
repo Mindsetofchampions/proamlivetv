@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { SignUpButton, SignInButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { PlayCircle, ChevronRight, UserPlus, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -68,7 +67,7 @@ const Hero = () => {
                   <h3 className="text-lg font-semibold mb-2 text-white">Start Your Creator Journey</h3>
                   <p className="text-gray-300 mb-4">Join our community of student creators and start sharing your talent.</p>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <SignUpButton mode="modal">
+                    <Link href="/sign-up">
                       <Button 
                         size="lg" 
                         className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
@@ -76,8 +75,8 @@ const Hero = () => {
                         <UserPlus className="mr-2 h-5 w-5" />
                         Create Account
                       </Button>
-                    </SignUpButton>
-                    <SignInButton mode="modal">
+                    </Link>
+                    <Link href="/sign-in">
                       <Button 
                         variant="outline" 
                         size="lg" 
@@ -86,7 +85,7 @@ const Hero = () => {
                         <LogIn className="mr-2 h-5 w-5" />
                         Sign In
                       </Button>
-                    </SignInButton>
+                    </Link>
                   </div>
                 </div>
               </TabsContent>
@@ -96,7 +95,7 @@ const Hero = () => {
                   <h3 className="text-lg font-semibold mb-2 text-white">Watch Amazing Content</h3>
                   <p className="text-gray-300 mb-4">Discover and support the next generation of content creators.</p>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <SignUpButton mode="modal">
+                    <Link href="/sign-up">
                       <Button 
                         size="lg" 
                         className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
@@ -104,7 +103,7 @@ const Hero = () => {
                         <UserPlus className="mr-2 h-5 w-5" />
                         Join Free
                       </Button>
-                    </SignUpButton>
+                    </Link>
                     <Link href="/videos" className="w-full sm:w-auto">
                       <Button 
                         variant="outline" 
