@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { UserButton, SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/theme-toggle";
 import { 
-  Tv, 
   Menu, 
   X, 
   Home, 
@@ -63,7 +63,13 @@ const Header = () => {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <Tv className="h-6 w-6 text-primary" />
+              <Image 
+                src="/logo.png"
+                alt="PRO AM LIVE TV"
+                width={32}
+                height={32}
+                className="h-8 w-auto"
+              />
               <span className="font-bold text-xl">PRO AM LIVE TV</span>
             </Link>
           </div>
