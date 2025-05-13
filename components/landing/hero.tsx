@@ -36,11 +36,10 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-              Youth Creators
-            </span>
-            {" "}
-            Deserve a Platform
+            <span className="text-[#FFD700]">Tomorrow's</span>{" "}
+            <span className="text-[#FFD700]">Talent</span>,{" "}
+            <span className="text-[#BF0707]">LIVE</span>{" "}
+            <span className="text-[#FFD700]">Today</span>
           </motion.h1>
           
           <motion.p 
