@@ -15,7 +15,6 @@ export function Providers({ children }: ProvidersProps) {
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange
-        storageKey="proam-theme"
       >
         {children}
       </ThemeProvider>
