@@ -72,7 +72,7 @@ export async function GET(req: Request) {
       where: status ? { status: status as VideoStatus } : undefined,
       include: {
         creator: true,
-        sponsorSpots: {
+        sponsorships: {
           include: {
             sponsor: true
           }
