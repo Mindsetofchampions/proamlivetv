@@ -43,7 +43,7 @@ const Header = () => {
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
     { name: "Shop", href: "/shop", icon: <ShoppingBag className="h-4 w-4 mr-2" /> },
     { name: "Creators", href: "/creators", icon: <Users className="h-4 w-4 mr-2" /> },
-    { name: "Live TV", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true },
+    { name: "LIVE", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true, isLive: true },
   ];
   
   const authLinks = isSignedIn ? [
@@ -68,7 +68,6 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             {[...navLinks, ...authLinks].map((link) => (
               <Link
@@ -78,7 +77,7 @@ const Header = () => {
                   isActive(link.href) 
                     ? "text-primary" 
                     : link.highlight
-                    ? "bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90"
+                    ? "live-button px-4 py-2 rounded-full hover:bg-red-600"
                     : "text-foreground/60"
                 }`}
               >
@@ -88,7 +87,6 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Auth and Theme Toggle Desktop */}
           <div className="hidden md:flex items-center space-x-4">
             <ModeToggle />
             {isSignedIn ? (
@@ -105,7 +103,6 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center">
             <ModeToggle />
             <Button 
@@ -120,7 +117,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-background border-b">
           <div className="container mx-auto px-4 py-4">
@@ -133,7 +129,7 @@ const Header = () => {
                     isActive(link.href) 
                       ? "bg-secondary text-primary" 
                       : link.highlight
-                      ? "bg-primary text-primary-foreground"
+                      ? "live-button"
                       : "hover:bg-secondary/50"
                   }`}
                   onClick={() => setMenuOpen(false)}
