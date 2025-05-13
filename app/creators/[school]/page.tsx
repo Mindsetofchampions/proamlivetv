@@ -82,8 +82,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function SchoolPage({ params }: { params: { school: string } }) {
-  const { school } = params;
+export default async function SchoolPage({ params }: { params: { school: string } }) {
+  const { school } = await Promise.resolve(params);
   const details = schoolDetails[school as keyof typeof schoolDetails];
   
   if (!details) {
