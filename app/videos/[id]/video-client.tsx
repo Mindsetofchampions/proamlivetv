@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ReactPlayer from 'react-player';
+import { trackEngagement, getVideoAnalytics } from '@/lib/analytics';
+import VideoPlayer from '@/components/video/video-player';
 import { 
   Heart, 
   Share2, 
@@ -34,6 +35,7 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+  const [analytics, setAnalytics] = useState<any>(null);
   
   const requireSubscription = !isSignedIn;
   
@@ -58,6 +60,25 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
       return () => clearTimeout(timer);
     }
   }, [requireSubscription]);
+
+  useEffect(() => {
+    loadAnalytics();
+  }, [video.id]);
+
+  const loadAnalytics = async () => {
+    const data = await getVideoAnalytics(video.id);
+    setAnalytics(data);
+  };
+
+  const handleLike = async () => {
+    await trackEngagement(video.id, 'like');
+    loadAnalytics();
+  };
+
+  const handleShare = async () => {
+    await trackEngagement(video.id, 'share');
+    loadAnalytics();
+  };
 
   return (
     <>
@@ -95,17 +116,9 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
                   </Badge>
                 </div>
               )}
-              <ReactPlayer
+              <VideoPlayer 
+                videoId={video.id}
                 url={video.url}
-                width="100%"
-                height="100%"
-                controls
-                pip
-                config={{
-                  youtube: {
-                    playerVars: { showinfo: 1 }
-                  }
-                }}
               />
             </div>
             
@@ -141,7 +154,10 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
                   variant="outline" 
                   size="sm" 
                   className={liked ? "text-red-500" : ""}
-                  onClick={() => setLiked(!liked)}
+                  onClick={() => {
+                    setLiked(!liked);
+                    handleLike();
+                  }}
                 >
                   <Heart className={`h-4 w-4 mr-1 ${liked ? "fill-red-500" : ""}`} />
                   <span>{formatNumber(liked ? video.likes + 1 : video.likes)}</span>
@@ -156,7 +172,11 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
                   <span>Save</span>
                 </Button>
                 
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleShare}
+                >
                   <Share2 className="h-4 w-4 mr-1" />
                   <span>Share</span>
                 </Button>
