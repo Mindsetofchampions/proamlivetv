@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Home, Search } from 'lucide-react';
+import { AlertCircle, Home, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Error({
@@ -27,7 +27,7 @@ export default function Error({
             transition={{ duration: 0.5 }}
           >
             <div className="bg-destructive/10 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-              <Search className="h-8 w-8 text-destructive" />
+              <AlertCircle className="h-8 w-8 text-destructive" />
             </div>
             
             <h1 className="text-4xl font-bold mb-4">Something Went Wrong</h1>
@@ -37,6 +37,7 @@ export default function Error({
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button onClick={reset}>
+                <RotateCcw className="h-4 w-4 mr-2" />
                 Try Again
               </Button>
               <Button variant="outline" asChild>
