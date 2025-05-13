@@ -28,7 +28,6 @@ interface NavLink {
 }
 
 const Header = () => {
-  const isSignedIn = false; // Dummy auth state
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -52,11 +51,6 @@ const Header = () => {
     { name: "Creators", href: "/creators", icon: <Users className="h-4 w-4 mr-2" /> },
     { name: "LIVE", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true, isLive: true },
   ];
-  
-  const authLinks: NavLink[] = isSignedIn ? [
-    { name: "Upload", href: "/dashboard/upload", icon: <Upload className="h-4 w-4 mr-2" /> },
-    { name: "Dashboard", href: "/dashboard", icon: <Settings className="h-4 w-4 mr-2" /> },
-  ] : [];
 
   return (
     <header 
@@ -76,7 +70,7 @@ const Header = () => {
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
-            {[...navLinks, ...authLinks].map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -96,14 +90,12 @@ const Header = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             <ModeToggle />
-            {isSignedIn ? (
-              <Button variant="ghost" size="sm">Account</Button>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm">Sign In</Button>
-                <Button size="sm">Join Free</Button>
-              </>
-            )}
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/login">Sign In</Link>
+            </Button>
+            <Button size="sm" asChild>
+              <Link href="/register">Join Free</Link>
+            </Button>
           </div>
 
           <div className="flex md:hidden items-center">
@@ -124,7 +116,7 @@ const Header = () => {
         <div className="md:hidden bg-background border-b">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4">
-              {[...navLinks, ...authLinks].map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -141,16 +133,14 @@ const Header = () => {
                   {link.name}
                 </Link>
               ))}
-              {isSignedIn ? (
-                <div className="pt-2 border-t">
-                  <Button variant="ghost" className="w-full">Account Settings</Button>
-                </div>
-              ) : (
-                <div className="pt-2 border-t flex flex-col space-y-2">
-                  <Button variant="outline" className="w-full">Sign In</Button>
-                  <Button className="w-full">Join Free</Button>
-                </div>
-              )}
+              <div className="pt-2 border-t flex flex-col space-y-2">
+                <Button variant="outline" asChild className="w-full">
+                  <Link href="/login">Sign In</Link>
+                </Button>
+                <Button asChild className="w-full">
+                  <Link href="/register">Join Free</Link>
+                </Button>
+              </div>
             </nav>
           </div>
         </div>

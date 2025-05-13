@@ -2,14 +2,14 @@
 
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SignUpButton, useAuth } from '@clerk/nextjs';
+import Link from 'next/link';
 
 interface PremiumContentLockProps {
   children: React.ReactNode;
 }
 
 export function PremiumContentLock({ children }: PremiumContentLockProps) {
-  const { isSignedIn } = useAuth();
+  const isSignedIn = false; // Replace with your auth check
 
   if (!isSignedIn) {
     return (
@@ -23,9 +23,9 @@ export function PremiumContentLock({ children }: PremiumContentLockProps) {
             <p className="text-sm text-muted-foreground mb-4">
               Sign up to access this content and more
             </p>
-            <SignUpButton mode="modal">
-              <Button>Sign Up Now</Button>
-            </SignUpButton>
+            <Button asChild>
+              <Link href="/register">Sign Up Now</Link>
+            </Button>
           </div>
         </div>
         <div className="blur-sm">

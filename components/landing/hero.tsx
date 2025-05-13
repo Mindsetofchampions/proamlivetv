@@ -67,25 +67,27 @@ const Hero = () => {
                   <h3 className="text-lg font-semibold mb-2 text-white">Start Your Creator Journey</h3>
                   <p className="text-gray-300 mb-4">Join our community of student creators and start sharing your talent.</p>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Link href="/sign-up">
-                      <Button 
-                        size="lg" 
-                        className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
-                      >
+                    <Button 
+                      size="lg" 
+                      className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
+                      asChild
+                    >
+                      <Link href="/register">
                         <UserPlus className="mr-2 h-5 w-5" />
                         Create Account
-                      </Button>
-                    </Link>
-                    <Link href="/sign-in">
-                      <Button 
-                        variant="outline" 
-                        size="lg" 
-                        className="w-full sm:w-auto text-lg h-14 px-8 rounded-full border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10"
-                      >
+                      </Link>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      className="w-full sm:w-auto text-lg h-14 px-8 rounded-full border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10"
+                      asChild
+                    >
+                      <Link href="/login">
                         <LogIn className="mr-2 h-5 w-5" />
                         Sign In
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               </TabsContent>
@@ -95,15 +97,16 @@ const Hero = () => {
                   <h3 className="text-lg font-semibold mb-2 text-white">Watch Amazing Content</h3>
                   <p className="text-gray-300 mb-4">Discover and support the next generation of content creators.</p>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Link href="/sign-up">
-                      <Button 
-                        size="lg" 
-                        className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
-                      >
+                    <Button 
+                      size="lg" 
+                      className="w-full sm:w-auto text-lg h-14 px-8 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
+                      asChild
+                    >
+                      <Link href="/register">
                         <UserPlus className="mr-2 h-5 w-5" />
                         Join Free
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                     <Link href="/videos" className="w-full sm:w-auto">
                       <Button 
                         variant="outline" 
