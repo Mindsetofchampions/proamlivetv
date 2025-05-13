@@ -20,6 +20,14 @@ import {
   ShoppingBag
 } from 'lucide-react';
 
+interface NavLink {
+  name: string;
+  href: string;
+  icon: JSX.Element;
+  highlight?: boolean;
+  isLive?: boolean;
+}
+
 const Header = () => {
   const { isSignedIn } = useAuth();
   const pathname = usePathname();
@@ -37,7 +45,7 @@ const Header = () => {
 
   const isActive = (path: string) => pathname === path;
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { name: "Home", href: "/", icon: <Home className="h-4 w-4 mr-2" /> },
     { name: "Shows", href: "/shows", icon: <PlayCircle className="h-4 w-4 mr-2" /> },
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
@@ -46,7 +54,7 @@ const Header = () => {
     { name: "LIVE", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true, isLive: true },
   ];
   
-  const authLinks = isSignedIn ? [
+  const authLinks: NavLink[] = isSignedIn ? [
     { name: "Upload", href: "/dashboard/upload", icon: <Upload className="h-4 w-4 mr-2" /> },
     { name: "Dashboard", href: "/dashboard", icon: <Settings className="h-4 w-4 mr-2" /> },
   ] : [];
