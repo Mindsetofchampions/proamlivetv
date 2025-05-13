@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserButton, SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/theme-toggle";
 import { 
@@ -29,7 +28,7 @@ interface NavLink {
 }
 
 const Header = () => {
-  const { isSignedIn } = useAuth();
+  const isSignedIn = false; // Dummy auth state
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -98,15 +97,11 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             <ModeToggle />
             {isSignedIn ? (
-              <UserButton afterSignOutUrl="/" />
+              <Button variant="ghost" size="sm">Account</Button>
             ) : (
               <>
-                <SignInButton mode="modal">
-                  <Button variant="ghost" size="sm">Sign In</Button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <Button size="sm">Join Free</Button>
-                </SignUpButton>
+                <Button variant="ghost" size="sm">Sign In</Button>
+                <Button size="sm">Join Free</Button>
               </>
             )}
           </div>
@@ -147,18 +142,13 @@ const Header = () => {
                 </Link>
               ))}
               {isSignedIn ? (
-                <div className="pt-2 border-t flex items-center">
-                  <span className="text-sm text-foreground/60 mr-2">Account:</span>
-                  <UserButton afterSignOutUrl="/" />
+                <div className="pt-2 border-t">
+                  <Button variant="ghost" className="w-full">Account Settings</Button>
                 </div>
               ) : (
                 <div className="pt-2 border-t flex flex-col space-y-2">
-                  <SignInButton mode="modal">
-                    <Button variant="outline" className="w-full">Sign In</Button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
-                    <Button className="w-full">Join Free</Button>
-                  </SignUpButton>
+                  <Button variant="outline" className="w-full">Sign In</Button>
+                  <Button className="w-full">Join Free</Button>
                 </div>
               )}
             </nav>
