@@ -14,8 +14,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check active sessions and sets the user
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        const { roles, permissions } = await getUserRoles(session.user.id);
-        setUser({ ...session.user, roles, permissions });
+        try {
+          const { roles, permissions } = await getUserRoles(session.user.id);
+          setUser({ ...session.user, roles, permissions });
+        } catch (error) {
+          console.error('Error setting user:', error);
+          setUser(session.user);
+        }
       } else {
         setUser(null);
       }
@@ -25,8 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for changes on auth state
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        const { roles, permissions } = await getUserRoles(session.user.id);
-        setUser({ ...session.user, roles, permissions });
+        try {
+          const { roles, permissions } = await getUserRoles(session.user.id);
+          setUser({ ...session.user, roles, permissions });
+        } catch (error) {
+          console.error('Error updating user:', error);
+          setUser(session.user);
+        }
       } else {
         setUser(null);
       }
@@ -35,17 +45,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
       if (error) throw error;
       
-      // Assign default viewer role
-      if (user) {
+      if (data.user) {
+        const { roles, permissions } = await getUserRoles(data.user.id);
+        setUser({ ...data.user, roles, permissions });
+      }
+    } catch (error) {
+      console.error('Sign in error:', error);
+      throw error;
+    }
+  };
+
+  const signUp = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      
+      if (error) throw error;
+      
+      if (data.user) {
+        // Assign default viewer role
         const { data: roleData } = await supabase
           .from('roles')
           .select('id')
@@ -54,40 +83,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (roleData) {
           await supabase.from('user_roles').insert({
-            user_id: user.id,
+            user_id: data.user.id,
             role_id: roleData.id
           });
         }
+
+        setUser(data.user);
       }
       
       toast({
         title: "Success",
-        description: "Please check your email to verify your account.",
+        description: "Account created successfully. Please check your email to verify your account.",
       });
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-      throw error;
-    }
-  };
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      
-      if (error) throw error;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Sign up error:', error);
       throw error;
     }
   };
@@ -96,12 +105,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      setUser(null);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Sign out error:', error);
       throw error;
     }
   };

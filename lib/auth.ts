@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { supabase } from './supabase';
 import { User } from '@supabase/supabase-js';
 
@@ -30,24 +30,29 @@ export function useAuth() {
 }
 
 export async function getUserRoles(userId: string) {
-  const { data, error } = await supabase
-    .from('user_roles')
-    .select(`
-      role:roles (
-        name,
-        permissions:role_permissions (
-          permission
+  try {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select(`
+        role:roles (
+          name,
+          permissions:role_permissions (
+            permission
+          )
         )
-      )
-    `)
-    .eq('user_id', userId);
+      `)
+      .eq('user_id', userId);
 
-  if (error) throw error;
+    if (error) throw error;
 
-  const roles = data?.map(d => d.role.name) || [];
-  const permissions = data?.flatMap(d => 
-    d.role.permissions.map(p => p.permission)
-  ) || [];
+    const roles = data?.map(d => d.role.name) || [];
+    const permissions = data?.flatMap(d => 
+      d.role.permissions.map(p => p.permission)
+    ) || [];
 
-  return { roles, permissions };
+    return { roles, permissions };
+  } catch (error) {
+    console.error('Error fetching user roles:', error);
+    return { roles: [], permissions: [] };
+  }
 }
