@@ -14,7 +14,8 @@ import {
   CheckCircle,
   Clock3,
   Play,
-  Edit
+  Edit,
+  Heart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
