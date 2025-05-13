@@ -16,7 +16,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { SignInButton, useAuth } from '@clerk/nextjs';
 
 // Mock data for demo purposes
 const mockMetrics = {
@@ -47,9 +46,17 @@ const mockMetrics = {
 };
 
 export default function AdvertisePage() {
-  const { isSignedIn } = useAuth();
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Mock sign in - in a real app this would validate credentials
+    if (email && password) {
+      setIsSignedIn(true);
+    }
+  };
 
   if (!isSignedIn) {
     return (
@@ -57,7 +64,7 @@ export default function AdvertisePage() {
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto">
             <Card>
-              <div className="p-6">
+              <form onSubmit={handleSignIn} className="p-6">
                 <h1 className="text-2xl font-bold mb-6">Advertiser Login</h1>
                 <div className="space-y-4">
                   <div>
@@ -67,6 +74,7 @@ export default function AdvertisePage() {
                       placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </div>
                   <div>
@@ -76,17 +84,18 @@ export default function AdvertisePage() {
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      required
                     />
                   </div>
-                  <SignInButton mode="modal">
-                    <Button className="w-full">Sign In</Button>
-                  </SignInButton>
+                  <Button type="submit" className="w-full">
+                    Sign In
+                  </Button>
                   <p className="text-sm text-center text-muted-foreground">
                     Don't have an account?{" "}
                     <Button variant="link" className="p-0">Contact us</Button>
                   </p>
                 </div>
-              </div>
+              </form>
             </Card>
           </div>
         </div>
