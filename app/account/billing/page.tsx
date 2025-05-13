@@ -24,8 +24,7 @@ export default function BillingPage() {
       }
 
       const { url } = await response.json();
-      // Ensure the URL is properly encoded before navigation
-      router.push(encodeURI(url));
+      router.push(url);
     } catch (error) {
       console.error('Error:', error);
       toast({
