@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserButton, SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
+// import { UserButton, SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/theme-toggle";
 import { 
@@ -29,7 +29,8 @@ interface NavLink {
 }
 
 const Header = () => {
-  const { isSignedIn } = useAuth();
+  // const { isSignedIn } = useAuth();
+  const isSignedIn = false; // Temporary mock
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -98,15 +99,18 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             <ModeToggle />
             {isSignedIn ? (
-              <UserButton afterSignOutUrl="/" />
+              <div>User Menu</div>
+              // <UserButton afterSignOutUrl="/" />
             ) : (
               <>
-                <SignInButton mode="modal">
+                <Button variant="ghost" size="sm">Sign In</Button>
+                <Button size="sm">Join Free</Button>
+                {/* <SignInButton mode="modal">
                   <Button variant="ghost" size="sm">Sign In</Button>
                 </SignInButton>
                 <SignUpButton mode="modal">
                   <Button size="sm">Join Free</Button>
-                </SignUpButton>
+                </SignUpButton> */}
               </>
             )}
           </div>
@@ -149,16 +153,19 @@ const Header = () => {
               {isSignedIn ? (
                 <div className="pt-2 border-t flex items-center">
                   <span className="text-sm text-foreground/60 mr-2">Account:</span>
-                  <UserButton afterSignOutUrl="/" />
+                  <div>User Menu</div>
+                  {/* <UserButton afterSignOutUrl="/" /> */}
                 </div>
               ) : (
                 <div className="pt-2 border-t flex flex-col space-y-2">
-                  <SignInButton mode="modal">
+                  <Button variant="outline" className="w-full">Sign In</Button>
+                  <Button className="w-full">Join Free</Button>
+                  {/* <SignInButton mode="modal">
                     <Button variant="outline" className="w-full">Sign In</Button>
                   </SignInButton>
                   <SignUpButton mode="modal">
                     <Button className="w-full">Join Free</Button>
-                  </SignUpButton>
+                  </SignUpButton> */}
                 </div>
               )}
             </nav>
