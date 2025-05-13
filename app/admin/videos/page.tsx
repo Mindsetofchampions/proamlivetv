@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 import { 
   CheckCircle,
@@ -31,6 +32,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 
 type VideoStatus = 'PENDING_REVIEW' | 'PROCESSING' | 'APPROVED' | 'REJECTED' | 'FAILED' | 'READY';
 
@@ -46,49 +48,61 @@ interface Video {
     lastName: string;
     email: string;
   };
-  sponsorSpots: Array<{
-    id: string;
-    type: string;
-    status: string;
-    sponsor: {
-      name: string;
-      logoUrl: string;
-    };
-  }>;
 }
 
 export default function AdminVideosPage() {
-  const { isSignedIn, user } = useUser();
+  const { user, hasRole } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<VideoStatus | 'ALL'>('ALL');
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    if (!isSignedIn) {
-      router.push('/sign-in');
+    if (!user || !hasRole('admin')) {
+      router.push('/login');
       return;
     }
 
     fetchVideos();
-  }, [isSignedIn, statusFilter]);
+  }, [user, statusFilter]);
 
   const fetchVideos = async () => {
     try {
-      const url = statusFilter === 'ALL' 
-        ? '/api/videos'
-        : `/api/videos?status=${statusFilter}`;
-        
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch videos');
+      const query = supabase
+        .from('videos')
+        .select(`
+          id,
+          title,
+          description,
+          thumbnail_url,
+          status,
+          created_at,
+          creator:users!creator_id (
+            first_name,
+            last_name,
+            email
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (statusFilter !== 'ALL') {
+        query.eq('status', statusFilter);
+      }
+
+      const { data, error } = await query;
       
-      const data = await response.json();
-      setVideos(data);
+      if (error) throw error;
+      setVideos(data || []);
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch videos",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -97,61 +111,70 @@ export default function AdminVideosPage() {
   const handleApprove = async (videoId: string) => {
     try {
       setProcessing(true);
-      const response = await fetch(`/api/videos/${videoId}/approve`, {
-        method: 'POST'
-      });
+      const { error } = await supabase
+        .from('videos')
+        .update({ status: 'APPROVED' })
+        .eq('id', videoId);
 
-      if (!response.ok) throw new Error('Failed to approve video');
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Video has been approved",
+      });
       
       fetchVideos();
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to approve video",
+        variant: "destructive"
+      });
     } finally {
       setProcessing(false);
     }
   };
 
   const handleReject = async (videoId: string) => {
+    if (!rejectionReason.trim()) {
+      toast({
+        title: "Error",
+        description: "Please provide a reason for rejection",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setProcessing(true);
-      const response = await fetch(`/api/videos/${videoId}/reject`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ reason: rejectionReason })
-      });
+      const { error } = await supabase
+        .from('videos')
+        .update({ 
+          status: 'REJECTED',
+          rejection_reason: rejectionReason 
+        })
+        .eq('id', videoId);
 
-      if (!response.ok) throw new Error('Failed to reject video');
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Video has been rejected",
+      });
       
       setRejectionReason('');
-      setSelectedVideo(null);
       fetchVideos();
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to reject video",
+        variant: "destructive"
+      });
     } finally {
       setProcessing(false);
     }
-  };
-
-  const getStatusBadge = (status: VideoStatus) => {
-    const statusConfig = {
-      PENDING_REVIEW: { icon: Clock, color: 'bg-yellow-500/20 text-yellow-700' },
-      PROCESSING: { icon: Clock, color: 'bg-blue-500/20 text-blue-700' },
-      APPROVED: { icon: CheckCircle, color: 'bg-green-500/20 text-green-700' },
-      REJECTED: { icon: XCircle, color: 'bg-red-500/20 text-red-700' },
-      FAILED: { icon: AlertCircle, color: 'bg-red-500/20 text-red-700' },
-      READY: { icon: Play, color: 'bg-green-500/20 text-green-700' }
-    };
-
-    const { icon: Icon, color } = statusConfig[status];
-    
-    return (
-      <Badge variant="secondary" className={`flex items-center gap-1 ${color}`}>
-        <Icon className="h-3 w-3" />
-        {status.replace('_', ' ')}
-      </Badge>
-    );
   };
 
   if (loading) {
@@ -221,26 +244,17 @@ export default function AdminVideosPage() {
                             By {video.creator.firstName} {video.creator.lastName}
                           </p>
                         </div>
-                        {getStatusBadge(video.status)}
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          {video.status === 'PENDING_REVIEW' && <Clock className="h-3 w-3" />}
+                          {video.status === 'APPROVED' && <CheckCircle className="h-3 w-3" />}
+                          {video.status === 'REJECTED' && <XCircle className="h-3 w-3" />}
+                          {video.status}
+                        </Badge>
                       </div>
                       
                       <p className="text-sm text-muted-foreground mb-4">
                         {video.description}
                       </p>
-                      
-                      {video.sponsorSpots.length > 0 && (
-                        <div className="mb-4">
-                          <p className="text-sm font-medium mb-2">Sponsor Spots:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {video.sponsorSpots.map((spot) => (
-                              <Badge key={spot.id} variant="outline" className="flex items-center">
-                                <DollarSign className="h-3 w-3 mr-1" />
-                                {spot.sponsor.name} - {spot.type}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                       
                       <div className="flex items-center gap-4">
                         {video.status === 'PENDING_REVIEW' && (
