@@ -172,9 +172,9 @@ export default function Pricing() {
                     : ''
                 }`} 
                 variant={plan.popular ? 'default' : 'outline'}
-                onClick={() => window.location.href = '/register'}
+                asChild
               >
-                {plan.buttonText}
+                <a href="/register">{plan.buttonText}</a>
               </Button>
               
               <ul className="space-y-3">

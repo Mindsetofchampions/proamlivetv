@@ -1,6 +1,5 @@
 "use client";
 
-import { SignUpButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
@@ -45,15 +44,16 @@ const JoinCta = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <SignUpButton mode="modal">
-                <Button 
-                  size="lg" 
-                  className="text-lg h-14 px-8 rounded-full bg-white text-purple-700 hover:bg-white/90"
-                >
+              <Button 
+                size="lg" 
+                className="text-lg h-14 px-8 rounded-full bg-white text-purple-700 hover:bg-white/90"
+                asChild
+              >
+                <a href="/register">
                   Start Creating Now
                   <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
-              </SignUpButton>
+                </a>
+              </Button>
             </motion.div>
           </motion.div>
         </div>
