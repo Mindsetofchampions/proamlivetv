@@ -4,10 +4,7 @@ import { useState } from 'react';
 import { SignUpButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { 
-  Check, 
-  X 
-} from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const plans = [
@@ -24,7 +21,7 @@ const plans = [
       { name: "HD video quality", included: true },
       { name: "Community support", included: true },
       { name: "Basic parental controls", included: true },
-      { name: "No ads", included: true }
+      { name: "Ad-supported viewing", included: true }
     ],
     popular: false,
     buttonText: "Start Watching"
@@ -42,7 +39,7 @@ const plans = [
       { name: "4K video quality", included: true },
       { name: "Priority support", included: true },
       { name: "Advanced parental controls", included: true },
-      { name: "Offline downloads", included: true }
+      { name: "Ad-free viewing", included: true }
     ],
     popular: true,
     buttonText: "Choose Family Plus"
@@ -74,7 +71,7 @@ const comparisonFeatures = [
       { name: "Video Library Access", free: "Full", basic: "Full", premium: "Full" },
       { name: "Video Quality", free: "HD", basic: "4K", premium: "4K" },
       { name: "Offline Downloads", free: "No", basic: "Yes", premium: "Yes" },
-      { name: "Ad-Free Viewing", free: "Yes", basic: "Yes", premium: "Yes" }
+      { name: "Ad-Free Viewing", free: "No", basic: "Yes", premium: "Yes" }
     ]
   },
   {
@@ -97,7 +94,7 @@ const comparisonFeatures = [
   }
 ];
 
-const Pricing = () => {
+export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   
   const toggleBillingCycle = () => {
@@ -262,6 +259,4 @@ const Pricing = () => {
       </div>
     </section>
   );
-};
-
-export default Pricing;
+}
