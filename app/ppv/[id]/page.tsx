@@ -46,6 +46,12 @@ const ppvEvents = {
   }
 };
 
+export function generateStaticParams() {
+  return Object.keys(ppvEvents).map((id) => ({
+    id,
+  }));
+}
+
 export default function PPVEventPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const searchParams = useSearchParams();
