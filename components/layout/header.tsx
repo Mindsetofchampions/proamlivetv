@@ -18,7 +18,7 @@ import {
   PlayCircle,
   Users,
   ShoppingBag
-} from "lucide-react";
+} from 'lucide-react';
 
 const Header = () => {
   const { isSignedIn } = useAuth();
@@ -64,7 +64,7 @@ const Header = () => {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <Tv className="h-6 w-6 text-primary" />
-              <span className="font-bold text-xl">PRO AM TV</span>
+              <span className="font-bold text-xl">PRO AM LIVE TV</span>
             </Link>
           </div>
 

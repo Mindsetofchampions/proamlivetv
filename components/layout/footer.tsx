@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-4">
               <Tv className="h-6 w-6 text-primary" />
-              <span className="font-bold text-xl">PRO AM TV</span>
+              <span className="font-bold text-xl">PRO AM LIVE TV</span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4">
               The premier platform for youth creators to showcase their talent and connect with audiences worldwide.
