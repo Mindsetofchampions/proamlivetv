@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { LogIn } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signIn } = useAuth();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,8 +25,13 @@ export default function LoginPage() {
       setLoading(true);
       await signIn(email, password);
       router.push('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }

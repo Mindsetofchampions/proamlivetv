@@ -33,9 +33,9 @@ export async function getUserRoles(userId: string) {
   const { data, error } = await supabase
     .from('user_roles')
     .select(`
-      roles (
+      role:roles (
         name,
-        role_permissions (
+        permissions:role_permissions (
           permission
         )
       )
@@ -44,9 +44,9 @@ export async function getUserRoles(userId: string) {
 
   if (error) throw error;
 
-  const roles = data?.map(d => d.roles.name) || [];
+  const roles = data?.map(d => d.role.name) || [];
   const permissions = data?.flatMap(d => 
-    d.roles.role_permissions.map(p => p.permission)
+    d.role.permissions.map(p => p.permission)
   ) || [];
 
   return { roles, permissions };
