@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { 
   BarChart3, 
   Layers, 
@@ -80,19 +78,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const [timeRange, setTimeRange] = useState("week");
   
-  // Dummy user data
-  const isSignedIn = true;
-  const user = {
-    firstName: 'Demo',
-    lastName: 'User',
-    imageUrl: 'https://avatars.githubusercontent.com/u/1',
-  };
-
-  if (!isSignedIn) {
-    router.push('/sign-in');
-    return null;
-  }
-
   return (
     <div className="pt-24 pb-16">
       <div className="container mx-auto px-4">
@@ -121,7 +106,6 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content Area */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="earnings">
               <div className="flex justify-between items-center mb-4">
@@ -254,7 +238,6 @@ export default function DashboardPage() {
             </Tabs>
           </div>
           
-          {/* Student Profile Sidebar */}
           <div>
             <StudentProfile user={user} />
           </div>
