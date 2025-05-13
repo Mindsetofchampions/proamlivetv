@@ -24,7 +24,28 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from '@/components/ui/badge';
 
-const careerPaths = [
+interface Module {
+  title: string;
+  badge?: string;
+  task?: string;
+  description?: string;
+  certificate?: string;
+}
+
+interface PathwayStage {
+  stage: string;
+  modules: Module[];
+}
+
+interface CareerPath {
+  id: string;
+  title: string;
+  icon: JSX.Element;
+  roles: string[];
+  pathway: PathwayStage[];
+}
+
+const careerPaths: CareerPath[] = [
   {
     id: 'on-air-talent',
     title: 'On-Air Talent & Hosts',
