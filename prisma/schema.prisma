@@ -28,22 +28,39 @@ model User {
 }
 
 model Video {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?  @db.Text
+  url           String
+  thumbnailUrl  String?
+  duration      Int?     // Duration in seconds
+  status        VideoStatus @default(PENDING_REVIEW)
+  visibility    Visibility @default(PRIVATE)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  publishedAt   DateTime?
+  creator       User     @relation(fields: [creatorId], references: [id])
+  creatorId     String
+  sponsorships  Sponsorship[]
+  impressions   Int      @default(0)
+  earnings      Earning[]
+  rejectionReason String? @db.Text
+  hlsUrl        String?  // URL for HLS stream after transcoding
+  sponsorSpots  SponsorSpot[]
+}
+
+model SponsorSpot {
   id          String   @id @default(cuid())
-  title       String
-  description String?  @db.Text
-  url         String
-  thumbnailUrl String?
-  duration    Int?     // Duration in seconds
-  status      VideoStatus @default(PROCESSING)
-  visibility  Visibility @default(PUBLIC)
+  video       Video    @relation(fields: [videoId], references: [id])
+  videoId     String
+  sponsor     Sponsor  @relation(fields: [sponsorId], references: [id])
+  sponsorId   String
+  startTime   Int      // Start time in seconds
+  endTime     Int      // End time in seconds
+  type        SponsorSpotType
+  status      SponsorSpotStatus @default(PENDING)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  publishedAt DateTime?
-  creator     User     @relation(fields: [creatorId], references: [id])
-  creatorId   String
-  sponsorships Sponsorship[]
-  impressions Int      @default(0)
-  earnings    Earning[]
 }
 
 model Product {
@@ -90,6 +107,7 @@ model Sponsor {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   sponsorships Sponsorship[]
+  sponsorSpots SponsorSpot[]
 }
 
 model Sponsorship {
@@ -127,12 +145,12 @@ enum UserRole {
 }
 
 enum VideoStatus {
-  PROCESSING
-  READY
-  FAILED
   PENDING_REVIEW
+  PROCESSING
   APPROVED
   REJECTED
+  FAILED
+  READY
 }
 
 enum Visibility {
@@ -168,4 +186,18 @@ enum EarningType {
   PRODUCT_SALE
   VIDEO_IMPRESSION
   TIP
+}
+
+enum SponsorSpotType {
+  PRE_ROLL
+  MID_ROLL
+  POST_ROLL
+  OVERLAY
+  PRODUCT_PLACEMENT
+}
+
+enum SponsorSpotStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
