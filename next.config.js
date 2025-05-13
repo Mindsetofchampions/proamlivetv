@@ -10,7 +10,9 @@ const nextConfig = {
       config.cache = false;
     }
     return config;
-  }
+  },
+    swcMinify: false,
+
 };
 
 module.exports = nextConfig;
