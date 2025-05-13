@@ -5,6 +5,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
+  swcMinify: false,
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.cache = false;
