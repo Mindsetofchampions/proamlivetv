@@ -1,5 +1,6 @@
 "use client";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "./theme-provider";
 
 interface ProvidersProps {
@@ -8,13 +9,16 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      {children}
-    </ThemeProvider>
+    <ClerkProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+        storageKey="proam-theme"
+      >
+        {children}
+      </ThemeProvider>
+    </ClerkProvider>
   );
 }
