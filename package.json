@@ -57,7 +57,8 @@
     "stripe": "^14.8.0",
     "tailwind-merge": "^2.1.0",
     "tailwindcss-animate": "^1.0.7",
-    "vaul": "^0.8.0"
+    "vaul": "^0.8.0",
+    "@shopify/buy-sdk": "^2.21.1"
   },
   "devDependencies": {
     "@types/node": "^20",
