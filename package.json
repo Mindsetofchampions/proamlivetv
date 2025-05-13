@@ -10,7 +10,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.29.1",
     "@prisma/client": "^5.7.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
@@ -51,11 +50,8 @@
     "next": "^14.2.25",
     "next-themes": "^0.2.1",
     "react": "^18",
-    "react-day-picker": "^8.9.1",
     "react-dom": "^18",
-    "react-hook-form": "^7.49.2",
     "react-player": "^2.14.1",
-    "recharts": "^2.10.3",
     "sonner": "^1.2.4",
     "stripe": "^14.8.0",
     "tailwind-merge": "^2.1.0",
@@ -66,14 +62,12 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "postcss": "^8",
     "prisma": "^5.7.0",
     "tailwindcss": "^3.3.0",
-    "typescript": "5.8.3"
+    "typescript": "^5"
   }
 }
