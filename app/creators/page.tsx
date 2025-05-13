@@ -15,7 +15,6 @@ import {
   MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@clerk/nextjs';
 import {
   Accordion,
   AccordionContent,
@@ -237,8 +236,9 @@ const participatingSchools = [
 ];
 
 export default function CreatorsPage() {
-  const { isSignedIn } = useAuth();
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  // Dummy auth state
+  const isSignedIn = false;
 
   return (
     <div className="pt-24 pb-16">

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useUser } from '@clerk/nextjs';
+import { motion } from 'framer-motion';
 import { 
   BarChart3, 
   Layers, 
@@ -42,7 +42,6 @@ import { Progress } from '@/components/ui/progress';
 import { EarningsAnalytics } from '@/components/dashboard/earnings-analytics';
 import { StudentProfile } from '@/components/dashboard/student-profile';
 
-// Mock data for dashboard
 const mockVideos = [
   {
     id: "vid1",
@@ -78,10 +77,17 @@ const mockVideos = [
 ];
 
 export default function DashboardPage() {
-  const { isSignedIn, user } = useUser();
   const router = useRouter();
   const [timeRange, setTimeRange] = useState("week");
   
+  // Dummy user data
+  const isSignedIn = true;
+  const user = {
+    firstName: 'Demo',
+    lastName: 'User',
+    imageUrl: 'https://avatars.githubusercontent.com/u/1',
+  };
+
   if (!isSignedIn) {
     router.push('/sign-in');
     return null;
