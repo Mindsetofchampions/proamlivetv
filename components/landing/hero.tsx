@@ -21,19 +21,11 @@ const Hero = () => {
       {/* Video Background with Overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90 z-10" />
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
+        <img 
+          src="https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg"
+          alt="Esports Background"
           className="w-full h-full object-cover"
-          poster="https://images.pexels.com/photos/7345444/pexels-photo-7345444.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-        >
-          <source
-            src="https://player.vimeo.com/external/403635109.sd.mp4?s=66c9fbd26bb3224c21c6d574d1a8e8179ba18a60&profile_id=165&oauth2_token_id=57447761"
-            type="video/mp4"
-          />
-        </video>
+        />
       </div>
 
       <div className="container mx-auto px-4 relative z-10 pt-32 pb-20 md:pt-40 md:pb-32">
