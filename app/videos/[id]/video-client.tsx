@@ -4,14 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { trackEngagement, getVideoAnalytics } from '@/lib/analytics';
 import VideoPlayer from '@/components/video/video-player';
+import Comments from '@/components/video/comments';
 import { 
   Heart, 
   Share2, 
   Bookmark, 
-  MessageSquare, 
-  Calendar,
-  User,
   Clock,
+  Eye,
   Shield,
   Lock
 } from 'lucide-react';
@@ -134,16 +133,12 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
                   <div className="font-medium">{video.creator}</div>
                   <div className="text-sm text-muted-foreground flex items-center gap-2">
                     <span className="flex items-center">
-                      <Calendar className="h-3 w-3 mr-1" />
+                      <Clock className="h-3 w-3 mr-1" />
                       {formatDate(video.publishedAt)}
                     </span>
                     <span className="flex items-center">
-                      <User className="h-3 w-3 mr-1" />
+                      <Eye className="h-3 w-3 mr-1" />
                       {formatNumber(video.views)} views
-                    </span>
-                    <span className="flex items-center">
-                      <Clock className="h-3 w-3 mr-1" />
-                      {video.duration}
                     </span>
                   </div>
                 </div>
@@ -195,40 +190,7 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
               </div>
             </div>
             
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4">Comments</h3>
-              
-              {isSignedIn ? (
-                <div>
-                  <div className="flex space-x-4">
-                    <Avatar>
-                      <AvatarImage src={user.imageUrl} />
-                      <AvatarFallback>{user.firstName[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <textarea 
-                        className="w-full p-2 h-20 bg-background border rounded-md resize-none"
-                        placeholder="Add a comment..."
-                      ></textarea>
-                      <div className="flex justify-end mt-2">
-                        <Button>Comment</Button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="my-6 border-t" />
-                  
-                  <p className="text-center text-muted-foreground">No comments yet. Be the first to comment!</p>
-                </div>
-              ) : (
-                <div className="bg-secondary/30 rounded-lg p-6 text-center">
-                  <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                  <h4 className="font-medium mb-2">Join the conversation</h4>
-                  <p className="text-muted-foreground mb-4">Sign in to comment on this video</p>
-                  <Button onClick={() => router.push('/sign-in')}>Sign In</Button>
-                </div>
-              )}
-            </div>
+            <Comments videoId={video.id} />
           </div>
           
           <div>
