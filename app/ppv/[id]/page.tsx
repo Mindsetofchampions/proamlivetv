@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 import ReactPlayer from 'react-player';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -50,7 +49,8 @@ const ppvEvents = {
 export default function PPVEventPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const searchParams = useSearchParams();
-  const { isSignedIn } = useUser();
+  // Dummy auth state
+  const isSignedIn = false;
   const [hasPurchased, setHasPurchased] = useState(false);
   
   const event = ppvEvents[id as keyof typeof ppvEvents];

@@ -2,7 +2,6 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 import { 
   Upload, 
   X, 
@@ -63,7 +62,13 @@ const categories = [
 
 export default function UploadPage() {
   const router = useRouter();
-  const { isSignedIn, user } = useUser();
+  // Dummy user data
+  const isSignedIn = true;
+  const user = {
+    firstName: 'Demo',
+    lastName: 'User',
+    imageUrl: 'https://avatars.githubusercontent.com/u/1',
+  };
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');

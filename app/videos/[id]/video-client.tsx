@@ -37,12 +37,10 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
   
   const requireSubscription = !isSignedIn;
   
-  // Format numbers for display
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('en-US', { notation: 'compact' }).format(num);
   };
   
-  // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -51,7 +49,6 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
     });
   };
   
-  // If not signed in, show a preview and then a subscription modal
   useEffect(() => {
     if (requireSubscription) {
       const timer = setTimeout(() => {
@@ -89,7 +86,6 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            {/* Video Player */}
             <div className="relative aspect-video bg-black rounded-lg overflow-hidden mb-4">
               {requireSubscription && (
                 <div className="absolute top-0 left-0 z-10 bg-gradient-to-t from-black/80 to-transparent p-2 rounded">
@@ -113,7 +109,6 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
               />
             </div>
             
-            {/* Video Details */}
             <h1 className="text-2xl md:text-3xl font-bold mb-4">{video.title}</h1>
             
             <div className="flex flex-wrap items-center justify-between mb-6">
@@ -216,7 +211,6 @@ export default function VideoClient({ video, relatedVideos }: VideoClientProps) 
             </div>
           </div>
           
-          {/* Sidebar - Related Videos */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Related Videos</h3>
             <div className="space-y-4">

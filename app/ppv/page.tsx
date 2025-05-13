@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 import { 
   Calendar,
   Clock,
@@ -52,8 +51,9 @@ const ppvEvents = [
 ];
 
 export default function PPVPage() {
-  const { isSignedIn } = useUser();
   const router = useRouter();
+  // Dummy auth state
+  const isSignedIn = false;
   const [purchasingEvent, setPurchasingEvent] = useState<string | null>(null);
 
   const handlePurchase = async (eventId: string) => {
