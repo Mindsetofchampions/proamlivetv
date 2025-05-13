@@ -50,8 +50,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/ppv/${eventId}?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/ppv?canceled=true`,
+      success_url: encodeURI(`${process.env.NEXT_PUBLIC_APP_URL}/ppv/${eventId}?success=true`),
+      cancel_url: encodeURI(`${process.env.NEXT_PUBLIC_APP_URL}/ppv?canceled=true`),
       metadata: {
         userId,
         eventId,

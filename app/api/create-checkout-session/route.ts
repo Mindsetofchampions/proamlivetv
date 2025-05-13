@@ -24,8 +24,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/account?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe?canceled=true`,
+      success_url: encodeURI(`${process.env.NEXT_PUBLIC_APP_URL}/account?success=true`),
+      cancel_url: encodeURI(`${process.env.NEXT_PUBLIC_APP_URL}/subscribe?canceled=true`),
       metadata: {
         userId,
       },
