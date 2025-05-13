@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
 import prisma from '@/lib/db';
 
 const CREATOR_RATE_PER_IMPRESSION = 0.001; // $0.001 per impression
@@ -9,12 +8,9 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { userId } = auth();
+    // Dummy user ID for development
+    const userId = 'dummy-user-id';
     const videoId = params.id;
-
-    if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
 
     // Increment impression count
     const video = await prisma.video.update({

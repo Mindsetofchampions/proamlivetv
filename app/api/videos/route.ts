@@ -4,7 +4,8 @@ import { VideoStatus } from '@prisma/client';
 
 export async function POST(req: Request) {
   try {
-    const userId = 'dummyUserId';
+    // Dummy user ID for development
+    const userId = 'dummy-user-id';
     
     const data = await req.json();
     const { title, description, url, thumbnailUrl, duration } = data;
@@ -41,15 +42,11 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const userId = 'dummyUserId';
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
     
+    // Dummy admin check
     const user = { role: 'ADMIN' };
-
-    if (!user || user.role !== 'ADMIN') {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
 
     const videos = await prisma.video.findMany({
       where: status ? { status: status as VideoStatus } : undefined,

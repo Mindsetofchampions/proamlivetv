@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -23,12 +22,9 @@ const ppvEvents = {
 
 export async function POST(req: Request) {
   try {
-    const { userId } = auth();
+    // Dummy user ID for development
+    const userId = 'dummy-user-id';
     const { eventId } = await req.json();
-
-    if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
 
     const event = ppvEvents[eventId as keyof typeof ppvEvents];
     if (!event) {
