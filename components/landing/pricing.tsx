@@ -12,58 +12,58 @@ import { motion } from 'framer-motion';
 
 const plans = [
   {
-    name: "Free Trial",
-    description: "Experience all features for 7 days",
+    name: "Free Forever",
+    description: "Perfect for families and casual viewers",
     price: {
       monthly: 0,
       yearly: 0
     },
     features: [
-      { name: "Limited video library access", included: true },
+      { name: "Full video library access", included: true },
       { name: "Stream on one device", included: true },
-      { name: "Standard video quality", included: true },
-      { name: "Basic support", included: true },
-      { name: "No creator tools", included: false },
-      { name: "No account sharing", included: false }
+      { name: "HD video quality", included: true },
+      { name: "Community support", included: true },
+      { name: "Basic parental controls", included: true },
+      { name: "No ads", included: true }
     ],
     popular: false,
-    buttonText: "Start Free Trial"
+    buttonText: "Start Watching"
   },
   {
-    name: "Basic",
-    description: "Perfect for regular viewers",
+    name: "Family Plus",
+    description: "Enhanced features for the whole family",
     price: {
       monthly: 7.99,
       yearly: 79.99
     },
     features: [
-      { name: "Full video library access", included: true },
-      { name: "Stream on two devices", included: true },
-      { name: "HD video quality", included: true },
+      { name: "Everything in Free", included: true },
+      { name: "Stream on three devices", included: true },
+      { name: "4K video quality", included: true },
       { name: "Priority support", included: true },
-      { name: "Limited creator tools", included: true },
-      { name: "No account sharing", included: false }
+      { name: "Advanced parental controls", included: true },
+      { name: "Offline downloads", included: true }
     ],
     popular: true,
-    buttonText: "Choose Basic"
+    buttonText: "Choose Family Plus"
   },
   {
-    name: "Premium",
-    description: "For serious creators and superfans",
+    name: "Creator",
+    description: "For aspiring content creators",
     price: {
       monthly: 14.99,
       yearly: 149.99
     },
     features: [
-      { name: "Full video library access", included: true },
-      { name: "Stream on four devices", included: true },
-      { name: "4K video quality", included: true },
+      { name: "Everything in Family Plus", included: true },
+      { name: "Stream on five devices", included: true },
+      { name: "Creator tools & analytics", included: true },
       { name: "24/7 premium support", included: true },
-      { name: "Full creator tools", included: true },
-      { name: "Account sharing allowed", included: true }
+      { name: "Revenue sharing", included: true },
+      { name: "Early access features", included: true }
     ],
     popular: false,
-    buttonText: "Choose Premium"
+    buttonText: "Choose Creator"
   }
 ];
 
@@ -71,37 +71,28 @@ const comparisonFeatures = [
   {
     category: "Content Access",
     features: [
-      { name: "Video Library Access", free: "Limited", basic: "Full", premium: "Full" },
-      { name: "Live Event Access", free: "No", basic: "Yes", premium: "Yes" },
-      { name: "Early Access to New Content", free: "No", basic: "No", premium: "Yes" },
-      { name: "Offline Downloads", free: "No", basic: "Yes", premium: "Yes" }
+      { name: "Video Library Access", free: "Full", basic: "Full", premium: "Full" },
+      { name: "Video Quality", free: "HD", basic: "4K", premium: "4K" },
+      { name: "Offline Downloads", free: "No", basic: "Yes", premium: "Yes" },
+      { name: "Ad-Free Viewing", free: "Yes", basic: "Yes", premium: "Yes" }
     ]
   },
   {
-    category: "Streaming Quality",
+    category: "Family Features",
     features: [
-      { name: "Maximum Resolution", free: "720p", basic: "1080p", premium: "4K" },
-      { name: "HDR Support", free: "No", basic: "No", premium: "Yes" },
-      { name: "Simultaneous Streams", free: "1", basic: "2", premium: "4" },
-      { name: "Offline Viewing", free: "No", basic: "Yes", premium: "Yes" }
+      { name: "Simultaneous Streams", free: "1", basic: "3", premium: "5" },
+      { name: "Parental Controls", free: "Basic", basic: "Advanced", premium: "Advanced" },
+      { name: "Family Profiles", free: "2", basic: "6", premium: "Unlimited" },
+      { name: "Watch History", free: "Yes", basic: "Yes", premium: "Yes" }
     ]
   },
   {
-    category: "Creator Tools",
+    category: "Support & Features",
     features: [
-      { name: "Analytics Dashboard", free: "No", basic: "Basic", premium: "Advanced" },
-      { name: "Custom Thumbnails", free: "No", basic: "Yes", premium: "Yes" },
-      { name: "Live Streaming", free: "No", basic: "720p", premium: "1080p" },
-      { name: "Monetization Tools", free: "No", basic: "Limited", premium: "Full" }
-    ]
-  },
-  {
-    category: "Support",
-    features: [
-      { name: "Customer Support", free: "Email", basic: "Priority", premium: "24/7" },
-      { name: "Community Access", free: "Read", basic: "Full", premium: "VIP" },
-      { name: "Account Sharing", free: "No", basic: "No", premium: "Yes" },
-      { name: "Custom Branding", free: "No", basic: "No", premium: "Yes" }
+      { name: "Customer Support", free: "Community", basic: "Priority", premium: "24/7" },
+      { name: "Creator Tools", free: "No", basic: "No", premium: "Yes" },
+      { name: "Revenue Sharing", free: "No", basic: "No", premium: "Yes" },
+      { name: "Early Access", free: "No", basic: "No", premium: "Yes" }
     ]
   }
 ];
@@ -119,10 +110,10 @@ const Pricing = () => {
     <section id="pricing" className="container mx-auto px-4 py-16">
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          Simple, Transparent <span className="text-primary">Pricing</span>
+          Simple, Family-Friendly <span className="text-primary">Pricing</span>
         </h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Choose the plan that works for you. All plans include a 7-day free trial.
+          Start watching for free forever. Upgrade anytime for enhanced family features.
         </p>
         
         <div className="flex items-center justify-center mt-8">
@@ -218,9 +209,9 @@ const Pricing = () => {
             <thead>
               <tr className="border-b">
                 <th className="text-left py-4 px-4 font-medium">Feature</th>
-                <th className="text-center py-4 px-4 font-medium">Free Trial</th>
-                <th className="text-center py-4 px-4 font-medium">Basic</th>
-                <th className="text-center py-4 px-4 font-medium">Premium</th>
+                <th className="text-center py-4 px-4 font-medium">Free Forever</th>
+                <th className="text-center py-4 px-4 font-medium">Family Plus</th>
+                <th className="text-center py-4 px-4 font-medium">Creator</th>
               </tr>
             </thead>
             <tbody>
