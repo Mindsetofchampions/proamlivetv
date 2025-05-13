@@ -20,13 +20,27 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { user, hasRole, signOut } = useAuth();
+  const { user, hasRole, signOut, loading } = useAuth();
 
   useEffect(() => {
-    if (!user || !hasRole('admin')) {
+    if (!loading && (!user || !hasRole('admin'))) {
       router.push('/login');
     }
-  }, [user]);
+  }, [user, loading, router, hasRole]);
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // Don't render admin content until we confirm admin role
+  if (!user || !hasRole('admin')) {
+    return null;
+  }
 
   const navigation = [
     {
