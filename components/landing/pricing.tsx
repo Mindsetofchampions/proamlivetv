@@ -67,6 +67,45 @@ const plans = [
   }
 ];
 
+const comparisonFeatures = [
+  {
+    category: "Content Access",
+    features: [
+      { name: "Video Library Access", free: "Limited", basic: "Full", premium: "Full" },
+      { name: "Live Event Access", free: "No", basic: "Yes", premium: "Yes" },
+      { name: "Early Access to New Content", free: "No", basic: "No", premium: "Yes" },
+      { name: "Offline Downloads", free: "No", basic: "Yes", premium: "Yes" }
+    ]
+  },
+  {
+    category: "Streaming Quality",
+    features: [
+      { name: "Maximum Resolution", free: "720p", basic: "1080p", premium: "4K" },
+      { name: "HDR Support", free: "No", basic: "No", premium: "Yes" },
+      { name: "Simultaneous Streams", free: "1", basic: "2", premium: "4" },
+      { name: "Offline Viewing", free: "No", basic: "Yes", premium: "Yes" }
+    ]
+  },
+  {
+    category: "Creator Tools",
+    features: [
+      { name: "Analytics Dashboard", free: "No", basic: "Basic", premium: "Advanced" },
+      { name: "Custom Thumbnails", free: "No", basic: "Yes", premium: "Yes" },
+      { name: "Live Streaming", free: "No", basic: "720p", premium: "1080p" },
+      { name: "Monetization Tools", free: "No", basic: "Limited", premium: "Full" }
+    ]
+  },
+  {
+    category: "Support",
+    features: [
+      { name: "Customer Support", free: "Email", basic: "Priority", premium: "24/7" },
+      { name: "Community Access", free: "Read", basic: "Full", premium: "VIP" },
+      { name: "Account Sharing", free: "No", basic: "No", premium: "Yes" },
+      { name: "Custom Branding", free: "No", basic: "No", premium: "Yes" }
+    ]
+  }
+];
+
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   
@@ -105,7 +144,7 @@ const Pricing = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16">
         {plans.map((plan, index) => (
           <motion.div
             key={index}
@@ -169,6 +208,66 @@ const Pricing = () => {
             </div>
           </motion.div>
         ))}
+      </div>
+
+      {/* Features Comparison Table */}
+      <div className="max-w-6xl mx-auto mt-16">
+        <h3 className="text-2xl font-bold text-center mb-8">Features Comparison</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-4 px-4 font-medium">Feature</th>
+                <th className="text-center py-4 px-4 font-medium">Free Trial</th>
+                <th className="text-center py-4 px-4 font-medium">Basic</th>
+                <th className="text-center py-4 px-4 font-medium">Premium</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonFeatures.map((section, sectionIndex) => (
+                <>
+                  <tr key={`section-${sectionIndex}`} className="bg-muted/50">
+                    <td colSpan={4} className="py-3 px-4 font-semibold">
+                      {section.category}
+                    </td>
+                  </tr>
+                  {section.features.map((feature, featureIndex) => (
+                    <tr key={`feature-${sectionIndex}-${featureIndex}`} className="border-b">
+                      <td className="py-3 px-4">{feature.name}</td>
+                      <td className="text-center py-3 px-4">
+                        {feature.free === "Yes" ? (
+                          <Check className="h-5 w-5 text-green-500 mx-auto" />
+                        ) : feature.free === "No" ? (
+                          <X className="h-5 w-5 text-red-500 mx-auto" />
+                        ) : (
+                          feature.free
+                        )}
+                      </td>
+                      <td className="text-center py-3 px-4">
+                        {feature.basic === "Yes" ? (
+                          <Check className="h-5 w-5 text-green-500 mx-auto" />
+                        ) : feature.basic === "No" ? (
+                          <X className="h-5 w-5 text-red-500 mx-auto" />
+                        ) : (
+                          feature.basic
+                        )}
+                      </td>
+                      <td className="text-center py-3 px-4">
+                        {feature.premium === "Yes" ? (
+                          <Check className="h-5 w-5 text-green-500 mx-auto" />
+                        ) : feature.premium === "No" ? (
+                          <X className="h-5 w-5 text-red-500 mx-auto" />
+                        ) : (
+                          feature.premium
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   );
