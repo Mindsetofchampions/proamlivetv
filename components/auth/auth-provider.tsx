@@ -2,24 +2,34 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { AuthContext, AuthContextType } from '@/lib/auth';
+import { AuthContext, AuthContextType, AuthUser, UserRole, getUserRoles } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     // Check active sessions and sets the user
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        const { roles, permissions } = await getUserRoles(session.user.id);
+        setUser({ ...session.user, roles, permissions });
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
     // Listen for changes on auth state
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const { roles, permissions } = await getUserRoles(session.user.id);
+        setUser({ ...session.user, roles, permissions });
+      } else {
+        setUser(null);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -33,6 +43,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       
       if (error) throw error;
+      
+      // Assign default viewer role
+      if (user) {
+        const { data: roleData } = await supabase
+          .from('roles')
+          .select('id')
+          .eq('name', 'viewer')
+          .single();
+
+        if (roleData) {
+          await supabase.from('user_roles').insert({
+            user_id: user.id,
+            role_id: roleData.id
+          });
+        }
+      }
       
       toast({
         title: "Success",
@@ -80,12 +106,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const hasRole = (role: UserRole) => {
+    return user?.roles?.includes(role) || false;
+  };
+
+  const hasPermission = (permission: string) => {
+    return user?.permissions?.includes(permission) || false;
+  };
+
   const value: AuthContextType = {
     user,
     loading,
     signIn,
     signUp,
     signOut,
+    hasRole,
+    hasPermission
   };
 
   return (
