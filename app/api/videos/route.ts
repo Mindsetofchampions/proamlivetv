@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 import prisma from '@/lib/db';
+import { VideoStatus } from '@prisma/client';
 
 export async function POST(req: Request) {
   try {
