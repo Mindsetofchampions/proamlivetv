@@ -50,6 +50,13 @@ const products = {
   }
 };
 
+// Generate static params for all product IDs
+export function generateStaticParams() {
+  return Object.keys(products).map((id) => ({
+    id: id,
+  }));
+}
+
 export default function ProductPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState(0);
