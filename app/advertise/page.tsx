@@ -3,21 +3,26 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
+  Trophy, 
   BarChart, 
-  Users, 
-  Clock, 
-  Target, 
-  Play,
-  ArrowRight,
-  LineChart,
-  PieChart,
-  Activity
+  Upload, 
+  ArrowRight, 
+  CheckCircle2, 
+  Radio 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
-// Mock data for demo purposes
 const mockMetrics = {
   totalViews: 125789,
   uniqueViewers: 45123,
@@ -49,12 +54,20 @@ export default function AdvertisePage() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock sign in - in a real app this would validate credentials
-    if (email && password) {
+    setSubmitting(true);
+    
+    try {
+      // Mock authentication delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setIsSignedIn(true);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -68,7 +81,7 @@ export default function AdvertisePage() {
                 <h1 className="text-2xl font-bold mb-6">Advertiser Login</h1>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Email</label>
+                    <Label className="text-sm font-medium mb-1 block">Email</Label>
                     <Input 
                       type="email" 
                       placeholder="Enter your email"
@@ -78,7 +91,7 @@ export default function AdvertisePage() {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Password</label>
+                    <Label className="text-sm font-medium mb-1 block">Password</Label>
                     <Input 
                       type="password" 
                       placeholder="Enter your password"
@@ -87,8 +100,12 @@ export default function AdvertisePage() {
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full">
-                    Sign In
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Signing in...' : 'Sign In'}
                   </Button>
                   <p className="text-sm text-center text-muted-foreground">
                     Don't have an account?{" "}
