@@ -16,7 +16,8 @@ import {
   Radio,
   PlayCircle,
   Users,
-  ShoppingBag
+  ShoppingBag,
+  LayoutDashboard
 } from 'lucide-react';
 
 interface NavLink {
@@ -49,6 +50,7 @@ const Header = () => {
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
     { name: "Shop", href: "/shop", icon: <ShoppingBag className="h-4 w-4 mr-2" /> },
     { name: "Creators", href: "/creators", icon: <Users className="h-4 w-4 mr-2" /> },
+    { name: "Creator Dashboard", href: "/creator/dashboard", icon: <LayoutDashboard className="h-4 w-4 mr-2" /> },
     { name: "LIVE", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true, isLive: true },
   ];
 
