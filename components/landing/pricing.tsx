@@ -210,8 +210,8 @@ export default function Pricing() {
             </thead>
             <tbody>
               {comparisonFeatures.map((section, sectionIndex) => (
-                <>
-                  <tr key={`section-${sectionIndex}`} className="bg-muted/50">
+                <React.Fragment key={`section-${sectionIndex}`}>
+                  <tr className="bg-muted/50">
                     <td colSpan={4} className="py-3 px-4 font-semibold">
                       {section.category}
                     </td>
@@ -248,7 +248,7 @@ export default function Pricing() {
                       </td>
                     </tr>
                   ))}
-                </>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
