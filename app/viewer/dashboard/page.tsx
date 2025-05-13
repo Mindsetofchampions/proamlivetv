@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
+import Link from 'next/link';
 import { 
   Heart, 
   Clock, 
@@ -27,7 +27,6 @@ import {
 } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-// Mock data
 const watchHistory = [
   {
     id: 1,
@@ -84,13 +83,8 @@ const playlists = [
 ];
 
 export default function ViewerDashboard() {
-  const { isSignedIn, user } = useUser();
   const router = useRouter();
-  
-  if (!isSignedIn) {
-    router.push('/sign-in');
-    return null;
-  }
+  const [activeTab, setActiveTab] = useState('history');
 
   return (
     <div className="pt-24 pb-16">
@@ -233,12 +227,11 @@ export default function ViewerDashboard() {
               <CardContent>
                 <div className="flex items-center gap-4 mb-6">
                   <Avatar className="h-16 w-16">
-                    <AvatarImage src={user?.imageUrl} />
-                    <AvatarFallback>{user?.firstName?.[0]}{user?.lastName?.[0]}</AvatarFallback>
+                    <AvatarFallback>U</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-medium">{user?.fullName}</h3>
-                    <p className="text-sm text-muted-foreground">{user?.primaryEmailAddress?.emailAddress}</p>
+                    <h3 className="font-medium">User</h3>
+                    <p className="text-sm text-muted-foreground">user@example.com</p>
                     <span className="inline-block mt-1 px-2 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-full">
                       Viewer
                     </span>

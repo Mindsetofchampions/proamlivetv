@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,12 +40,11 @@ const schools = [
 ];
 
 export default function OnboardingPage() {
-  const { isSignedIn, user } = useUser();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
+    firstName: '',
+    lastName: '',
     school: '',
     grade: '',
     careerPath: '',
@@ -56,11 +54,6 @@ export default function OnboardingPage() {
     portfolio: '',
     agreeToTerms: false
   });
-
-  if (!isSignedIn) {
-    router.push('/sign-in');
-    return null;
-  }
 
   const handleSubmit = async () => {
     // Here you would typically send the form data to your backend
