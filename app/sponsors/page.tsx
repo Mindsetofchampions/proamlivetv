@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, BarChart, Upload, ArrowRight, CheckCircle2, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -91,6 +93,35 @@ const metrics = [
 ];
 
 export default function SponsorsPage() {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const response = await fetch('/api/sponsors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          // Form data would go here
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit');
+      }
+
+      // Handle success
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="pt-24 pb-16">
       <div className="container mx-auto px-4">
@@ -207,55 +238,66 @@ export default function SponsorsPage() {
         <div id="apply-form" className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Apply Now</h2>
           <Card>
-            <div className="p-6">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Sponsor Name</label>
-                    <Input placeholder="Enter sponsor name" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Contact Name</label>
-                    <Input placeholder="Enter contact name" />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Email</label>
-                    <Input type="email" placeholder="Enter email" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Phone</label>
-                    <Input type="tel" placeholder="Enter phone number" />
-                  </div>
-                </div>
-                
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Sponsorship Level Interest</label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="title">Title Sponsor</SelectItem>
-                      <SelectItem value="season">Season Sponsor</SelectItem>
-                      <SelectItem value="show">Show Sponsor</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="sponsorName">Sponsor Name</Label>
+                  <Input id="sponsorName" placeholder="Enter sponsor name" />
                 </div>
-                
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Message</label>
-                  <Textarea 
-                    placeholder="Tell us about your sponsorship goals"
-                    className="min-h-[100px]"
-                  />
+                  <Label htmlFor="contactName">Contact Name</Label>
+                  <Input id="contactName" placeholder="Enter contact name" />
                 </div>
-                
-                <Button className="w-full">Submit Application</Button>
               </div>
-            </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" placeholder="Enter email" />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input id="phone" type="tel" placeholder="Enter phone number" />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="level">Sponsorship Level Interest</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="title">Title Sponsor</SelectItem>
+                    <SelectItem value="season">Season Sponsor</SelectItem>
+                    <SelectItem value="show">Show Sponsor</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="message">Message</Label>
+                <Textarea 
+                  id="message"
+                  placeholder="Tell us about your sponsorship goals"
+                  className="min-h-[100px]"
+                />
+              </div>
+              
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Submit Application
+                  </>
+                )}
+              </Button>
+            </form>
           </Card>
         </div>
       </div>
