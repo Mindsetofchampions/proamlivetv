@@ -36,7 +36,7 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-green-600">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
               Youth Creators
             </span>
             {" "}
