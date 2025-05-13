@@ -24,7 +24,13 @@ export default function LoginPage() {
     try {
       setLoading(true);
       await signIn(email, password);
-      router.push('/dashboard');
+      
+      // For admin users, redirect to admin dashboard
+      if (email === 'admin@proamtv.com') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (error: any) {
       console.error('Error:', error);
       toast({
