@@ -48,7 +48,7 @@ const Header = () => {
     { name: "Shows", href: "/shows", icon: <PlayCircle className="h-4 w-4 mr-2" /> },
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
     { name: "Shop", href: "/shop", icon: <ShoppingBag className="h-4 w-4 mr-2" /> },
-    { name: "Creators", href: "/creators", icon: <Users className="h-4 w-4 mr-2" /> },
+    { name: "Creators", href: "/creator", icon: <Users className="h-4 w-4 mr-2" /> },
     { name: "LIVE", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true, isLive: true },
   ];
 
