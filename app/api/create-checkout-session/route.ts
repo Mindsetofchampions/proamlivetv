@@ -15,6 +15,9 @@ export async function POST(req: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
+    const successUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL}/account?success=true`);
+    const cancelUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL}/subscribe?canceled=true`);
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -24,8 +27,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/account?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe?canceled=true`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         userId,
       },

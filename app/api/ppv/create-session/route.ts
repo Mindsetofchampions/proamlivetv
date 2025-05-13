@@ -35,6 +35,9 @@ export async function POST(req: Request) {
       return new NextResponse('Event not found', { status: 404 });
     }
 
+    const successUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL}/ppv/${eventId}?success=true`);
+    const cancelUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL}/ppv?canceled=true`);
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
@@ -50,8 +53,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/ppv/${eventId}?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/ppv?canceled=true`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         userId,
         eventId,
