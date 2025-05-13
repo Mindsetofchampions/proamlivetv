@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import { SignUpButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Check, X } from 'lucide-react';
@@ -166,18 +165,17 @@ export default function Pricing() {
                 </div>
               </div>
               
-              <SignUpButton mode="modal">
-                <Button 
-                  className={`w-full mb-6 ${
-                    plan.popular 
-                      ? 'bg-primary hover:bg-primary/90' 
-                      : ''
-                  }`} 
-                  variant={plan.popular ? 'default' : 'outline'}
-                >
-                  {plan.buttonText}
-                </Button>
-              </SignUpButton>
+              <Button 
+                className={`w-full mb-6 ${
+                  plan.popular 
+                    ? 'bg-primary hover:bg-primary/90' 
+                    : ''
+                }`} 
+                variant={plan.popular ? 'default' : 'outline'}
+                onClick={() => window.location.href = '/register'}
+              >
+                {plan.buttonText}
+              </Button>
               
               <ul className="space-y-3">
                 {plan.features.map((feature, featureIndex) => (
@@ -198,7 +196,6 @@ export default function Pricing() {
         ))}
       </div>
 
-      {/* Features Comparison Table */}
       <div className="max-w-6xl mx-auto mt-16">
         <h3 className="text-2xl font-bold text-center mb-8">Features Comparison</h3>
         <div className="overflow-x-auto">
