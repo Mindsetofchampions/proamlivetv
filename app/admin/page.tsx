@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AddAdminDialog } from '@/components/admin/add-admin-dialog';
 import { 
   Video,
   Users,
@@ -41,7 +42,10 @@ export default function AdminDashboard() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8">Dashboard Overview</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Dashboard Overview</h1>
+        <AddAdminDialog />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
