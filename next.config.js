@@ -11,7 +11,7 @@ const nextConfig = {
     return config;
   },
   experimental: {
-    runtime: 'nodejs'
+    swcMinify: false
   },
   output: 'standalone'
 };
