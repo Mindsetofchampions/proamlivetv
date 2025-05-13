@@ -36,10 +36,10 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="text-[#FFD700]">Tomorrow's</span>{" "}
-            <span className="text-[#FFD700]">Talent</span>,{" "}
+            <span className="text-white">Tomorrow's</span>{" "}
+            <span className="text-white">Talent</span>,{" "}
             <span className="text-[#BF0707]">LIVE</span>{" "}
-            <span className="text-[#FFD700]">Today</span>
+            <span className="text-white">Today</span>
           </motion.h1>
           
           <motion.p 
