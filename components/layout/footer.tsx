@@ -41,6 +41,11 @@ const Footer = () => {
                   For Creators
                 </Link>
               </li>
+              <li>
+                <Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors">
+                  Admin Dashboard
+                </Link>
+              </li>
             </ul>
           </div>
           
