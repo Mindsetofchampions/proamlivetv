@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import VideoClient from './video-client';
 
 // Mock video data
@@ -31,6 +33,21 @@ const videos = {
     category: "Sports",
     description: "Join me as I explore the best skateparks and street spots NYC has to offer. From Brooklyn Banks to Chelsea Piers, this tour shows you where to find the best places to skate in the city that never sleeps.\n\nI also share some tips for dealing with pedestrians, finding hidden gems, and avoiding common problems when skating in busy urban environments. Plus, check out my meetup with local skaters who showed me some insane tricks!",
     tags: ["skateboarding", "nyc", "urban", "sports", "street"]
+  },
+  "esports1": {
+    id: "esports1",
+    title: "Pro Gaming Championship Finals",
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Replace with actual video URL
+    thumbnail: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    duration: "45:21",
+    views: 98765,
+    likes: 8432,
+    creator: "ESportsCenter",
+    creatorAvatar: "https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=300",
+    publishedAt: "2025-03-10",
+    category: "Esports",
+    description: "Watch the thrilling finals of the 2025 Pro Gaming Championship! See the world's top players compete for the grand prize in this intense matchup that came down to the wire.",
+    tags: ["esports", "gaming", "competition", "pro-gaming"]
   }
 };
 
@@ -78,8 +95,8 @@ export default function VideoPage({ params }: { params: { id: string } }) {
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-2xl font-bold mb-4">Video not found</h1>
         <p className="mb-6">The video you're looking for doesn't exist or has been removed.</p>
-        <Button onClick={() => router.push('/videos')}>
-          Back to Videos
+        <Button asChild>
+          <a href="/videos">Back to Videos</a>
         </Button>
       </div>
     );
