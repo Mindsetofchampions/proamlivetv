@@ -17,8 +17,9 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        title: ['var(--font-title)'],
-        body: ['var(--font-body)'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        title: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        body: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -26,6 +27,7 @@ const config: Config = {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        backdrop: 'rgba(255,255,255,0.5)',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -54,6 +56,12 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+      },
+      boxShadow: {
+        'apple-card': '0 10px 30px rgba(0,0,0,0.12)',
+      },
+      backdropBlur: {
+        xs: '4px',
       },
       borderRadius: {
         lg: 'var(--radius)',
