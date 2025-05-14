@@ -58,23 +58,25 @@ const Header = () => {
     <header 
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled || menuOpen 
-          ? "bg-white/50 dark:bg-black/50 backdrop-blur-sm" 
+          ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" 
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-8">
-        <div className="flex h-20 items-center justify-between">
-          <Link href="/" className="flex items-center space-x-3">
-            <Tv className="h-8 w-8 text-primary" />
-            <span className="font-medium text-xl tracking-wide">PRO AM LIVE TV</span>
-          </Link>
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2">
+              <Tv className="h-6 w-6 text-primary" />
+              <span className="font-bold text-xl">PRO AM LIVE TV</span>
+            </Link>
+          </div>
 
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center text-sm font-medium tracking-wide transition-colors hover:text-primary ${
+                className={`flex items-center text-sm font-medium transition-colors hover:text-primary ${
                   isActive(link.href) 
                     ? "text-primary" 
                     : link.highlight
@@ -90,10 +92,10 @@ const Header = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             <ModeToggle />
-            <Button variant="ghost" size="sm" asChild className="tracking-wide">
+            <Button variant="ghost" size="sm" asChild>
               <Link href="/login">Sign In</Link>
             </Button>
-            <Button size="sm" asChild className="tracking-wide">
+            <Button size="sm" asChild>
               <Link href="/register">Join Free</Link>
             </Button>
           </div>
@@ -113,7 +115,7 @@ const Header = () => {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden bg-white/50 dark:bg-black/50 backdrop-blur-sm border-t">
+        <div className="md:hidden bg-background border-b">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4">
               {navLinks.map((link) => (
@@ -122,10 +124,10 @@ const Header = () => {
                   href={link.href}
                   className={`flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                     isActive(link.href) 
-                      ? "bg-primary/10 text-primary" 
+                      ? "bg-secondary text-primary" 
                       : link.highlight
                       ? "live-button"
-                      : "hover:bg-primary/5"
+                      : "hover:bg-secondary/50"
                   }`}
                   onClick={() => setMenuOpen(false)}
                 >
@@ -134,10 +136,10 @@ const Header = () => {
                 </Link>
               ))}
               <div className="pt-2 border-t flex flex-col space-y-2">
-                <Button variant="outline" asChild className="w-full tracking-wide">
+                <Button variant="outline" asChild className="w-full">
                   <Link href="/login">Sign In</Link>
                 </Button>
-                <Button asChild className="w-full tracking-wide">
+                <Button asChild className="w-full">
                   <Link href="/register">Join Free</Link>
                 </Button>
               </div>
@@ -147,6 +149,6 @@ const Header = () => {
       )}
     </header>
   );
-}
+};
 
 export default Header;
