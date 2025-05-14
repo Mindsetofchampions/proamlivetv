@@ -43,6 +43,19 @@ export default function Comments({ videoId }: CommentsProps) {
   const loadComments = async () => {
     try {
       setLoading(true);
+      
+      // Get the UUID from the video data
+      const { data: videoData } = await supabase
+        .from('videos')
+        .select('id')
+        .eq('legacy_id', videoId)
+        .single();
+
+      if (!videoData?.id) {
+        console.error('Video not found:', videoId);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('comments')
         .select(`
@@ -55,7 +68,7 @@ export default function Comments({ videoId }: CommentsProps) {
             avatar_url
           )
         `)
-        .eq('video_id', videoId)
+        .eq('video_id', videoData.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -72,10 +85,23 @@ export default function Comments({ videoId }: CommentsProps) {
 
     try {
       setSubmitting(true);
+
+      // Get the UUID from the video data
+      const { data: videoData } = await supabase
+        .from('videos')
+        .select('id')
+        .eq('legacy_id', videoId)
+        .single();
+
+      if (!videoData?.id) {
+        console.error('Video not found:', videoId);
+        return;
+      }
+
       const { error } = await supabase
         .from('comments')
         .insert({
-          video_id: videoId,
+          video_id: videoData.id,
           user_id: user.id,
           content: newComment.trim()
         });

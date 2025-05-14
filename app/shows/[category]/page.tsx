@@ -143,8 +143,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function ShowCategoryPage({ params }: { params: { category: string } }) {
-  const { category } = params;
+export default async function ShowCategoryPage({ params }: { params: { category: string } }) {
+  const { category } = await Promise.resolve(params);
   const data = categoryData[category as keyof typeof categoryData];
 
   if (!data) {

@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import VideoClient from './video-client';
 
 // Mock video data
 const videos = {
   "video1": {
-    id: "video1",
+    id: "d290f1ee-6c54-4b01-90e6-d701748f0851",
     title: "Urban Dance Championship Highlights",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Replace with actual video URL
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     thumbnail: "https://images.pexels.com/photos/1701202/pexels-photo-1701202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     duration: "12:34",
     views: 25678,
@@ -20,9 +19,9 @@ const videos = {
     tags: ["dance", "championship", "youth", "urban", "competition"]
   },
   "video2": {
-    id: "video2",
+    id: "25a6dff3-cdba-4f94-9af9-d79b937a2c1c",
     title: "New York Skateboarding Adventures",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Replace with actual video URL
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     thumbnail: "https://images.pexels.com/photos/2693208/pexels-photo-2693208.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     duration: "8:17",
     views: 18765,
@@ -34,10 +33,24 @@ const videos = {
     description: "Join me as I explore the best skateparks and street spots NYC has to offer. From Brooklyn Banks to Chelsea Piers, this tour shows you where to find the best places to skate in the city that never sleeps.\n\nI also share some tips for dealing with pedestrians, finding hidden gems, and avoiding common problems when skating in busy urban environments. Plus, check out my meetup with local skaters who showed me some insane tricks!",
     tags: ["skateboarding", "nyc", "urban", "sports", "street"]
   },
+  "video3": {
+    id: "7b8e6477-32ee-4c48-9b87-6e952a9069f1",
+    title: "DIY Room Makeover Under $100",
+    thumbnail: "https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    duration: "15:42",
+    creator: "CreativeSoul",
+    views: 12432,
+    likes: 876,
+    creatorAvatar: "https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=300",
+    publishedAt: "2025-03-05",
+    category: "DIY",
+    description: "Transform your space on a budget with these creative DIY ideas. Perfect for students and young professionals looking to personalize their living space without breaking the bank.",
+    tags: ["diy", "home", "budget", "creative"]
+  },
   "esports1": {
-    id: "esports1",
+    id: "9c47d657-e428-4c49-b1e3-1c1ca3f58a25",
     title: "Pro Gaming Championship Finals",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Replace with actual video URL
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     thumbnail: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     duration: "45:21",
     views: 98765,
@@ -51,45 +64,16 @@ const videos = {
   }
 };
 
-// Mock related videos
-const relatedVideos = [
-  {
-    id: "video3",
-    title: "DIY Room Makeover Under $100",
-    thumbnail: "https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "15:42",
-    creator: "CreativeSoul",
-    views: 12432
-  },
-  {
-    id: "video4",
-    title: "Making Music With Household Items",
-    thumbnail: "https://images.pexels.com/photos/164693/pexels-photo-164693.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "7:29",
-    creator: "SoundWizard",
-    views: 8765
-  },
-  {
-    id: "video5",
-    title: "Street Art Documentary: Young Voices",
-    thumbnail: "https://images.pexels.com/photos/2119706/pexels-photo-2119706.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "22:15",
-    creator: "UrbanLens",
-    views: 15983
-  }
-];
-
 export function generateStaticParams() {
   return Object.keys(videos).map((id) => ({
     id,
   }));
 }
 
-export default function VideoPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function VideoPage({ params }: { params: { id: string } }) {
+  const { id } = await Promise.resolve(params);
   const video = videos[id as keyof typeof videos];
   
-  // Check if video exists
   if (!video) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -104,7 +88,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="pt-16 pb-16 bg-background">
-      <VideoClient video={video} relatedVideos={relatedVideos} />
+      <VideoClient video={video} relatedVideos={[]} />
     </div>
   );
 }

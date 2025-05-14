@@ -12,15 +12,27 @@ export async function trackVideoView(
   analytics: VideoAnalytics
 ) {
   try {
+    // Get the UUID from the video data
+    const { data: videoData } = await supabase
+      .from('videos')
+      .select('id')
+      .eq('legacy_id', videoId)
+      .single();
+
+    if (!videoData?.id) {
+      console.error('Video not found:', videoId);
+      return;
+    }
+
     const { error } = await supabase
       .from('video_analytics')
       .insert([{
-        video_id: videoId,
+        video_id: videoData.id,
         watch_duration: analytics.watchDuration,
         watch_percentage: analytics.watchPercentage,
         device_type: analytics.deviceType,
         browser: analytics.browser,
-        country: 'Unknown', // Could be enhanced with IP geolocation
+        country: 'Unknown',
         region: 'Unknown'
       }]);
 
@@ -35,10 +47,22 @@ export async function trackEngagement(
   engagementType: 'like' | 'share' | 'comment'
 ) {
   try {
+    // Get the UUID from the video data
+    const { data: videoData } = await supabase
+      .from('videos')
+      .select('id')
+      .eq('legacy_id', videoId)
+      .single();
+
+    if (!videoData?.id) {
+      console.error('Video not found:', videoId);
+      return;
+    }
+
     const { error } = await supabase
       .from('video_engagement')
       .insert([{
-        video_id: videoId,
+        video_id: videoData.id,
         engagement_type: engagementType
       }]);
 
@@ -50,11 +74,23 @@ export async function trackEngagement(
 
 export async function getVideoAnalytics(videoId: string) {
   try {
+    // Get the UUID from the video data
+    const { data: videoData } = await supabase
+      .from('videos')
+      .select('id')
+      .eq('legacy_id', videoId)
+      .single();
+
+    if (!videoData?.id) {
+      console.error('Video not found:', videoId);
+      return null;
+    }
+
     // Get view count
     const { data: viewData, error: viewError } = await supabase
       .from('video_analytics')
       .select('id')
-      .eq('video_id', videoId);
+      .eq('video_id', videoData.id);
     
     if (viewError) throw viewError;
 
@@ -62,7 +98,7 @@ export async function getVideoAnalytics(videoId: string) {
     const { data: engagementData, error: engagementError } = await supabase
       .from('video_engagement')
       .select('engagement_type')
-      .eq('video_id', videoId);
+      .eq('video_id', videoData.id);
     
     if (engagementError) throw engagementError;
 
