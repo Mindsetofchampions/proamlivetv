@@ -55,13 +55,15 @@ const config = {
       listenIps: [
         {
           ip: '0.0.0.0',
-          announcedIp: '127.0.0.1' // Change this to your public IP in production
+          announcedIp: process.env.ANNOUNCED_IP || '127.0.0.1'
         }
       ],
       enableUdp: true,
       enableTcp: true,
       preferUdp: true,
-      initialAvailableOutgoingBitrate: 1000000
+      initialAvailableOutgoingBitrate: 1000000,
+      minimumAvailableOutgoingBitrate: 600000,
+      maxIncomingBitrate: 1500000
     }
   }
 };
@@ -112,7 +114,13 @@ class MediaServer {
           id: transport.id,
           iceParameters: transport.iceParameters,
           iceCandidates: transport.iceCandidates,
-          dtlsParameters: transport.dtlsParameters
+          dtlsParameters: transport.dtlsParameters,
+          sctpParameters: transport.sctpParameters
+        });
+
+        // Monitor transport ICE state
+        transport.on('icestatechange', (state) => {
+          socket.emit('iceConnectionStateChange', state);
         });
       } catch (error) {
         console.error('createProducerTransport error:', error);
@@ -144,6 +152,11 @@ class MediaServer {
         this.producers.delete(producer.id);
       });
 
+      // Monitor producer score
+      producer.on('score', (score) => {
+        socket.emit('producerScore', { producerId: producer.id, score });
+      });
+
       callback({ id: producer.id });
     });
 
@@ -156,7 +169,13 @@ class MediaServer {
           id: transport.id,
           iceParameters: transport.iceParameters,
           iceCandidates: transport.iceCandidates,
-          dtlsParameters: transport.dtlsParameters
+          dtlsParameters: transport.dtlsParameters,
+          sctpParameters: transport.sctpParameters
+        });
+
+        // Monitor transport ICE state
+        transport.on('icestatechange', (state) => {
+          socket.emit('iceConnectionStateChange', state);
         });
       } catch (error) {
         console.error('createConsumerTransport error:', error);
@@ -206,6 +225,11 @@ class MediaServer {
           this.consumers.delete(consumer.id);
         });
 
+        // Monitor consumer score
+        consumer.on('score', (score) => {
+          socket.emit('consumerScore', { consumerId: consumer.id, score });
+        });
+
         callback({
           id: consumer.id,
           producerId: producer.id,
@@ -215,6 +239,46 @@ class MediaServer {
       } catch (error) {
         console.error('consume error:', error);
         callback({ error: error.message });
+      }
+    });
+
+    socket.on('requestNewTransports', async () => {
+      try {
+        // Close existing transports
+        const oldTransports = Array.from(this.transports.values())
+          .filter(t => t.appData.socketId === socket.id);
+        
+        for (const transport of oldTransports) {
+          transport.close();
+          this.transports.delete(transport.id);
+        }
+
+        // Create new transports
+        const producerTransport = await this.createWebRtcTransport();
+        const consumerTransport = await this.createWebRtcTransport();
+
+        this.transports.set(producerTransport.id, producerTransport);
+        this.transports.set(consumerTransport.id, consumerTransport);
+
+        socket.emit('newTransportsCreated', {
+          producerTransport: {
+            id: producerTransport.id,
+            iceParameters: producerTransport.iceParameters,
+            iceCandidates: producerTransport.iceCandidates,
+            dtlsParameters: producerTransport.dtlsParameters,
+            sctpParameters: producerTransport.sctpParameters
+          },
+          consumerTransport: {
+            id: consumerTransport.id,
+            iceParameters: consumerTransport.iceParameters,
+            iceCandidates: consumerTransport.iceCandidates,
+            dtlsParameters: consumerTransport.dtlsParameters,
+            sctpParameters: consumerTransport.sctpParameters
+          }
+        });
+      } catch (error) {
+        console.error('Error creating new transports:', error);
+        socket.emit('newTransportsError', { error: error.message });
       }
     });
 
@@ -231,12 +295,12 @@ class MediaServer {
 
   private async createWebRtcTransport(): Promise<WebRtcTransport> {
     const transport = await this.router!.createWebRtcTransport({
-      listenIps: config.mediasoup.webRtcTransport.listenIps,
-      enableUdp: config.mediasoup.webRtcTransport.enableUdp,
-      enableTcp: config.mediasoup.webRtcTransport.enableTcp,
-      preferUdp: config.mediasoup.webRtcTransport.preferUdp,
-      initialAvailableOutgoingBitrate: config.mediasoup.webRtcTransport.initialAvailableOutgoingBitrate
+      ...config.mediasoup.webRtcTransport,
+      enableSctp: true,
+      numSctpStreams: { OS: 1024, MIS: 1024 }
     });
+
+    await transport.setMaxIncomingBitrate(config.mediasoup.webRtcTransport.maxIncomingBitrate);
 
     return transport;
   }
