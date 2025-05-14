@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "server:dev": "tsx server/index.ts"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -44,6 +45,7 @@
     "embla-carousel-react": "^8.0.0-rc17",
     "framer-motion": "^10.16.5",
     "lucide-react": "^0.292.0",
+    "mediasoup": "^3.15.7",
     "mediasoup-client": "^3.7.4",
     "next": "^15.0.0",
     "next-themes": "^0.2.1",
@@ -52,11 +54,13 @@
     "react-dom": "^18.2.0",
     "react-player": "^2.13.0",
     "react-resizable-panels": "^1.0.5",
+    "socket.io": "^4.7.4",
     "socket.io-client": "^4.7.4",
     "sonner": "^1.2.3",
     "stripe": "^14.5.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.19.4",
     "vaul": "^0.7.7",
     "webrtc-adapter": "^8.2.3"
   },
