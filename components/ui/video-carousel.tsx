@@ -1,84 +1,68 @@
-"use client";
-
-import { useRef } from 'react';
-import { motion } from 'framer-motion';
+import { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface VideoCarouselProps {
-  title?: string;
+  title: string;
   description?: string;
-  children: React.ReactNode;
+  children: ReactNode;
+  className?: string;
 }
 
-export function VideoCarousel({ title, description, children }: VideoCarouselProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+export function VideoCarousel({
+  title,
+  description,
+  children,
+  className
+}: VideoCarouselProps) {
+  const scrollLeft = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const container = e.currentTarget.parentElement?.querySelector('.video-scroll');
+    if (container) {
+      container.scrollLeft -= container.clientWidth;
+    }
+  };
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (!scrollContainerRef.current) return;
-    
-    const container = scrollContainerRef.current;
-    const scrollAmount = container.clientWidth * 0.8;
-    
-    container.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth'
-    });
+  const scrollRight = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const container = e.currentTarget.parentElement?.querySelector('.video-scroll');
+    if (container) {
+      container.scrollLeft += container.clientWidth;
+    }
   };
 
   return (
-    <div className="relative py-8">
-      {(title || description) && (
-        <div className="mb-6">
-          {title && (
-            <motion.h2 
-              className="text-2xl font-semibold mb-2"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              {title}
-            </motion.h2>
-          )}
+    <div className={cn("mb-12", className)}>
+      <div className="flex items-end justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-wide mb-1">{title}</h2>
           {description && (
-            <motion.p 
-              className="text-muted-foreground"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
-              {description}
-            </motion.p>
+            <p className="text-muted-foreground">{description}</p>
           )}
         </div>
-      )}
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full bg-white/5 backdrop-blur-sm hover:bg-white/10"
+            onClick={scrollLeft}
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full bg-white/5 backdrop-blur-sm hover:bg-white/10"
+            onClick={scrollRight}
+          >
+            <ChevronRight className="h-6 w-6" />
+          </Button>
+        </div>
+      </div>
 
-      <div className="relative group">
-        <div
-          ref={scrollContainerRef}
-          className="flex space-x-6 overflow-x-auto hide-scrollbar scroll-smooth pb-4"
-        >
+      <div className="relative">
+        <div className="video-scroll flex gap-4 overflow-x-auto scroll-smooth hide-scrollbar">
           {children}
         </div>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 backdrop-blur-sm hover:bg-white/30"
-          onClick={() => scroll('left')}
-        >
-          <ChevronLeft className="h-6 w-6" />
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 backdrop-blur-sm hover:bg-white/30"
-          onClick={() => scroll('right')}
-        >
-          <ChevronRight className="h-6 w-6" />
-        </Button>
       </div>
     </div>
   );
