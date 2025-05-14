@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { supabase } from '@/lib/supabase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,6 +12,30 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+// Mock comments data since Supabase isn't properly configured yet
+const mockComments = [
+  {
+    id: "1",
+    content: "Great video! Really enjoyed the techniques shown.",
+    created_at: "2025-03-15T10:00:00Z",
+    user: {
+      id: "user1",
+      username: "PhotoEnthusiast",
+      avatar_url: "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=300"
+    }
+  },
+  {
+    id: "2",
+    content: "The lighting tips were especially helpful. Thanks for sharing!",
+    created_at: "2025-03-15T11:30:00Z",
+    user: {
+      id: "user2",
+      username: "CameraPro",
+      avatar_url: "https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=300"
+    }
+  }
+];
 
 interface Comment {
   id: string;
@@ -31,85 +54,30 @@ interface CommentsProps {
 
 export default function Comments({ videoId }: CommentsProps) {
   const { user } = useAuth();
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<Comment[]>(mockComments);
   const [newComment, setNewComment] = useState('');
-  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    loadComments();
-  }, [videoId]);
-
-  const loadComments = async () => {
-    try {
-      setLoading(true);
-      
-      // Get the UUID from the video data
-      const { data: videoData } = await supabase
-        .from('videos')
-        .select('id')
-        .eq('legacy_id', videoId)
-        .single();
-
-      if (!videoData?.id) {
-        console.error('Video not found:', videoId);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('comments')
-        .select(`
-          id,
-          content,
-          created_at,
-          user:user_id (
-            id,
-            username,
-            avatar_url
-          )
-        `)
-        .eq('video_id', videoData.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setComments(data || []);
-    } catch (error) {
-      console.error('Error loading comments:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async () => {
     if (!user || !newComment.trim()) return;
 
     try {
       setSubmitting(true);
+      
+      // Mock adding a new comment
+      const newCommentObj = {
+        id: `temp-${Date.now()}`,
+        content: newComment.trim(),
+        created_at: new Date().toISOString(),
+        user: {
+          id: user.id,
+          username: user.email?.split('@')[0] || 'Anonymous',
+          avatar_url: user.user_metadata?.avatar_url || ''
+        }
+      };
 
-      // Get the UUID from the video data
-      const { data: videoData } = await supabase
-        .from('videos')
-        .select('id')
-        .eq('legacy_id', videoId)
-        .single();
-
-      if (!videoData?.id) {
-        console.error('Video not found:', videoId);
-        return;
-      }
-
-      const { error } = await supabase
-        .from('comments')
-        .insert({
-          video_id: videoData.id,
-          user_id: user.id,
-          content: newComment.trim()
-        });
-
-      if (error) throw error;
-
+      setComments([newCommentObj, ...comments]);
       setNewComment('');
-      loadComments();
     } catch (error) {
       console.error('Error posting comment:', error);
     } finally {
@@ -119,14 +87,7 @@ export default function Comments({ videoId }: CommentsProps) {
 
   const handleDelete = async (commentId: string) => {
     try {
-      const { error } = await supabase
-        .from('comments')
-        .delete()
-        .eq('id', commentId)
-        .eq('user_id', user?.id);
-
-      if (error) throw error;
-      loadComments();
+      setComments(comments.filter(comment => comment.id !== commentId));
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
@@ -139,14 +100,6 @@ export default function Comments({ videoId }: CommentsProps) {
       day: 'numeric'
     });
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">

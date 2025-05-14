@@ -47,6 +47,20 @@ const videos = {
     description: "Transform your space on a budget with these creative DIY ideas. Perfect for students and young professionals looking to personalize their living space without breaking the bank.",
     tags: ["diy", "home", "budget", "creative"]
   },
+  "video4": {
+    id: "f5b6d789-c123-4d56-a789-e012f3456789",
+    title: "Advanced Photography Tips",
+    thumbnail: "https://images.pexels.com/photos/1787236/pexels-photo-1787236.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    duration: "20:15",
+    creator: "PhotoPro",
+    views: 15678,
+    likes: 1234,
+    creatorAvatar: "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=300",
+    publishedAt: "2025-03-15",
+    category: "Photography",
+    description: "Master advanced photography techniques with this comprehensive guide. Learn about composition, lighting, and post-processing to take your photography skills to the next level.",
+    tags: ["photography", "tutorial", "advanced", "tips"]
+  },
   "esports1": {
     id: "9c47d657-e428-4c49-b1e3-1c1ca3f58a25",
     title: "Pro Gaming Championship Finals",
