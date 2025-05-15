@@ -37,16 +37,13 @@ async function createAdminUser() {
       return;
     }
 
-    // Create the user in Auth with email already confirmed
+    // Create the user in Auth
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email: adminEmail,
       password: password,
       email_confirmed: true,
       user_metadata: {
         role: 'admin'
-      },
-      app_metadata: {
-        email_confirmed_at: new Date().toISOString()
       }
     });
 
