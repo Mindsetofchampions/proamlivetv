@@ -38,14 +38,13 @@ export async function getUserRoles(userId: string) {
       .from('users')
       .select('id')
       .eq('auth_id', userId)
-      .maybeSingle();
+      .single();
 
     if (userError) {
       console.error('Error fetching user:', userError);
       throw userError;
     }
-    
-    // If no user record found, return empty roles and permissions
+
     if (!userData) {
       console.log('No user record found for auth_id:', userId);
       return { roles: [], permissions: [] };

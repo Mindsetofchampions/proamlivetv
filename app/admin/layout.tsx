@@ -30,7 +30,10 @@ export default function AdminLayout({
         return;
       }
 
-      if (!hasRole('admin')) {
+      const isAdmin = hasRole('admin');
+      console.log('Admin role check:', { isAdmin, userRoles: user.roles });
+
+      if (!isAdmin) {
         console.log('User lacks admin role:', user);
         router.push('/');
         return;
