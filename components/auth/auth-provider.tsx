@@ -40,6 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null);
       }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();

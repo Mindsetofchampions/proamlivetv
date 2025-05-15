@@ -23,9 +23,17 @@ export default function AdminLayout({
   const { user, hasRole, signOut, loading } = useAuth();
 
   useEffect(() => {
-    // Check for admin role specifically
-    if (!loading && (!user || !hasRole('admin'))) {
-      router.push('/login');
+    if (!loading) {
+      if (!user) {
+        router.push('/login');
+        return;
+      }
+
+      if (!hasRole('admin')) {
+        console.log('User lacks admin role:', user);
+        router.push('/');
+        return;
+      }
     }
   }, [user, loading, router, hasRole]);
 
