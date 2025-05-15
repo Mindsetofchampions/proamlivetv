@@ -36,8 +36,9 @@ export function generateStaticParams() {
   }));
 }
 
-export default function ProductPage({ params }: { params: { id: string } }) {
-  const product = products[params.id as keyof typeof products];
+export default async function ProductPage({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const product = products[id as keyof typeof products];
   
   if (!product) {
     return (
