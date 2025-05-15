@@ -25,19 +25,36 @@ async function createAdminUser() {
     // Generate a secure random password
     const password = randomBytes(16).toString('hex');
 
+    // First check if user already exists
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('username', 'admin')
+      .single();
+
+    if (existingUser) {
+      console.log('Admin user already exists');
+      return;
+    }
+
     // Create the user in Auth
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email: adminEmail,
       password: password,
-      email_confirm: true,
+      email_confirmed: true,
       user_metadata: {
         role: 'admin'
       }
     });
 
-    if (authError) throw authError;
+    if (authError) {
+      console.error('Auth error:', authError);
+      throw authError;
+    }
     
-    if (!authData.user) throw new Error('Failed to create auth user');
+    if (!authData.user) {
+      throw new Error('Failed to create auth user - no user data returned');
+    }
 
     // Create user record
     const { data: userData, error: userError } = await supabase
@@ -50,7 +67,14 @@ async function createAdminUser() {
       .select()
       .single();
 
-    if (userError) throw userError;
+    if (userError) {
+      console.error('User creation error:', userError);
+      throw userError;
+    }
+
+    if (!userData) {
+      throw new Error('Failed to create user record - no data returned');
+    }
 
     // Get admin role ID
     const { data: roleData, error: roleError } = await supabase
@@ -59,7 +83,14 @@ async function createAdminUser() {
       .eq('name', 'admin')
       .single();
 
-    if (roleError) throw roleError;
+    if (roleError) {
+      console.error('Role lookup error:', roleError);
+      throw roleError;
+    }
+
+    if (!roleData) {
+      throw new Error('Admin role not found');
+    }
 
     // Assign admin role
     const { error: roleAssignError } = await supabase
@@ -69,12 +100,15 @@ async function createAdminUser() {
         role_id: roleData.id
       });
 
-    if (roleAssignError) throw roleAssignError;
+    if (roleAssignError) {
+      console.error('Role assignment error:', roleAssignError);
+      throw roleAssignError;
+    }
 
-    console.log('Admin user created successfully!');
+    console.log('\n=== Admin User Created Successfully ===');
     console.log('Email:', adminEmail);
     console.log('Password:', password);
-    console.log('\nPlease change this password immediately after first login.');
+    console.log('\nIMPORTANT: Change this password after first login!\n');
 
   } catch (error) {
     console.error('Error creating admin user:', error);
