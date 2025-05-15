@@ -33,11 +33,22 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       console.error('Error:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to sign in",
-        variant: "destructive"
-      });
+      
+      // Check for email confirmation error
+      if (error.message?.includes('email_not_confirmed') || 
+          error.error?.message?.includes('email_not_confirmed')) {
+        toast({
+          title: "Email Not Confirmed",
+          description: "Please check your email inbox and confirm your email address before signing in.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to sign in",
+          variant: "destructive"
+        });
+      }
     } finally {
       setLoading(false);
     }
