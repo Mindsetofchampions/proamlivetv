@@ -8,21 +8,52 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { LogIn } from 'lucide-react';
+import { LogIn, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { createClient } from '@/lib/supabase';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
+  const [showResend, setShowResend] = useState(false);
   const router = useRouter();
   const { signIn } = useAuth();
   const { toast } = useToast();
+
+  const handleResendConfirmation = async () => {
+    try {
+      setResendingEmail(true);
+      const supabase = createClient();
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Confirmation Email Sent",
+        description: "Please check your inbox for the confirmation email.",
+      });
+      setShowResend(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to resend confirmation email. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setResendingEmail(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
+      setShowResend(false);
       await signIn(email, password);
       
       // For admin users, redirect to admin dashboard
@@ -37,6 +68,7 @@ export default function LoginPage() {
       // Check for email confirmation error
       if (error.message?.includes('email_not_confirmed') || 
           error.error?.message?.includes('email_not_confirmed')) {
+        setShowResend(true);
         toast({
           title: "Email Not Confirmed",
           description: "Please check your email inbox and confirm your email address before signing in.",
@@ -107,6 +139,28 @@ export default function LoginPage() {
                 </>
               )}
             </Button>
+
+            {showResend && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mt-2"
+                onClick={handleResendConfirmation}
+                disabled={resendingEmail}
+              >
+                {resendingEmail ? (
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                    Sending...
+                  </div>
+                ) : (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Resend Confirmation Email
+                  </>
+                )}
+              </Button>
+            )}
           </form>
 
           <div className="mt-6 text-center text-sm">
