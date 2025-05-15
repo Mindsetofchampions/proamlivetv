@@ -31,23 +31,31 @@ export function useAuth() {
 
 export async function getUserRoles(userId: string) {
   try {
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('auth_id', userId)
+      .single();
+
+    if (userError) throw userError;
+
     const { data, error } = await supabase
       .from('user_roles')
       .select(`
-        role:roles (
+        roles (
           name,
-          permissions:role_permissions (
+          role_permissions (
             permission
           )
         )
       `)
-      .eq('user_id', userId);
+      .eq('user_id', userData.id);
 
     if (error) throw error;
 
-    const roles = data?.map(d => d.role.name) || [];
+    const roles = data?.map(d => d.roles.name as UserRole) || [];
     const permissions = data?.flatMap(d => 
-      d.role.permissions.map(p => p.permission)
+      d.roles.role_permissions.map(p => p.permission)
     ) || [];
 
     return { roles, permissions };

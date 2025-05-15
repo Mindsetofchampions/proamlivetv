@@ -74,19 +74,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       
       if (data.user) {
-        // Assign default viewer role
-        const { data: roleData } = await supabase
+        // Create user record
+        const { error: userError } = await supabase
+          .from('users')
+          .insert({
+            auth_id: data.user.id,
+            username: email.split('@')[0],
+            display_name: email.split('@')[0]
+          });
+
+        if (userError) throw userError;
+
+        // Get viewer role
+        const { data: roleData, error: roleError } = await supabase
           .from('roles')
           .select('id')
           .eq('name', 'viewer')
           .single();
 
-        if (roleData) {
-          await supabase.from('user_roles').insert({
+        if (roleError) throw roleError;
+
+        // Assign viewer role
+        const { error: roleAssignError } = await supabase
+          .from('user_roles')
+          .insert({
             user_id: data.user.id,
             role_id: roleData.id
           });
-        }
+
+        if (roleAssignError) throw roleAssignError;
 
         setUser(data.user);
       }
