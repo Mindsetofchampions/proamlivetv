@@ -35,9 +35,14 @@ export async function getUserRoles(userId: string) {
       .from('users')
       .select('id')
       .eq('auth_id', userId)
-      .single();
+      .maybeSingle();
 
     if (userError) throw userError;
+    
+    // If no user data found, return empty roles and permissions
+    if (!userData) {
+      return { roles: [], permissions: [] };
+    }
 
     const { data, error } = await supabase
       .from('user_roles')
