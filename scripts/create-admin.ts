@@ -37,13 +37,17 @@ async function createAdminUser() {
       return;
     }
 
-    // Create the user in Auth
+    // Create the user in Auth with email confirmation disabled
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email: adminEmail,
       password: password,
-      email_confirmed: true,
+      email_confirm: true,
       user_metadata: {
         role: 'admin'
+      },
+      // Force email confirmation by setting the timestamp
+      app_metadata: {
+        email_confirmed_at: new Date().toISOString()
       }
     });
 
@@ -103,6 +107,18 @@ async function createAdminUser() {
     if (roleAssignError) {
       console.error('Role assignment error:', roleAssignError);
       throw roleAssignError;
+    }
+
+    // Verify email confirmation status
+    const { data: verifyData, error: verifyError } = await supabase.auth.admin.getUserById(authData.user.id);
+    
+    if (verifyError) {
+      console.error('Verification error:', verifyError);
+      throw verifyError;
+    }
+
+    if (!verifyData.user.email_confirmed_at) {
+      console.error('Warning: Email confirmation status not set properly');
     }
 
     console.log('\n=== Admin User Created Successfully ===');
