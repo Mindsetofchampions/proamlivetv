@@ -31,6 +31,8 @@ export function useAuth() {
 
 export async function getUserRoles(userId: string) {
   try {
+    console.log('Fetching roles for user:', userId);
+
     // First get the user record with auth_id
     const { data: userData, error: userError } = await supabase
       .from('users')
@@ -38,7 +40,10 @@ export async function getUserRoles(userId: string) {
       .eq('auth_id', userId)
       .maybeSingle();
 
-    if (userError) throw userError;
+    if (userError) {
+      console.error('Error fetching user:', userError);
+      throw userError;
+    }
     
     // If no user record found, return empty roles and permissions
     if (!userData) {
@@ -70,7 +75,7 @@ export async function getUserRoles(userId: string) {
       d.roles.role_permissions.map(p => p.permission)
     ) || [];
 
-    console.log('Fetched roles:', roles);
+    console.log('Fetched roles for user:', { userId, roles, permissions });
     return { roles, permissions };
   } catch (error) {
     console.error('Error in getUserRoles:', error);

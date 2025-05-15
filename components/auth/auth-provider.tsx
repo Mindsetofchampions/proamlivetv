@@ -16,9 +16,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session?.user) {
         try {
           const { roles, permissions } = await getUserRoles(session.user.id);
+          console.log('Initial session roles:', roles);
           setUser({ ...session.user, roles, permissions });
         } catch (error) {
-          console.error('Error setting user:', error);
+          console.error('Error setting initial user:', error);
           setUser(session.user);
         }
       } else {
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session?.user) {
         try {
           const { roles, permissions } = await getUserRoles(session.user.id);
+          console.log('Auth state change roles:', roles);
           setUser({ ...session.user, roles, permissions });
         } catch (error) {
           console.error('Error updating user:', error);
@@ -48,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      setLoading(true);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -57,16 +60,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (data.user) {
         const { roles, permissions } = await getUserRoles(data.user.id);
+        console.log('Sign in roles:', roles);
         setUser({ ...data.user, roles, permissions });
       }
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signUp = async (email: string, password: string) => {
     try {
+      setLoading(true);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -115,21 +122,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       setUser(null);
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const hasRole = (role: UserRole) => {
+    console.log('Checking role:', role, 'User roles:', user?.roles);
     return user?.roles?.includes(role) || false;
   };
 
