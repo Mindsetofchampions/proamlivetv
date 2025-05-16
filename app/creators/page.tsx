@@ -2,19 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { 
-  Gamepad2, 
-  Tv, 
-  Laptop, 
-  GraduationCap,
-  ArrowRight,
-  Search,
-  Filter,
-  Briefcase,
-  Handshake,
-  Calendar,
-  DollarSign
-} from 'lucide-react';
+import { Gamepad2, Tv, Laptop, GraduationCap, ArrowRight, Search, Filter, Briefcase, HeartHandshake as Handshake, Calendar, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const careerPaths = [
