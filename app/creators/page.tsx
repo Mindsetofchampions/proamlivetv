@@ -8,7 +8,13 @@ import {
   MapPin,
   GraduationCap,
   ArrowRight,
-  Filter
+  Filter,
+  Gamepad2,
+  Video,
+  Users,
+  Trophy,
+  PlayCircle,
+  Mic2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +26,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
+const careerPaths = [
+  {
+    id: 'on-air-talent',
+    title: 'On-Air Talent & Hosts',
+    icon: <Mic2 className="h-8 w-8" />,
+    description: 'Learn broadcasting, hosting, and on-camera skills',
+    color: 'from-purple-500 to-indigo-500'
+  },
+  {
+    id: 'content-production',
+    title: 'Content Production',
+    icon: <Video className="h-8 w-8" />,
+    description: 'Master video editing, motion graphics, and storytelling',
+    color: 'from-blue-500 to-cyan-500'
+  },
+  {
+    id: 'esports',
+    title: 'Esports & Gaming',
+    icon: <Gamepad2 className="h-8 w-8" />,
+    description: 'Compete and create content in competitive gaming',
+    color: 'from-green-500 to-emerald-500'
+  },
+  {
+    id: 'live-production',
+    title: 'Live Production',
+    icon: <PlayCircle className="h-8 w-8" />,
+    description: 'Learn to produce and direct live events',
+    color: 'from-orange-500 to-red-500'
+  }
+];
 
 const skills = [
   "Broadcasting",
@@ -83,8 +120,8 @@ export default function CreatorsPage() {
   const filteredSchools = schools.filter(school => {
     const matchesSearch = school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          school.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSkill = !selectedSkill || school.programs.includes(selectedSkill);
-    const matchesLocation = !selectedLocation || school.location.includes(selectedLocation);
+    const matchesSkill = !selectedSkill || selectedSkill === 'all' || school.programs.includes(selectedSkill);
+    const matchesLocation = !selectedLocation || selectedLocation === 'all' || school.location.includes(selectedLocation);
     return matchesSearch && matchesSkill && matchesLocation;
   });
 
@@ -94,14 +131,45 @@ export default function CreatorsPage() {
     <div className="pt-24 pb-16">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Find Your School</h1>
+          <h1 className="text-4xl font-bold mb-4">Creator Academy</h1>
           <p className="text-lg text-muted-foreground">
-            Discover participating schools and their creative programs
+            Launch your content creation career with professional training and mentorship
           </p>
         </div>
 
-        {/* Search and Filters */}
+        {/* Career Paths */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">What You'll Learn</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {careerPaths.map((path, index) => (
+              <motion.div
+                key={path.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className={`group relative overflow-hidden rounded-xl bg-gradient-to-r ${path.color} p-1`}>
+                  <div className="relative overflow-hidden rounded-lg bg-background p-6">
+                    <div className="rounded-full bg-primary/10 p-3 w-fit text-primary mb-4">
+                      {path.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                      {path.title}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {path.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* School Search */}
         <div className="max-w-4xl mx-auto mb-12">
+          <h2 className="text-2xl font-bold text-center mb-8">Find Your School</h2>
           <div className="bg-card border rounded-lg p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
