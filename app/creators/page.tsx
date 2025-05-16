@@ -4,410 +4,214 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  Mic,
-  Video,
-  Cog,
-  BarChart,
-  Users,
-  ArrowRight,
+  Search,
+  MapPin,
   GraduationCap,
-  School,
-  MapPin
+  ArrowRight,
+  Filter
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
-interface Module {
-  title: string;
-  badge?: string;
-  task?: string;
-  description?: string;
-  certificate?: string;
-}
-
-interface PathwayStage {
-  stage: string;
-  modules: Module[];
-}
-
-interface CareerPath {
-  id: string;
-  title: string;
-  icon: JSX.Element;
-  roles: string[];
-  pathway: PathwayStage[];
-}
-
-const careerPaths: CareerPath[] = [
-  {
-    id: 'on-air-talent',
-    title: 'On-Air Talent & Hosts',
-    icon: <Mic className="h-6 w-6" />,
-    roles: ['Live Stream Host', 'Show Anchor', 'Play-by-Play Commentator', 'Analyst'],
-    pathway: [
-      {
-        stage: 'Foundations',
-        modules: [
-          {
-            title: 'Public Speaking & On-Camera Confidence',
-            badge: 'Studio Rookie',
-            task: 'Record a 1-min on-camera intro'
-          }
-        ]
-      },
-      {
-        stage: 'Practice & Feedback',
-        modules: [
-          {
-            title: 'Co-host 1–2 community streams',
-            badge: 'Co-Host Certified'
-          }
-        ]
-      },
-      {
-        stage: 'Lead Shows',
-        modules: [
-          {
-            title: 'Pitch & run your own weekly show',
-            description: 'Create highlight reel or interview segment',
-            badge: 'On-Air Host'
-          }
-        ]
-      },
-      {
-        stage: 'Advanced Broadcast',
-        modules: [
-          {
-            title: 'Play-by-Play/Color Commentary training',
-            certificate: 'Pro Commentator'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'content-production',
-    title: 'Content Production & Editing',
-    icon: <Video className="h-6 w-6" />,
-    roles: ['Video Editor', 'Highlight Reel Producer', 'Motion Graphics Designer'],
-    pathway: [
-      {
-        stage: 'Basics of Editing',
-        modules: [
-          {
-            title: 'Adobe Premiere / DaVinci Resolve Essentials',
-            badge: 'Cut Rookie',
-            task: 'Cut a 60-sec highlight clip'
-          }
-        ]
-      },
-      {
-        stage: 'Advanced Techniques',
-        modules: [
-          {
-            title: 'Transitions, Color Grading, Sound Design',
-            badge: 'Editor Certified',
-            task: 'Produce a themed highlight reel with music/sfx'
-          }
-        ]
-      },
-      {
-        stage: 'Motion Graphics & Branding',
-        modules: [
-          {
-            title: 'After Effects / Blender Basics',
-            certificate: 'Motion Designer'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'live-production',
-    title: 'Live Production & Engineering',
-    icon: <Cog className="h-6 w-6" />,
-    roles: ['Broadcast Engineer', 'Technical Director', 'Stream Operations Specialist'],
-    pathway: [
-      {
-        stage: 'Streaming Fundamentals',
-        modules: [
-          {
-            title: 'OBS/Streamlabs setup, audio/video sync',
-            badge: 'Stream Tech Rookie',
-            task: 'Configure a 720p multi-scene stream'
-          }
-        ]
-      },
-      {
-        stage: 'Hardware & Networking',
-        modules: [
-          {
-            title: 'Encoders, Switchers, Network Optimization',
-            badge: 'Tech Certified',
-            task: 'Build and run a mock live event with 2 cameras'
-          }
-        ]
-      },
-      {
-        stage: 'Live Event Management',
-        modules: [
-          {
-            title: 'Redundancy & Failover, Team Coordination',
-            certificate: 'Live Broadcast Engineer'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'content-strategy',
-    title: 'Content Strategy & Production Management',
-    icon: <BarChart className="h-6 w-6" />,
-    roles: ['Showrunner', 'Series Producer', 'Scheduler'],
-    pathway: [
-      {
-        stage: 'Creative Development',
-        modules: [
-          {
-            title: 'Ideation & Scripting for Episodic Content',
-            badge: 'Showrunner Rookie',
-            task: 'Draft a 3–episode mini-series outline'
-          }
-        ]
-      },
-      {
-        stage: 'Project Management',
-        modules: [
-          {
-            title: 'Agile & Waterfall for Media Production',
-            badge: 'Producer Certified',
-            task: 'Run a 2-week sprint to deliver an episode'
-          }
-        ]
-      },
-      {
-        stage: 'Monetization & PPV',
-        modules: [
-          {
-            title: 'Pricing Strategy, Audience Analytics',
-            certificate: 'Content Strategist'
-          }
-        ]
-      }
-    ]
-  }
+const skills = [
+  "Broadcasting",
+  "Digital Media",
+  "Film Production",
+  "Sports Commentary",
+  "Media Technology",
+  "Live Production",
+  "Creative Media",
+  "Performance Arts"
 ];
 
-const participatingSchools = [
+const schools = [
   {
     id: 'lincoln-high-school',
     name: "Lincoln High School",
     location: "San Francisco, CA",
     programs: ["Broadcasting", "Digital Media"],
-    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg"
+    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg",
+    rating: 4.8,
+    studentCount: 450,
+    description: "State-of-the-art facilities and experienced instructors dedicated to nurturing the next generation of content creators."
   },
   {
     id: 'roosevelt-academy',
     name: "Roosevelt Academy",
     location: "Chicago, IL",
     programs: ["Film Production", "Sports Commentary"],
-    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg"
+    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg",
+    rating: 4.7,
+    studentCount: 380,
+    description: "Specializing in film production and sports broadcasting, providing hands-on experience in live event coverage."
   },
   {
     id: 'washington-tech',
     name: "Washington Tech",
     location: "Seattle, WA",
     programs: ["Media Technology", "Live Production"],
-    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg"
+    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg",
+    rating: 4.9,
+    studentCount: 520,
+    description: "Innovative program combining technical expertise with creative storytelling."
   },
   {
     id: 'jefferson-arts',
     name: "Jefferson Arts",
     location: "New York, NY",
     programs: ["Creative Media", "Performance Arts"],
-    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg"
+    image: "https://images.pexels.com/photos/2982449/pexels-photo-2982449.jpeg",
+    rating: 4.6,
+    studentCount: 410,
+    description: "Integrating traditional performing arts with digital media for unique storytelling opportunities."
   }
 ];
 
 export default function CreatorsPage() {
-  const [selectedPath, setSelectedPath] = useState<string | null>(null);
-  // Dummy auth state
-  const isSignedIn = false;
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSkill, setSelectedSkill] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+
+  const filteredSchools = schools.filter(school => {
+    const matchesSearch = school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         school.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSkill = !selectedSkill || school.programs.includes(selectedSkill);
+    const matchesLocation = !selectedLocation || school.location.includes(selectedLocation);
+    return matchesSearch && matchesSkill && matchesLocation;
+  });
+
+  const locations = Array.from(new Set(schools.map(school => school.location)));
 
   return (
     <div className="pt-24 pb-16">
       <div className="container mx-auto px-4">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Launch Your Creator Career
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Choose your path, earn certifications, and build your portfolio in our youth-run television network
-            </p>
-            {isSignedIn ? (
-              <Button size="lg" asChild>
-                <Link href="/dashboard/career">
-                  Start Your Journey
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            ) : (
-              <Button size="lg" asChild>
-                <Link href="/sign-up">
-                  Join as Creator
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            )}
-          </motion.div>
+        <div className="max-w-3xl mx-auto text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Find Your School</h1>
+          <p className="text-lg text-muted-foreground">
+            Discover participating schools and their creative programs
+          </p>
         </div>
 
-        {/* Career Paths */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-8">Career Pathways</h2>
-          <div className="grid gap-6">
-            {careerPaths.map((path) => (
-              <motion.div
-                key={path.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-              >
-                <Accordion type="single" collapsible>
-                  <AccordionItem value={path.id}>
-                    <AccordionTrigger className="hover:no-underline">
-                      <div className="flex items-center gap-4">
-                        <div className="bg-primary/10 p-3 rounded-lg">
-                          {path.icon}
-                        </div>
-                        <div className="text-left">
-                          <h3 className="text-xl font-semibold">{path.title}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {path.roles.join(' • ')}
-                          </p>
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="pl-16 pt-4">
-                        {path.pathway.map((stage, index) => (
-                          <div key={index} className="mb-6">
-                            <h4 className="font-semibold mb-3">{stage.stage}</h4>
-                            {stage.modules.map((module, moduleIndex) => (
-                              <div key={moduleIndex} className="mb-4 pl-4 border-l">
-                                <p className="mb-2">{module.title}</p>
-                                {module.task && (
-                                  <p className="text-sm text-muted-foreground mb-2">
-                                    Task: {module.task}
-                                  </p>
-                                )}
-                                {module.badge && (
-                                  <Badge variant="secondary">
-                                    Badge: {module.badge}
-                                  </Badge>
-                                )}
-                                {module.certificate && (
-                                  <Badge variant="default">
-                                    Certificate: {module.certificate}
-                                  </Badge>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </motion.div>
-            ))}
+        {/* Search and Filters */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="bg-card border rounded-lg p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search schools..."
+                  className="pl-9"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              
+              <Select value={selectedSkill} onValueChange={setSelectedSkill}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select skill" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All Skills</SelectItem>
+                  {skills.map(skill => (
+                    <SelectItem key={skill} value={skill}>{skill}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select location" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All Locations</SelectItem>
+                  {locations.map(location => (
+                    <SelectItem key={location} value={location}>{location}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
-        {/* Participating Schools */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-8">Participating Schools</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {participatingSchools.map((school, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Link href={`/creators/${school.id}`}>
-                  <div className="bg-card border rounded-xl overflow-hidden group hover:border-primary transition-colors">
-                    <div className="relative aspect-video">
-                      <img 
-                        src={school.image}
-                        alt={school.name}
-                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-4 left-4 right-4 text-white">
-                        <h3 className="text-xl font-semibold mb-1">{school.name}</h3>
-                        <div className="flex items-center text-sm mb-2">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {school.location}
-                        </div>
+        {/* School Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {filteredSchools.map((school, index) => (
+            <motion.div
+              key={school.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Link href={`/creators/${school.id}`}>
+                <div className="group relative overflow-hidden rounded-xl bg-card border hover:border-primary transition-colors">
+                  <div className="relative aspect-video">
+                    <img 
+                      src={school.image}
+                      alt={school.name}
+                      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <h3 className="text-xl font-semibold mb-1">{school.name}</h3>
+                      <div className="flex items-center text-sm mb-2">
+                        <MapPin className="h-4 w-4 mr-1" />
+                        {school.location}
                       </div>
-                    </div>
-                    <div className="p-4">
-                      <div className="flex flex-wrap gap-2">
-                        {school.programs.map((program, programIndex) => (
-                          <Badge key={programIndex} variant="secondary">
-                            {program}
-                          </Badge>
-                        ))}
+                      <div className="flex items-center gap-2 text-sm">
+                        <GraduationCap className="h-4 w-4" />
+                        <span>{school.studentCount} students</span>
+                        <span className="mx-2">•</span>
+                        <span>{school.rating} rating</span>
                       </div>
                     </div>
                   </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+                  <div className="p-4">
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {school.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {school.programs.map((program, programIndex) => (
+                        <Badge key={programIndex} variant="secondary">
+                          {program}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
 
-        {/* CTA Section */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 p-8 md:p-12">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.2),transparent_50%)] mix-blend-overlay"></div>
-          <div className="relative z-10">
-            <div className="max-w-2xl">
-              <h2 className="text-3xl font-bold text-white mb-4">
-                Ready to Start Your Creator Journey?
-              </h2>
-              <p className="text-white/90 mb-6">
-                Join our community of young creators and start building your portfolio today.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" variant="secondary" asChild>
-                  <Link href="/sign-up">
-                    Create Account
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20" asChild>
-                  <Link href="/dashboard">
-                    Creator Dashboard
-                  </Link>
-                </Button>
-              </div>
-            </div>
+        {filteredSchools.length === 0 && (
+          <div className="text-center py-12">
+            <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">No schools found</h3>
+            <p className="text-muted-foreground">
+              Try adjusting your search criteria
+            </p>
           </div>
+        )}
+
+        {/* CTA Section */}
+        <div className="mt-16 text-center">
+          <h2 className="text-2xl font-bold mb-4">Don't see your school?</h2>
+          <p className="text-muted-foreground mb-6">
+            We're always looking to partner with more educational institutions
+          </p>
+          <Button size="lg">
+            Partner With Us
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
         </div>
       </div>
     </div>
