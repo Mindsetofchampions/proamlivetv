@@ -20,11 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser({ ...session.user, roles, permissions });
         } catch (error) {
           console.error('Error setting initial user:', error);
-          toast({
-            title: "Error",
-            description: "Failed to load user roles. Please try logging in again.",
-            variant: "destructive"
-          });
+          setUser(session.user);
         }
       } else {
         setUser(null);
@@ -41,11 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser({ ...session.user, roles, permissions });
         } catch (error) {
           console.error('Error updating user:', error);
-          toast({
-            title: "Error",
-            description: "Failed to update user roles",
-            variant: "destructive"
-          });
+          setUser(session.user);
         }
       } else {
         setUser(null);
@@ -54,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [toast]);
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -95,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .from('users')
           .insert({
             auth_id: data.user.id,
-            email: email,
             username: email.split('@')[0],
             display_name: email.split('@')[0]
           });
