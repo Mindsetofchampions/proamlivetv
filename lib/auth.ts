@@ -33,22 +33,31 @@ export async function getUserRoles(userId: string) {
   try {
     console.log('Fetching roles for user:', userId);
 
-    // First get the user record with auth_id
-    const { data: userData, error: userError } = await supabase
+    // First get all user records with auth_id to check for duplicates
+    const { data: userRecords, error: userError } = await supabase
       .from('users')
       .select('id')
-      .eq('auth_id', userId)
-      .single();
+      .eq('auth_id', userId);
 
     if (userError) {
       console.error('Error fetching user:', userError);
       throw userError;
     }
 
-    if (!userData) {
-      console.log('No user record found for auth_id:', userId);
+    // Handle case where no user record exists
+    if (!userRecords || userRecords.length === 0) {
+      console.warn('No user record found for auth_id:', userId);
       return { roles: [], permissions: [] };
     }
+
+    // Handle case where multiple user records exist (data integrity issue)
+    if (userRecords.length > 1) {
+      console.warn('Multiple user records found for auth_id:', userId, 'Count:', userRecords.length);
+      // Use the first record but log the issue
+      console.warn('Using first user record:', userRecords[0]);
+    }
+
+    const userData = userRecords[0];
 
     // Get user roles and permissions
     const { data: roleData, error: roleError } = await supabase
