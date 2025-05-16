@@ -22,7 +22,6 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 async function createAdminUser() {
   try {
     const adminEmail = 'admin@proamtv.com';
-    // Generate a secure random password
     const password = randomBytes(16).toString('hex');
 
     // First check if user already exists
