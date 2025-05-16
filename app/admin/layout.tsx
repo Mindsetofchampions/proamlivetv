@@ -35,7 +35,7 @@ export default function AdminLayout({
 
       if (!isAdmin) {
         console.log('User lacks admin role:', user);
-        router.push('/');
+        router.push('/uhoh');
         return;
       }
     }
