@@ -33,7 +33,7 @@ export async function getUserRoles(userId: string) {
   try {
     console.log('Fetching roles for user:', userId);
 
-    // First get all user records with auth_id to check for duplicates
+    // First get the user record with auth_id
     const { data: userRecords, error: userError } = await supabase
       .from('users')
       .select('id')
