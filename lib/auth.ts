@@ -78,6 +78,6 @@ export async function getUserRoles(userId: string) {
     return { roles, permissions };
   } catch (error) {
     console.error('Error in getUserRoles:', error);
-    return { roles: [], permissions: [] };
+    throw error;
   }
 }
