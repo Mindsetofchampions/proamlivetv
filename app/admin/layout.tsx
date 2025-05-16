@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
@@ -11,7 +11,9 @@ import {
   Users,
   Flag,
   Settings,
-  LogOut
+  LogOut,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -21,22 +23,14 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const { user, hasRole, signOut, loading } = useAuth();
+  const [showAuthOverlay, setShowAuthOverlay] = useState(false);
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        console.log('No user found, redirecting to login');
-        router.push('/login?redirect=/admin');
-        return;
-      }
-
+    if (!loading && user) {
       const isAdmin = hasRole('admin');
-      console.log('Admin role check:', { isAdmin, userRoles: user.roles });
-
       if (!isAdmin) {
         console.log('User lacks admin role:', user);
         router.push('/');
-        return;
       }
     }
   }, [user, loading, router, hasRole]);
@@ -48,11 +42,6 @@ export default function AdminLayout({
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
-  }
-
-  // Don't render admin content until we confirm admin role
-  if (!user || !hasRole('admin')) {
-    return null;
   }
 
   const navigation = [
@@ -84,7 +73,7 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen relative">
       <div className="w-64 border-r bg-card">
         <div className="flex flex-col h-full">
           <div className="p-6">
@@ -113,19 +102,73 @@ export default function AdminLayout({
           </nav>
 
           <div className="p-4 border-t">
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-              onClick={() => signOut()}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
+            {user ? (
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+                onClick={() => signOut()}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            ) : (
+              <div className="space-y-2">
+                <Button 
+                  variant="default" 
+                  className="w-full justify-start"
+                  onClick={() => router.push('/login?redirect=/admin')}
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => router.push('/register')}
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Sign Up
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 relative">
+        {!user && (
+          <div 
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center"
+            onMouseEnter={() => setShowAuthOverlay(true)}
+            onMouseLeave={() => setShowAuthOverlay(false)}
+          >
+            <div 
+              className={`text-center p-6 rounded-lg transition-opacity duration-200 ${
+                showAuthOverlay ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <h2 className="text-2xl font-bold mb-4">Admin Access Required</h2>
+              <p className="text-muted-foreground mb-6">
+                Please sign in with an admin account to access the dashboard
+              </p>
+              <div className="space-x-4">
+                <Button 
+                  onClick={() => router.push('/login?redirect=/admin')}
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => router.push('/register')}
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Sign Up
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
         {children}
       </div>
     </div>
