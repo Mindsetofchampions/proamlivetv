@@ -77,8 +77,8 @@ const schools = [
 
 export default function CreatorsPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSkill, setSelectedSkill] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 
   const filteredSchools = schools.filter(school => {
     const matchesSearch = school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -114,24 +114,24 @@ export default function CreatorsPage() {
                 />
               </div>
               
-              <Select value={selectedSkill} onValueChange={setSelectedSkill}>
+              <Select value={selectedSkill || undefined} onValueChange={setSelectedSkill}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select skill" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Skills</SelectItem>
+                  <SelectItem value="all">All Skills</SelectItem>
                   {skills.map(skill => (
                     <SelectItem key={skill} value={skill}>{skill}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
-              <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+              <Select value={selectedLocation || undefined} onValueChange={setSelectedLocation}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select location" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Locations</SelectItem>
+                  <SelectItem value="all">All Locations</SelectItem>
                   {locations.map(location => (
                     <SelectItem key={location} value={location}>{location}</SelectItem>
                   ))}
