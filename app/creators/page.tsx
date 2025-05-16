@@ -1,60 +1,81 @@
 "use client";
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  Search,
-  MapPin,
+  Gamepad2, 
+  Tv, 
+  Laptop, 
   GraduationCap,
   ArrowRight,
+  Search,
   Filter,
-  Gamepad2,
-  Video,
-  Users,
-  Trophy,
-  PlayCircle,
-  Mic2
+  Briefcase,
+  Handshake,
+  Calendar,
+  DollarSign
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 const careerPaths = [
   {
     id: 'on-air-talent',
     title: 'On-Air Talent & Hosts',
-    icon: <Mic2 className="h-8 w-8" />,
     description: 'Learn broadcasting, hosting, and on-camera skills',
+    icon: <Tv className="h-8 w-8" />,
     color: 'from-purple-500 to-indigo-500'
   },
   {
     id: 'content-production',
     title: 'Content Production',
-    icon: <Video className="h-8 w-8" />,
     description: 'Master video editing, motion graphics, and storytelling',
+    icon: <Laptop className="h-8 w-8" />,
     color: 'from-blue-500 to-cyan-500'
   },
   {
     id: 'esports',
     title: 'Esports & Gaming',
-    icon: <Gamepad2 className="h-8 w-8" />,
     description: 'Compete and create content in competitive gaming',
+    icon: <Gamepad2 className="h-8 w-8" />,
     color: 'from-green-500 to-emerald-500'
   },
   {
     id: 'live-production',
     title: 'Live Production',
-    icon: <PlayCircle className="h-8 w-8" />,
     description: 'Learn to produce and direct live events',
+    icon: <GraduationCap className="h-8 w-8" />,
     color: 'from-orange-500 to-red-500'
+  }
+];
+
+const businessPaths = [
+  {
+    id: 'event-management',
+    title: 'Event Management',
+    description: 'Master the art of planning and executing successful live events',
+    icon: <Calendar className="h-8 w-8" />,
+    color: 'from-pink-500 to-rose-500'
+  },
+  {
+    id: 'sponsorship',
+    title: 'Sponsorship & Relations',
+    description: 'Learn to secure and manage corporate partnerships',
+    icon: <Handshake className="h-8 w-8" />,
+    color: 'from-yellow-500 to-amber-500'
+  },
+  {
+    id: 'business-development',
+    title: 'Business Development',
+    description: 'Develop strategies for growth and revenue generation',
+    icon: <Briefcase className="h-8 w-8" />,
+    color: 'from-teal-500 to-emerald-500'
+  },
+  {
+    id: 'revenue-management',
+    title: 'Revenue Management',
+    description: 'Master monetization and financial planning',
+    icon: <DollarSign className="h-8 w-8" />,
+    color: 'from-violet-500 to-purple-500'
   }
 ];
 
@@ -137,9 +158,9 @@ export default function CreatorsPage() {
           </p>
         </div>
 
-        {/* Career Paths */}
+        {/* Content Creation Paths */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-center mb-8">What You'll Learn</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">Content Creation Skills</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {careerPaths.map((path, index) => (
               <motion.div
@@ -151,7 +172,37 @@ export default function CreatorsPage() {
               >
                 <div className={`group relative overflow-hidden rounded-xl bg-gradient-to-r ${path.color} p-1`}>
                   <div className="relative overflow-hidden rounded-lg bg-background p-6">
-                    <div className="rounded-full bg-primary/10 p-3 w-fit text-primary mb-4">
+                    <div className="rounded-full bg-primary/10 p-3 text-primary">
+                      {path.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                      {path.title}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {path.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Business & Entrepreneurship Paths */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">Business & Entrepreneurship</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {businessPaths.map((path, index) => (
+              <motion.div
+                key={path.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className={`group relative overflow-hidden rounded-xl bg-gradient-to-r ${path.color} p-1`}>
+                  <div className="relative overflow-hidden rounded-lg bg-background p-6">
+                    <div className="rounded-full bg-primary/10 p-3 text-primary">
                       {path.icon}
                     </div>
                     <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
@@ -174,37 +225,37 @@ export default function CreatorsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
+                <input
                   placeholder="Search schools..."
-                  className="pl-9"
+                  className="w-full pl-9 pr-4 py-2 rounded-lg border bg-background"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
               
-              <Select value={selectedSkill || undefined} onValueChange={setSelectedSkill}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select skill" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Skills</SelectItem>
-                  {skills.map(skill => (
-                    <SelectItem key={skill} value={skill}>{skill}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                className="w-full px-4 py-2 rounded-lg border bg-background"
+                value={selectedSkill || ''}
+                onChange={(e) => setSelectedSkill(e.target.value || null)}
+              >
+                <option value="">Select skill</option>
+                <option value="all">All Skills</option>
+                {skills.map(skill => (
+                  <option key={skill} value={skill}>{skill}</option>
+                ))}
+              </select>
 
-              <Select value={selectedLocation || undefined} onValueChange={setSelectedLocation}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select location" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Locations</SelectItem>
-                  {locations.map(location => (
-                    <SelectItem key={location} value={location}>{location}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                className="w-full px-4 py-2 rounded-lg border bg-background"
+                value={selectedLocation || ''}
+                onChange={(e) => setSelectedLocation(e.target.value || null)}
+              >
+                <option value="">Select location</option>
+                <option value="all">All Locations</option>
+                {locations.map(location => (
+                  <option key={location} value={location}>{location}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
