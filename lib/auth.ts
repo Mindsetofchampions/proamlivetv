@@ -59,7 +59,7 @@ export async function getUserRoles(userId: string) {
 
     const userData = userRecords[0];
 
-    // Get user roles and permissions
+    // Get user roles and permissions with a more detailed query
     const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select(`
@@ -77,13 +77,15 @@ export async function getUserRoles(userId: string) {
       throw roleError;
     }
 
+    console.log('Raw role data:', roleData);
+
     // Extract roles and permissions from the data
     const roles = roleData?.map(d => d.roles.name as UserRole) || [];
     const permissions = roleData?.flatMap(d => 
       d.roles.role_permissions.map(p => p.permission)
     ) || [];
 
-    console.log('Fetched roles for user:', { userId, roles, permissions });
+    console.log('Processed roles and permissions:', { roles, permissions });
     return { roles, permissions };
   } catch (error) {
     console.error('Error in getUserRoles:', error);
