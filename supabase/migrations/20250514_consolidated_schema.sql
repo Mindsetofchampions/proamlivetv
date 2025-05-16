@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   auth_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT,
   username TEXT UNIQUE,
   display_name TEXT,
   bio TEXT,
@@ -38,6 +39,9 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- add unique email constraint
+ALTER TABLE users ADD CONSTRAINT users_email_unique UNIQUE (email);
 
 -- User roles table
 CREATE TABLE IF NOT EXISTS user_roles (
