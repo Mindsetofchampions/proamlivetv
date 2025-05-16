@@ -87,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .from('users')
           .insert({
             auth_id: data.user.id,
-            email: email,
             username: email.split('@')[0],
             display_name: email.split('@')[0]
           });
