@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [resendingEmail, setResendingEmail] = useState(false);
   const [showResend, setShowResend] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { signIn } = useAuth();
   const { toast } = useToast();
 
@@ -56,12 +57,9 @@ export default function LoginPage() {
       setShowResend(false);
       await signIn(email, password);
       
-      // For admin users, redirect to admin dashboard
-      if (email === 'admin@proamtv.com') {
-        router.push('/admin');
-      } else {
-        router.push('/dashboard');
-      }
+      // Get redirect URL from query params
+      const redirectTo = searchParams.get('redirect') || '/dashboard';
+      router.push(redirectTo);
     } catch (error: any) {
       console.error('Error:', error);
       

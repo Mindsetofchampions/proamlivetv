@@ -26,7 +26,7 @@ export default function AdminLayout({
     if (!loading) {
       if (!user) {
         console.log('No user found, redirecting to login');
-        router.push('/login');
+        router.push('/login?redirect=/admin');
         return;
       }
 
