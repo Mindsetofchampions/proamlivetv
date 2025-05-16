@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AddAdminDialog } from '@/components/admin/add-admin-dialog';
 import { 
@@ -48,22 +49,115 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <Card key={stat.name}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.name}
-              </CardTitle>
-              {stat.icon}
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">
-                {stat.description}
-              </p>
-            </CardContent>
-          </Card>
+        {stats.map((stat, index) => (
+          <motion.div
+            key={stat.name}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
+          >
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-primary/10 p-3 rounded-lg">
+                    {stat.icon}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">
+                    {stat.name}
+                  </p>
+                  <p className="text-2xl font-bold">
+                    {stat.value}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {stat.description}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="bg-green-500/10 p-2 rounded">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                </div>
+                <div>
+                  <p className="font-medium">Video Approved</p>
+                  <p className="text-sm text-muted-foreground">Championship Finals Highlights</p>
+                </div>
+                <span className="text-sm text-muted-foreground ml-auto">2m ago</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="bg-yellow-500/10 p-2 rounded">
+                  <Clock className="h-4 w-4 text-yellow-500" />
+                </div>
+                <div>
+                  <p className="font-medium">New Submission</p>
+                  <p className="text-sm text-muted-foreground">Dance Competition 2025</p>
+                </div>
+                <span className="text-sm text-muted-foreground ml-auto">15m ago</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="bg-red-500/10 p-2 rounded">
+                  <Flag className="h-4 w-4 text-red-500" />
+                </div>
+                <div>
+                  <p className="font-medium">Content Reported</p>
+                  <p className="text-sm text-muted-foreground">Inappropriate content flagged</p>
+                </div>
+                <span className="text-sm text-muted-foreground ml-auto">1h ago</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>System Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span>Video Processing</span>
+                </div>
+                <span className="text-sm text-muted-foreground">Operational</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span>Content Delivery</span>
+                </div>
+                <span className="text-sm text-muted-foreground">Operational</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span>User Authentication</span>
+                </div>
+                <span className="text-sm text-muted-foreground">Operational</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
+                  <span>Analytics</span>
+                </div>
+                <span className="text-sm text-muted-foreground">Partial Outage</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
