@@ -129,7 +129,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Login Form Overlay */}
+            {/* Hover Overlay */}
             <div 
               className="absolute inset-0 flex items-center justify-center"
               onMouseEnter={() => setShowLoginForm(true)}
@@ -152,7 +152,6 @@ export default function LoginPage() {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
                         required
-                        autoComplete="username"
                       />
                     </div>
 
@@ -165,7 +164,6 @@ export default function LoginPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         required
-                        autoComplete="current-password"
                       />
                     </div>
 

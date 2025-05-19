@@ -73,8 +73,8 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="flex min-h-screen relative mt-16">
-      <div className="fixed top-16 left-0 bottom-0 w-64 border-r bg-card">
+    <div className="flex min-h-screen relative">
+      <div className="w-64 border-r bg-card">
         <div className="flex flex-col h-full">
           <div className="p-6">
             <h1 className="text-xl font-bold">Admin Dashboard</h1>
@@ -135,7 +135,7 @@ export default function AdminLayout({
         </div>
       </div>
 
-      <div className="flex-1 ml-64">
+      <div className="flex-1 relative">
         {!user && (
           <div 
             className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center"
