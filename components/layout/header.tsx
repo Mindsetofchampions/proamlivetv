@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/theme-toggle";
 import { 
@@ -17,7 +18,9 @@ import {
   PlayCircle,
   Users,
   ShoppingBag,
-  LayoutDashboard
+  LayoutDashboard,
+  UserCircle,
+  LogOut
 } from 'lucide-react';
 
 interface NavLink {
@@ -26,12 +29,14 @@ interface NavLink {
   icon: JSX.Element;
   highlight?: boolean;
   isLive?: boolean;
+  requiresAuth?: boolean;
 }
 
 const Header = () => {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -50,9 +55,24 @@ const Header = () => {
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
     { name: "Shop", href: "/shop", icon: <ShoppingBag className="h-4 w-4 mr-2" /> },
     { name: "Creators", href: "/creators", icon: <Users className="h-4 w-4 mr-2" /> },
-    { name: "Creator Dashboard", href: "/creator/dashboard", icon: <LayoutDashboard className="h-4 w-4 mr-2" /> },
-    { name: "LIVE", href: "/live", icon: <Radio className="h-4 w-4 mr-2" />, highlight: true, isLive: true },
+    { 
+      name: "Creator Dashboard", 
+      href: "/creator/dashboard", 
+      icon: <LayoutDashboard className="h-4 w-4 mr-2" />,
+      requiresAuth: true 
+    },
+    { 
+      name: "LIVE", 
+      href: "/live", 
+      icon: <Radio className="h-4 w-4 mr-2" />, 
+      highlight: true, 
+      isLive: true 
+    },
   ];
+
+  const filteredNavLinks = navLinks.filter(link => 
+    !link.requiresAuth || (link.requiresAuth && user)
+  );
 
   return (
     <header 
@@ -72,7 +92,7 @@ const Header = () => {
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
-            {navLinks.map((link) => (
+            {filteredNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -92,12 +112,29 @@ const Header = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             <ModeToggle />
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">Sign In</Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link href="/register">Join Free</Link>
-            </Button>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/account">
+                    <UserCircle className="h-4 w-4 mr-2" />
+                    Account
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => signOut()}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/login">Sign In</Link>
+                </Button>
+                <Button size="sm" asChild>
+                  <Link href="/register">Join Free</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           <div className="flex md:hidden items-center">
@@ -118,7 +155,7 @@ const Header = () => {
         <div className="md:hidden bg-background border-b">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
+              {filteredNavLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -135,13 +172,30 @@ const Header = () => {
                   {link.name}
                 </Link>
               ))}
-              <div className="pt-2 border-t flex flex-col space-y-2">
-                <Button variant="outline" asChild className="w-full">
-                  <Link href="/login">Sign In</Link>
-                </Button>
-                <Button asChild className="w-full">
-                  <Link href="/register">Join Free</Link>
-                </Button>
+              <div className="pt-2 border-t">
+                {user ? (
+                  <>
+                    <Button variant="outline" className="w-full mb-2" asChild>
+                      <Link href="/account">
+                        <UserCircle className="h-4 w-4 mr-2" />
+                        Account
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full" onClick={() => signOut()}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" className="w-full mb-2" asChild>
+                      <Link href="/login">Sign In</Link>
+                    </Button>
+                    <Button className="w-full" asChild>
+                      <Link href="/register">Join Free</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>
