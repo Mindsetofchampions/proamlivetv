@@ -4,17 +4,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  Search,
-  MapPin,
-  GraduationCap,
-  ArrowRight,
-  Filter,
-  Gamepad2,
-  Video,
-  Users,
+  Search, 
+  Filter, 
+  Gamepad2, 
+  GraduationCap, 
+  Users, 
   Trophy,
   PlayCircle,
-  Mic2
+  ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
