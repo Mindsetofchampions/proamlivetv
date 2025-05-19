@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
@@ -15,11 +15,17 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signIn } = useAuth();
   const { toast } = useToast();
+
+  // Handle password manager autofill
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +53,10 @@ export default function LoginPage() {
     { name: 'Active Users', value: '1,234', description: 'Total registered' },
     { name: 'Reports', value: '12', description: 'Needs attention' }
   ];
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -129,71 +139,71 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Hover Overlay */}
+            {/* Login Form */}
             <div 
               className="absolute inset-0 flex items-center justify-center"
               onMouseEnter={() => setShowLoginForm(true)}
               onMouseLeave={() => setShowLoginForm(false)}
             >
-              {showLoginForm && (
-                <Card className="w-full max-w-md p-6 backdrop-blur-lg bg-background/95">
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="text-center mb-6">
-                      <h1 className="text-2xl font-bold">Admin Access Required</h1>
-                      <p className="text-muted-foreground">Sign in to access the dashboard</p>
-                    </div>
+              <Card className="w-full max-w-md p-6 backdrop-blur-lg bg-background/95">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="text-center mb-6">
+                    <h1 className="text-2xl font-bold">Admin Access Required</h1>
+                    <p className="text-muted-foreground">Sign in to access the dashboard</p>
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email"
-                        required
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      required
+                      autoComplete="username"
+                    />
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
-                        required
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      required
+                      autoComplete="current-password"
+                    />
+                  </div>
 
-                    <Button 
-                      type="submit" 
-                      className="w-full"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <>
-                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                          Signing in...
-                        </>
-                      ) : (
-                        <>
-                          <LogIn className="h-4 w-4 mr-2" />
-                          Sign In
-                        </>
-                      )}
-                    </Button>
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      <>
+                        <LogIn className="h-4 w-4 mr-2" />
+                        Sign In
+                      </>
+                    )}
+                  </Button>
 
-                    <p className="text-center text-sm text-muted-foreground">
-                      Don't have an account?{" "}
-                      <Link href="/register" className="text-primary hover:underline">
-                        Sign up
-                      </Link>
-                    </p>
-                  </form>
-                </Card>
-              )}
+                  <p className="text-center text-sm text-muted-foreground">
+                    Don't have an account?{" "}
+                    <Link href="/register" className="text-primary hover:underline">
+                      Sign up
+                    </Link>
+                  </p>
+                </form>
+              </Card>
             </div>
           </div>
         </div>
