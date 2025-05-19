@@ -63,9 +63,9 @@ export async function getUserRoles(userId: string) {
     const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select(`
-        roles (
+        role:roles (
           name,
-          role_permissions (
+          permissions:role_permissions (
             permission
           )
         )
@@ -80,9 +80,9 @@ export async function getUserRoles(userId: string) {
     console.log('Raw role data:', roleData);
 
     // Extract roles and permissions from the data
-    const roles = roleData?.map(d => d.roles.name as UserRole) || [];
+    const roles = roleData?.map(d => d.role.name as UserRole) || [];
     const permissions = roleData?.flatMap(d => 
-      d.roles.role_permissions.map(p => p.permission)
+      d.role.permissions.map(p => p.permission)
     ) || [];
 
     console.log('Processed roles and permissions:', { roles, permissions });
