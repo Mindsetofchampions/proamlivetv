@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { LogIn, RefreshCw, LayoutDashboard, Video, Users, Flag, Settings } from 'lucide-react';
+import { LogIn, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
@@ -45,132 +45,75 @@ export default function LoginPage() {
     }
   };
 
-  // Mock stats data for preview
-  const stats = [
-    { name: 'Pending Videos', value: '24', description: 'Awaiting review' },
-    { name: 'Approved Videos', value: '156', description: 'Last 30 days' },
-    { name: 'Active Users', value: '1,234', description: 'Total registered' },
-    { name: 'Reports', value: '12', description: 'Needs attention' }
-  ];
-
   if (!mounted) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex">
-        {/* Admin Dashboard Preview */}
-        <div className="w-64 border-r bg-card h-screen fixed">
-          <div className="p-6">
-            <h1 className="text-xl font-bold">Admin Dashboard</h1>
+    <div className="min-h-screen flex items-center justify-center bg-background/95 backdrop-blur-sm">
+      <Card className="w-full max-w-md p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold">Sign In</h1>
+            <p className="text-muted-foreground">
+              {searchParams.get('redirect')?.includes('admin') 
+                ? 'Admin access required' 
+                : 'Welcome back to PRO AM LIVE TV'}
+            </p>
           </div>
-          <nav className="p-4">
-            <ul className="space-y-2">
-              {[
-                { name: 'Overview', icon: LayoutDashboard },
-                { name: 'Videos', icon: Video },
-                { name: 'Users', icon: Users },
-                { name: 'Reports', icon: Flag },
-                { name: 'Settings', icon: Settings }
-              ].map((item) => (
-                <li key={item.name}>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <item.icon className="h-4 w-4 mr-2" />
-                    {item.name}
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
 
-        {/* Main Content */}
-        <div className="ml-64 flex-1 p-8">
-          <div className="relative">
-            {/* Dashboard Preview Content */}
-            <div className="opacity-10">
-              <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold">Dashboard Overview</h1>
-                <Button>Add Admin</Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {stats.map((stat) => (
-                  <Card key={stat.name} className="p-6">
-                    <h3 className="font-medium text-muted-foreground">{stat.name}</h3>
-                    <p className="text-2xl font-bold mt-2">{stat.value}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{stat.description}</p>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Login Form Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center bg-background/95">
-              <Card className="w-full max-w-md p-6">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="text-center mb-6">
-                    <h1 className="text-2xl font-bold">Admin Access Required</h1>
-                    <p className="text-muted-foreground">Sign in to access the dashboard</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      required
-                      autoComplete="username"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      required
-                      autoComplete="current-password"
-                    />
-                  </div>
-
-                  <Button 
-                    type="submit" 
-                    className="w-full"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                        Signing in...
-                      </>
-                    ) : (
-                      <>
-                        <LogIn className="h-4 w-4 mr-2" />
-                        Sign In
-                      </>
-                    )}
-                  </Button>
-
-                  <p className="text-center text-sm text-muted-foreground">
-                    Don't have an account?{" "}
-                    <Link href="/register" className="text-primary hover:underline">
-                      Sign up
-                    </Link>
-                  </p>
-                </form>
-              </Card>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+              autoComplete="username"
+            />
           </div>
-        </div>
-      </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+              autoComplete="current-password"
+            />
+          </div>
+
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              <>
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign In
+              </>
+            )}
+          </Button>
+
+          <p className="text-center text-sm text-muted-foreground">
+            Don't have an account?{" "}
+            <Link href="/register" className="text-primary hover:underline">
+              Sign up
+            </Link>
+          </p>
+        </form>
+      </Card>
     </div>
   );
 }
