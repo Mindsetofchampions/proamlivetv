@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
@@ -16,10 +16,44 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
+  const [isAutofilled, setIsAutofilled] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signIn } = useAuth();
   const { toast } = useToast();
+
+  // Handle autofill detection
+  useEffect(() => {
+    const inputs = document.querySelectorAll('input');
+    const checkAutofill = () => {
+      const isAnyAutofilled = Array.from(inputs).some(
+        input => input.value && !isAutofilled
+      );
+      if (isAnyAutofilled) {
+        setIsAutofilled(true);
+        const email = (document.getElementById('email') as HTMLInputElement)?.value;
+        const password = (document.getElementById('password') as HTMLInputElement)?.value;
+        if (email) setEmail(email);
+        if (password) setPassword(password);
+      }
+    };
+
+    inputs.forEach(input => {
+      input.addEventListener('animationstart', (e) => {
+        if ((e as AnimationEvent).animationName === 'onAutoFillStart') {
+          checkAutofill();
+        }
+      });
+      input.addEventListener('input', checkAutofill);
+    });
+
+    return () => {
+      inputs.forEach(input => {
+        input.removeEventListener('animationstart', checkAutofill);
+        input.removeEventListener('input', checkAutofill);
+      });
+    };
+  }, [isAutofilled]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,6 +186,7 @@ export default function LoginPage() {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
                         required
+                        className="autofill:bg-background"
                       />
                     </div>
 
@@ -164,6 +199,7 @@ export default function LoginPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         required
+                        className="autofill:bg-background"
                       />
                     </div>
 
