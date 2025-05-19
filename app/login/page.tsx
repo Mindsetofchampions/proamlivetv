@@ -15,7 +15,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showLoginForm, setShowLoginForm] = useState(true);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -90,7 +89,7 @@ export default function LoginPage() {
         <div className="ml-64 flex-1 p-8">
           <div className="relative">
             {/* Dashboard Preview Content */}
-            <div className={`transition-opacity duration-300 ${showLoginForm ? 'opacity-30' : 'opacity-100'}`}>
+            <div className="opacity-10">
               <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Dashboard Overview</h1>
                 <Button>Add Admin</Button>
@@ -105,47 +104,11 @@ export default function LoginPage() {
                   </Card>
                 ))}
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <div className="p-6">
-                    <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
-                    <div className="space-y-4">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">Video Approved</p>
-                            <p className="text-sm text-muted-foreground">2 minutes ago</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </Card>
-
-                <Card>
-                  <div className="p-6">
-                    <h2 className="text-lg font-semibold mb-4">System Status</h2>
-                    <div className="space-y-4">
-                      {['Video Processing', 'Content Delivery', 'Authentication'].map((service) => (
-                        <div key={service} className="flex justify-between items-center">
-                          <span>{service}</span>
-                          <span className="text-green-500">Operational</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </Card>
-              </div>
             </div>
 
-            {/* Login Form */}
-            <div 
-              className="absolute inset-0 flex items-center justify-center"
-              onMouseEnter={() => setShowLoginForm(true)}
-              onMouseLeave={() => setShowLoginForm(false)}
-            >
-              <Card className="w-full max-w-md p-6 backdrop-blur-lg bg-background/95">
+            {/* Login Form Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center bg-background/95">
+              <Card className="w-full max-w-md p-6">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="text-center mb-6">
                     <h1 className="text-2xl font-bold">Admin Access Required</h1>
