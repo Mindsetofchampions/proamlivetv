@@ -136,7 +136,7 @@ export default function LoginPage() {
               onMouseLeave={() => setShowLoginForm(false)}
             >
               {showLoginForm && (
-                <Card className="w-full max-w-md p-6 backdrop-blur-lg bg-background/95">
+                <Card className="w-full max-w-md p-6 backdrop-blur-lg bg-background/95 [&_input:-webkit-autofill]:shadow-[inset_0_0_0px_1000px_rgb(255,255,255)] dark:[&_input:-webkit-autofill]:shadow-[inset_0_0_0px_1000px_rgb(0,0,0)]">
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="text-center mb-6">
                       <h1 className="text-2xl font-bold">Admin Access Required</h1>
@@ -152,6 +152,8 @@ export default function LoginPage() {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
                         required
+                        className="[&:-webkit-autofill]:[-webkit-text-fill-color:inherit]"
+                        autoComplete="username"
                       />
                     </div>
 
@@ -164,6 +166,8 @@ export default function LoginPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         required
+                        className="[&:-webkit-autofill]:[-webkit-text-fill-color:inherit]"
+                        autoComplete="current-password"
                       />
                     </div>
 
