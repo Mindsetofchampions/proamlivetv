@@ -50,16 +50,9 @@ export async function getUserRoles(userId: string) {
       return { roles: [], permissions: [] };
     }
 
-    // Handle case where multiple user records exist (data integrity issue)
-    if (userRecords.length > 1) {
-      console.warn('Multiple user records found for auth_id:', userId, 'Count:', userRecords.length);
-      // Use the first record but log the issue
-      console.warn('Using first user record:', userRecords[0]);
-    }
-
     const userData = userRecords[0];
 
-    // Get user roles and permissions with a more detailed query
+    // Get user roles with a more detailed query
     const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select(`
