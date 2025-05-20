@@ -17,22 +17,25 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const params = useSearchParams();
   const { signIn } = useAuth();
   const { toast } = useToast();
+  const [redirectPath, setRedirectPath] = useState('');
 
-  // Handle password manager autofill
+  // Handle password manager autofill and search params
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (params) {
+      setRedirectPath(params.get('redirect') || '/dashboard');
+    }
+  }, [params]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
       await signIn(email, password);
-      const redirectTo = searchParams.get('redirect') || '/dashboard';
-      router.push(redirectTo);
+      router.push(redirectPath);
     } catch (error: any) {
       console.error('Error:', error);
       toast({
@@ -56,7 +59,7 @@ export default function LoginPage() {
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold">Sign In</h1>
             <p className="text-muted-foreground">
-              {searchParams.get('redirect')?.includes('admin') 
+              {redirectPath.includes('admin') 
                 ? 'Admin access required' 
                 : 'Welcome back to PRO AM LIVE TV'}
             </p>
