@@ -16,7 +16,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session?.user) {
         try {
           const { roles, permissions } = await getUserRoles(session.user.id);
-          console.log('Initial session roles:', roles);
           setUser({ ...session.user, roles, permissions });
         } catch (error) {
           console.error('Error setting initial user:', error);
@@ -33,7 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session?.user) {
         try {
           const { roles, permissions } = await getUserRoles(session.user.id);
-          console.log('Auth state change roles:', roles);
           setUser({ ...session.user, roles, permissions });
         } catch (error) {
           console.error('Error updating user:', error);
@@ -60,7 +58,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (data.user) {
         const { roles, permissions } = await getUserRoles(data.user.id);
-        console.log('Sign in roles:', roles);
         setUser({ ...data.user, roles, permissions });
       }
     } catch (error) {
@@ -142,7 +139,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const hasRole = (role: UserRole) => {
-    console.log('Checking role:', role, 'User roles:', user?.roles);
     return user?.roles?.includes(role) || false;
   };
 
