@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 import { supabase } from './supabase';
-import { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 
 export type UserRole = 'admin' | 'creator' | 'moderator' | 'viewer';
 
@@ -29,28 +29,29 @@ export function useAuth() {
   return context;
 }
 
-export async function getUserRoles(userId: string) {
+export async function getUserRoles(userId: string): Promise<{ roles: UserRole[]; permissions: string[] }> {
   try {
-    console.log('Fetching roles for user:', userId);
+    if (!userId) {
+      console.warn('No userId provided to getUserRoles');
+      return { roles: [], permissions: [] };
+    }
 
     // First get the user record with auth_id
     const { data: userRecords, error: userError } = await supabase
       .from('users')
       .select('id')
-      .eq('auth_id', userId);
+      .eq('auth_id', userId)
+      .single();
 
     if (userError) {
       console.error('Error fetching user:', userError);
-      throw userError;
-    }
-
-    // Handle case where no user record exists
-    if (!userRecords || userRecords.length === 0) {
-      console.warn('No user record found for auth_id:', userId);
       return { roles: [], permissions: [] };
     }
 
-    const userData = userRecords[0];
+    if (!userRecords) {
+      console.warn('No user record found for auth_id:', userId);
+      return { roles: [], permissions: [] };
+    }
 
     // Get user roles with a more detailed query
     const { data: roleData, error: roleError } = await supabase
@@ -63,22 +64,19 @@ export async function getUserRoles(userId: string) {
           )
         )
       `)
-      .eq('user_id', userData.id);
+      .eq('user_id', userRecords.id);
 
     if (roleError) {
       console.error('Error fetching roles:', roleError);
-      throw roleError;
+      return { roles: [], permissions: [] };
     }
 
-    console.log('Raw role data:', roleData);
-
     // Extract roles and permissions from the data
-    const roles = roleData?.map(d => d.role.name as UserRole) || [];
+    const roles = roleData?.map(d => d.role?.name as UserRole).filter(Boolean) || [];
     const permissions = roleData?.flatMap(d => 
-      d.role.permissions.map(p => p.permission)
-    ) || [];
+      d.role?.permissions?.map(p => p.permission) || []
+    ).filter(Boolean) || [];
 
-    console.log('Processed roles and permissions:', { roles, permissions });
     return { roles, permissions };
   } catch (error) {
     console.error('Error in getUserRoles:', error);
