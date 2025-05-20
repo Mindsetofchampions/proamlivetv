@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const params = useSearchParams();
-  const { signIn } = useAuth();
+  const { signIn, hasRole } = useAuth();
   const { toast } = useToast();
   const [redirectPath, setRedirectPath] = useState('');
 
@@ -35,7 +35,13 @@ export default function LoginPage() {
     try {
       setLoading(true);
       await signIn(email, password);
-      router.push(redirectPath);
+      
+      // Check if user has admin role and redirect accordingly
+      if (hasRole('admin')) {
+        router.push('/admin');
+      } else {
+        router.push(redirectPath);
+      }
     } catch (error: any) {
       console.error('Error:', error);
       toast({
