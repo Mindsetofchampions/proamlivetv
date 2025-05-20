@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from './supabase';
 import { User } from '@supabase/supabase-js';
 
 export type UserRole = 'admin' | 'creator' | 'moderator' | 'viewer';
@@ -32,26 +32,25 @@ export function useAuth() {
 export async function getUserRoles(userId: string) {
   try {
     console.log('Fetching roles for user:', userId);
-    
-    const supabase = createClientComponentClient();
 
     // First get the user record with auth_id
     const { data: userRecords, error: userError } = await supabase
       .from('users')
       .select('id')
-      .eq('auth_id', userId)
-      .single();
+      .eq('auth_id', userId);
 
     if (userError) {
       console.error('Error fetching user:', userError);
-      return { roles: [], permissions: [] };
+      throw userError;
     }
 
     // Handle case where no user record exists
-    if (!userRecords) {
+    if (!userRecords || userRecords.length === 0) {
       console.warn('No user record found for auth_id:', userId);
       return { roles: [], permissions: [] };
     }
+
+    const userData = userRecords[0];
 
     // Get user roles with a more detailed query
     const { data: roleData, error: roleError } = await supabase
@@ -64,12 +63,14 @@ export async function getUserRoles(userId: string) {
           )
         )
       `)
-      .eq('user_id', userRecords.id);
+      .eq('user_id', userData.id);
 
     if (roleError) {
       console.error('Error fetching roles:', roleError);
-      return { roles: [], permissions: [] };
+      throw roleError;
     }
+
+    console.log('Raw role data:', roleData);
 
     // Extract roles and permissions from the data
     const roles = roleData?.map(d => d.role.name as UserRole) || [];
