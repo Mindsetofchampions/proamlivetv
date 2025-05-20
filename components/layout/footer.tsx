@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { useAuth } from "@/lib/auth";
 import { Tv } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { user, hasRole } = useAuth();
   
   return (
     <footer className="bg-secondary/20 border-t py-12">
@@ -41,11 +43,19 @@ const Footer = () => {
                   For Creators
                 </Link>
               </li>
-              <li>
-                <Link href="/login?redirect=/admin" className="text-muted-foreground hover:text-primary transition-colors">
-                  Admin Dashboard
-                </Link>
-              </li>
+              {user && hasRole('admin') ? (
+                <li>
+                  <Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors">
+                    Admin Dashboard
+                  </Link>
+                </li>
+              ) : (
+                <li>
+                  <Link href="/login?redirect=/admin" className="text-muted-foreground hover:text-primary transition-colors">
+                    Admin Login
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
           
