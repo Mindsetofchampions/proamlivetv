@@ -36,7 +36,7 @@ const Header = () => {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, hasRole } = useAuth();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -73,6 +73,13 @@ const Header = () => {
   const filteredNavLinks = navLinks.filter(link => 
     !link.requiresAuth || (link.requiresAuth && user)
   );
+
+  const getAccountLink = () => {
+    if (hasRole('admin')) {
+      return '/admin';
+    }
+    return '/account';
+  };
 
   return (
     <header 
@@ -115,9 +122,9 @@ const Header = () => {
             {user ? (
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href="/account">
+                  <Link href={getAccountLink()}>
                     <UserCircle className="h-4 w-4 mr-2" />
-                    Account
+                    {hasRole('admin') ? 'Admin Dashboard' : 'Account'}
                   </Link>
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => signOut()}>
@@ -176,9 +183,9 @@ const Header = () => {
                 {user ? (
                   <>
                     <Button variant="outline" className="w-full mb-2" asChild>
-                      <Link href="/account">
+                      <Link href={getAccountLink()}>
                         <UserCircle className="h-4 w-4 mr-2" />
-                        Account
+                        {hasRole('admin') ? 'Admin Dashboard' : 'Account'}
                       </Link>
                     </Button>
                     <Button variant="outline" className="w-full" onClick={() => signOut()}>
