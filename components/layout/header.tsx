@@ -78,7 +78,7 @@ const Header = () => {
     if (hasRole('admin')) {
       return '/admin';
     }
-    return '/account';
+    return '/dashboard';
   };
 
   return (
@@ -124,7 +124,7 @@ const Header = () => {
                 <Button variant="ghost" size="sm" asChild>
                   <Link href={getAccountLink()}>
                     <UserCircle className="h-4 w-4 mr-2" />
-                    {hasRole('admin') ? 'Admin Dashboard' : 'Account'}
+                    {hasRole('admin') ? 'Admin Dashboard' : 'Dashboard'}
                   </Link>
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => signOut()}>
@@ -185,7 +185,7 @@ const Header = () => {
                     <Button variant="outline" className="w-full mb-2" asChild>
                       <Link href={getAccountLink()}>
                         <UserCircle className="h-4 w-4 mr-2" />
-                        {hasRole('admin') ? 'Admin Dashboard' : 'Account'}
+                        {hasRole('admin') ? 'Admin Dashboard' : 'Dashboard'}
                       </Link>
                     </Button>
                     <Button variant="outline" className="w-full" onClick={() => signOut()}>
