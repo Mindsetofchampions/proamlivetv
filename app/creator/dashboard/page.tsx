@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  Video, 
-  Eye, 
-  DollarSign,
+  Upload, 
+  Play, 
+  DollarSign, 
+  Users, 
+  Shield, 
+  Zap,
+  ArrowRight,
+  X,
   Clock,
-  Settings,
-  BarChart,
-  Upload,
-  User,
   CheckCircle,
   Clock3,
-  Play,
   Edit,
   Heart
 } from 'lucide-react';
@@ -32,7 +33,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/components/ui/tabs';
+} from "@/components/ui/tabs";
 
 export default function CreatorDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -123,9 +124,11 @@ export default function CreatorDashboard() {
           </div>
           
           <div className="flex gap-3">
-            <Button>
-              <Upload className="h-4 w-4 mr-2" />
-              Upload New Video
+            <Button asChild>
+              <Link href="/creator/upload">
+                <Upload className="h-4 w-4 mr-2" />
+                Upload New Video
+              </Link>
             </Button>
             <Button variant="outline">
               <Settings className="h-4 w-4 mr-2" />
@@ -375,9 +378,11 @@ export default function CreatorDashboard() {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload New Video
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link href="/creator/upload">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload New Video
+                  </Link>
                 </Button>
                 <Button variant="outline" className="w-full justify-start">
                   <Edit className="h-4 w-4 mr-2" />
