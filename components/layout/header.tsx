@@ -30,6 +30,7 @@ interface NavLink {
   highlight?: boolean;
   isLive?: boolean;
   requiresAuth?: boolean;
+  requiresCreator?: boolean;
 }
 
 const Header = () => {
@@ -59,7 +60,8 @@ const Header = () => {
       name: "Creator Dashboard", 
       href: "/creator/dashboard", 
       icon: <LayoutDashboard className="h-4 w-4 mr-2" />,
-      requiresAuth: true 
+      requiresAuth: true,
+      requiresCreator: true
     },
     { 
       name: "LIVE", 
@@ -70,13 +72,18 @@ const Header = () => {
     },
   ];
 
-  const filteredNavLinks = navLinks.filter(link => 
-    !link.requiresAuth || (link.requiresAuth && user)
-  );
+  const filteredNavLinks = navLinks.filter(link => {
+    if (link.requiresAuth && !user) return false;
+    if (link.requiresCreator && !hasRole('creator')) return false;
+    return true;
+  });
 
   const getAccountLink = () => {
     if (hasRole('admin')) {
       return '/admin';
+    }
+    if (hasRole('creator')) {
+      return '/creator/dashboard';
     }
     return '/dashboard';
   };
@@ -124,7 +131,7 @@ const Header = () => {
                 <Button variant="ghost" size="sm" asChild>
                   <Link href={getAccountLink()}>
                     <UserCircle className="h-4 w-4 mr-2" />
-                    {hasRole('admin') ? 'Admin Dashboard' : 'Dashboard'}
+                    {hasRole('admin') ? 'Admin Dashboard' : hasRole('creator') ? 'Creator Dashboard' : 'Dashboard'}
                   </Link>
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => signOut()}>
@@ -185,7 +192,7 @@ const Header = () => {
                     <Button variant="outline" className="w-full mb-2" asChild>
                       <Link href={getAccountLink()}>
                         <UserCircle className="h-4 w-4 mr-2" />
-                        {hasRole('admin') ? 'Admin Dashboard' : 'Dashboard'}
+                        {hasRole('admin') ? 'Admin Dashboard' : hasRole('creator') ? 'Creator Dashboard' : 'Dashboard'}
                       </Link>
                     </Button>
                     <Button variant="outline" className="w-full" onClick={() => signOut()}>
