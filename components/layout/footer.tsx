@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { Tv } from "lucide-react";
