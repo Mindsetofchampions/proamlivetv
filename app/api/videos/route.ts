@@ -4,6 +4,7 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client } from '@/lib/s3';
 import { prisma } from '@/lib/db';
 import formidable from 'formidable';
+import { createReadStream } from 'fs';
 
 export async function POST(req: Request) {
   try {
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
     await s3Client.send(new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: key,
-      Body: file.filepath,
+      Body: createReadStream(file.filepath),
       ContentType: file.mimetype || 'video/mp4'
     }));
 
