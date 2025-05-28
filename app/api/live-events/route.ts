@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { auth } from '@clerk/nextjs';
+import { createEventSchema } from '@/lib/validation/live-events';
+import type { CreateEventInput } from '@/lib/validation/live-events';
 
 export async function GET(request: Request) {
   try {
@@ -33,7 +35,8 @@ export async function POST(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { title, description, scheduledAt, capacity } = await request.json();
+    const body = await request.json();
+    const validatedData = createEventSchema.parse(body);
 
     // Get user record
     const { data: userData, error: userError } = await supabase
@@ -51,10 +54,10 @@ export async function POST(request: Request) {
       .from('streams')
       .insert({
         creator_id: userData.id,
-        title,
-        description,
-        scheduled_at: scheduledAt,
-        capacity,
+        title: validatedData.title,
+        description: validatedData.description,
+        scheduled_at: validatedData.scheduledAt,
+        capacity: validatedData.capacity,
         status: 'scheduled'
       })
       .select()
@@ -64,6 +67,12 @@ export async function POST(request: Request) {
     return NextResponse.json(event);
   } catch (error) {
     console.error('Error:', error);
+    if (error.name === 'ZodError') {
+      return new NextResponse(JSON.stringify({ errors: error.errors }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
     return new NextResponse('Internal Error', { status: 500 });
   }
 }

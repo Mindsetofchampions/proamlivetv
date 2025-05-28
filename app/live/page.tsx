@@ -6,7 +6,6 @@ import { Radio, Users, Clock, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-// Mock live events data
 const liveEvents = [
   {
     id: 'event1',
@@ -51,7 +50,7 @@ const liveEvents = [
 export default function LivePage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const formatViewers = (num: number) => {
+  const formatNumber = (num: number) => {
     return new Intl.NumberFormat('en-US', { notation: 'compact' }).format(num);
   };
 
@@ -139,7 +138,7 @@ export default function LivePage() {
                     {event.viewers && (
                       <Badge variant="secondary" className="ml-2">
                         <Eye className="h-3 w-3 mr-1" />
-                        {formatViewers(event.viewers)} watching
+                        {formatNumber(event.viewers)} watching
                       </Badge>
                     )}
                   </div>

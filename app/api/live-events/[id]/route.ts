@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { auth } from '@clerk/nextjs';
+import { updateEventSchema } from '@/lib/validation/live-events';
 
 export async function PATCH(
   request: Request,
@@ -12,7 +13,8 @@ export async function PATCH(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { title, description, scheduledAt, capacity } = await request.json();
+    const body = await request.json();
+    const validatedData = updateEventSchema.parse(body);
 
     // Get user record
     const { data: userData, error: userError } = await supabase
@@ -29,10 +31,10 @@ export async function PATCH(
     const { data: event, error } = await supabase
       .from('streams')
       .update({
-        title,
-        description,
-        scheduled_at: scheduledAt,
-        capacity
+        title: validatedData.title,
+        description: validatedData.description,
+        scheduled_at: validatedData.scheduledAt,
+        capacity: validatedData.capacity
       })
       .eq('id', params.id)
       .eq('creator_id', userData.id)
@@ -43,6 +45,12 @@ export async function PATCH(
     return NextResponse.json(event);
   } catch (error) {
     console.error('Error:', error);
+    if (error.name === 'ZodError') {
+      return new NextResponse(JSON.stringify({ errors: error.errors }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
     return new NextResponse('Internal Error', { status: 500 });
   }
 }
