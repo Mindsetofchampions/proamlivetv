@@ -76,7 +76,6 @@ const videos = {
     description: "Watch the thrilling finals of the 2025 Pro Gaming Championship! See the world's top players compete for the grand prize in this intense matchup that came down to the wire.",
     tags: ["esports", "gaming", "competition", "pro-gaming"]
   },
-  // Add video8 to handle the specific case in the error
   "video8": {
     id: "b2c3d4e5-f6g7-8h9i-j0k1-l2m3n4o5p6q7",
     title: "404 - Video Not Found",
@@ -93,15 +92,15 @@ const videos = {
   }
 };
 
-export function generateStaticParams() {
-  // Include all video IDs, including video8
+export async function generateStaticParams() {
+  // Return all video IDs as params, including video8
   return Object.keys(videos).map((id) => ({
-    id,
+    id: id
   }));
 }
 
 export default async function VideoPage({ params }: { params: { id: string } }) {
-  const { id } = await Promise.resolve(params);
+  const { id } = params;
   const video = videos[id as keyof typeof videos];
   
   if (!video) {
