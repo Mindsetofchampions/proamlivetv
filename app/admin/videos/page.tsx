@@ -10,7 +10,9 @@ import {
   XCircle,
   Clock,
   AlertCircle,
-  Play
+  Play,
+  DollarSign,
+  Building2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -29,13 +31,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import type { Video } from '@/types/supabase';
-
-type VideoStatus = 'PENDING_REVIEW' | 'PROCESSING' | 'APPROVED' | 'REJECTED' | 'FAILED' | 'READY';
 
 interface VideoWithCreator extends Video {
   creator: {
@@ -45,15 +47,27 @@ interface VideoWithCreator extends Video {
   };
 }
 
+interface Sponsor {
+  id: string;
+  name: string;
+  logoUrl: string;
+}
+
 export default function AdminVideosPage() {
-  const { user, hasRole } = useAuth();
   const router = useRouter();
+  const { user, hasRole } = useAuth();
   const { toast } = useToast();
   const [videos, setVideos] = useState<VideoWithCreator[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<VideoStatus | 'ALL'>('ALL');
   const [rejectionReason, setRejectionReason] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+  const [selectedSponsor, setSelectedSponsor] = useState<string>('');
+  const [sponsorPlacement, setSponsorPlacement] = useState<string>('');
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [showSponsorDialog, setShowSponsorDialog] = useState(false);
 
   const fetchVideos = useCallback(async () => {
     try {
@@ -66,12 +80,13 @@ export default function AdminVideosPage() {
             last_name,
             email
           )
-        `)
-        .order('created_at', { ascending: false });
+        `);
 
       if (statusFilter !== 'ALL') {
         query.eq('status', statusFilter);
       }
+
+      query.order('created_at', { ascending: false });
 
       const { data, error } = await query;
       
@@ -89,6 +104,20 @@ export default function AdminVideosPage() {
     }
   }, [statusFilter, toast]);
 
+  const fetchSponsors = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('sponsors')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      setSponsors(data || []);
+    } catch (error) {
+      console.error('Error fetching sponsors:', error);
+    }
+  };
+
   useEffect(() => {
     if (!user || !hasRole('admin')) {
       router.push('/login');
@@ -96,24 +125,21 @@ export default function AdminVideosPage() {
     }
 
     fetchVideos();
+    fetchSponsors();
   }, [user, hasRole, router, fetchVideos]);
 
   const handleApprove = async (videoId: string) => {
     try {
       setProcessing(true);
-      const { error } = await supabase
-        .from('videos')
-        .update({ 
-          status: 'APPROVED',
-          published_at: new Date().toISOString()
-        })
-        .eq('id', videoId);
+      const response = await fetch(`/api/admin/videos/${videoId}/approve`, {
+        method: 'PATCH'
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error('Failed to approve video');
       
       toast({
         title: "Success",
-        description: "Video has been approved",
+        description: "Video approved successfully",
       });
       
       fetchVideos();
@@ -129,40 +155,71 @@ export default function AdminVideosPage() {
     }
   };
 
-  const handleReject = async (videoId: string) => {
-    if (!rejectionReason.trim()) {
-      toast({
-        title: "Error",
-        description: "Please provide a reason for rejection",
-        variant: "destructive"
-      });
-      return;
-    }
+  const handleReject = async () => {
+    if (!selectedVideo || !rejectionReason.trim()) return;
 
     try {
       setProcessing(true);
-      const { error } = await supabase
-        .from('videos')
-        .update({ 
-          status: 'REJECTED',
-          rejection_reason: rejectionReason 
-        })
-        .eq('id', videoId);
+      const response = await fetch(`/api/admin/videos/${selectedVideo}/reject`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rejectionReason })
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error('Failed to reject video');
       
       toast({
         title: "Success",
-        description: "Video has been rejected",
+        description: "Video rejected successfully",
       });
       
+      setShowRejectDialog(false);
       setRejectionReason('');
+      setSelectedVideo(null);
       fetchVideos();
     } catch (error) {
       console.error('Error:', error);
       toast({
         title: "Error",
         description: "Failed to reject video",
+        variant: "destructive"
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleAssignSponsor = async () => {
+    if (!selectedVideo || !selectedSponsor || !sponsorPlacement) return;
+
+    try {
+      setProcessing(true);
+      const response = await fetch(`/api/admin/videos/${selectedVideo}/sponsor`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sponsorId: selectedSponsor,
+          placement: sponsorPlacement
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to assign sponsor');
+      
+      toast({
+        title: "Success",
+        description: "Sponsor assigned successfully",
+      });
+      
+      setShowSponsorDialog(false);
+      setSelectedSponsor('');
+      setSponsorPlacement('');
+      setSelectedVideo(null);
+      fetchVideos();
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to assign sponsor",
         variant: "destructive"
       });
     } finally {
@@ -261,39 +318,32 @@ export default function AdminVideosPage() {
                               Approve
                             </Button>
                             
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="destructive">
-                                  <XCircle className="h-4 w-4 mr-2" />
-                                  Reject
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Reject Video</DialogTitle>
-                                  <DialogDescription>
-                                    Please provide a reason for rejecting this video.
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <div className="py-4">
-                                  <Textarea
-                                    placeholder="Enter rejection reason..."
-                                    value={rejectionReason}
-                                    onChange={(e) => setRejectionReason(e.target.value)}
-                                  />
-                                </div>
-                                <div className="flex justify-end gap-4">
-                                  <Button
-                                    variant="destructive"
-                                    onClick={() => handleReject(video.id)}
-                                    disabled={!rejectionReason.trim() || processing}
-                                  >
-                                    Confirm Rejection
-                                  </Button>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
+                            <Button 
+                              variant="destructive"
+                              onClick={() => {
+                                setSelectedVideo(video.id);
+                                setShowRejectDialog(true);
+                              }}
+                              disabled={processing}
+                            >
+                              <XCircle className="h-4 w-4 mr-2" />
+                              Reject
+                            </Button>
                           </>
+                        )}
+
+                        {video.status === 'APPROVED' && (
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedVideo(video.id);
+                              setShowSponsorDialog(true);
+                            }}
+                            disabled={processing}
+                          >
+                            <Building2 className="h-4 w-4 mr-2" />
+                            Assign Sponsor
+                          </Button>
                         )}
                         
                         <Button variant="outline" asChild>
@@ -322,6 +372,99 @@ export default function AdminVideosPage() {
             </div>
           )}
         </div>
+
+        {/* Reject Dialog */}
+        <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Reject Video</DialogTitle>
+              <DialogDescription>
+                Please provide a reason for rejecting this video.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Textarea
+                placeholder="Enter rejection reason..."
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowRejectDialog(false)}
+                disabled={processing}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleReject}
+                disabled={!rejectionReason.trim() || processing}
+              >
+                {processing ? 'Rejecting...' : 'Confirm Rejection'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Sponsor Dialog */}
+        <Dialog open={showSponsorDialog} onOpenChange={setShowSponsorDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Assign Sponsor</DialogTitle>
+              <DialogDescription>
+                Select a sponsor and placement type for this video.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Sponsor</label>
+                <Select value={selectedSponsor} onValueChange={setSelectedSponsor}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a sponsor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sponsors.map((sponsor) => (
+                      <SelectItem key={sponsor.id} value={sponsor.id}>
+                        {sponsor.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-1 block">Placement</label>
+                <Select value={sponsorPlacement} onValueChange={setSponsorPlacement}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select placement type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pre-roll">Pre-Roll</SelectItem>
+                    <SelectItem value="overlay">Overlay</SelectItem>
+                    <SelectItem value="end-card">End Card</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowSponsorDialog(false)}
+                disabled={processing}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAssignSponsor}
+                disabled={!selectedSponsor || !sponsorPlacement || processing}
+              >
+                {processing ? 'Assigning...' : 'Assign Sponsor'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
