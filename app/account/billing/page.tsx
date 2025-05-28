@@ -24,7 +24,7 @@ export default function BillingPage() {
       }
 
       const { url } = await response.json();
-      router.push(url);
+      window.location.href = url;
     } catch (error) {
       console.error('Error:', error);
       toast({

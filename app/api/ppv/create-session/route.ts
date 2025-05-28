@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16'
-});
+import { stripe } from '@/lib/stripe';
+import { auth } from '@clerk/nextjs';
 
 const ppvEvents = {
   'championship-finals-2025': {
@@ -13,26 +10,22 @@ const ppvEvents = {
   'dance-competition-2025': {
     price: 2499,
     name: 'National Dance Competition 2025'
-  },
-  'talent-showcase-2025': {
-    price: 1999,
-    name: 'Youth Talent Showcase 2025'
   }
 };
 
 export async function POST(req: Request) {
   try {
-    // Dummy user ID for development
-    const userId = 'dummy-user-id';
+    const { userId } = auth();
+    if (!userId) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
     const { eventId } = await req.json();
 
     const event = ppvEvents[eventId as keyof typeof ppvEvents];
     if (!event) {
       return new NextResponse('Event not found', { status: 404 });
     }
-
-    const successUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL}/ppv/${eventId}?success=true`);
-    const cancelUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL}/ppv?canceled=true`);
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -49,8 +42,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: successUrl,
-      cancel_url: cancelUrl,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/ppv/${eventId}?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/ppv/${eventId}?canceled=true`,
       metadata: {
         userId,
         eventId,
