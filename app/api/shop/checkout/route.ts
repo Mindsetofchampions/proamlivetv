@@ -4,11 +4,9 @@ import { auth } from '@clerk/nextjs';
 
 export async function POST(req: Request) {
   try {
+    // Make checkout available for both authenticated and unauthenticated users
     const { userId } = auth();
-    if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
-
+    
     const { items } = await req.json();
 
     // Create Stripe checkout session
@@ -28,7 +26,8 @@ export async function POST(req: Request) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/cart`,
       metadata: {
-        userId,
+        // Only include userId in metadata if user is authenticated
+        ...(userId && { userId }),
       },
     });
 
