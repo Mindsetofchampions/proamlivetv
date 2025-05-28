@@ -1,41 +1,35 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/db';
+import { prisma } from '@/lib/db';
 
-const CREATOR_RATE_PER_IMPRESSION = 0.001; // $0.001 per impression
+const CREATOR_RATE = parseFloat(process.env.CREATOR_RATE_PER_IMPRESSION || '0.001');
 
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Dummy user ID for development
-    const userId = 'dummy-user-id';
     const videoId = params.id;
 
-    // Increment impression count
-    const video = await prisma.video.update({
-      where: { id: videoId },
-      data: {
-        impressions: { increment: 1 }
-      },
-      include: {
-        creator: true
-      }
-    });
-
-    // Create earning record
-    await prisma.earning.create({
-      data: {
-        creatorId: video.creatorId,
-        videoId: video.id,
-        amount: CREATOR_RATE_PER_IMPRESSION,
-        type: 'VIDEO_IMPRESSION'
-      }
-    });
+    // Atomically increment impressions and create earning record
+    const [video, earning] = await prisma.$transaction([
+      prisma.video.update({
+        where: { id: videoId },
+        data: { impressions: { increment: 1 } },
+        include: { creator: true }
+      }),
+      prisma.earning.create({
+        data: {
+          videoId,
+          creatorId: video.creatorId,
+          amount: CREATOR_RATE,
+          type: 'VIDEO_IMPRESSION'
+        }
+      })
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error:', error);
-    return new NextResponse('Internal Error', { status: 500 });
+    console.error('Error recording impression:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
