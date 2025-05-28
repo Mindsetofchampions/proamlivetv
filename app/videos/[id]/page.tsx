@@ -93,13 +93,12 @@ const videos = {
 };
 
 export async function generateStaticParams() {
-  // Return all video IDs as params, including video8
   return Object.keys(videos).map((id) => ({
     id: id
   }));
 }
 
-export default async function VideoPage({ params }: { params: { id: string } }) {
+export default function VideoPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const video = videos[id as keyof typeof videos];
   
