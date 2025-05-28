@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { Gamepad2, Trophy, Users, Broadcast, ArrowRight } from 'lucide-react';
+import { Gamepad2, Trophy, Users, Podcast as Broadcast, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
