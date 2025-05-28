@@ -11,34 +11,34 @@ import {
   Users
 } from 'lucide-react';
 
-export default function AdminDashboard() {
-  const stats = [
-    {
-      name: 'Pending Videos',
-      value: '24',
-      icon: <Clock className="h-6 w-6 text-yellow-500" />,
-      description: 'Awaiting review'
-    },
-    {
-      name: 'Approved Videos',
-      value: '156',
-      icon: <CheckCircle className="h-6 w-6 text-green-500" />,
-      description: 'Last 30 days'
-    },
-    {
-      name: 'Rejected Videos',
-      value: '12',
-      icon: <XCircle className="h-6 w-6 text-red-500" />,
-      description: 'Last 30 days'
-    },
-    {
-      name: 'Active Users',
-      value: '1,234',
-      icon: <Users className="h-6 w-6 text-blue-500" />,
-      description: 'Total registered'
-    }
-  ];
+const stats = [
+  {
+    name: "Pending Videos",
+    value: "24",
+    icon: <Clock className="h-6 w-6 text-yellow-500" />,
+    description: 'Awaiting review'
+  },
+  {
+    name: "Approved Videos",
+    value: "156",
+    icon: <CheckCircle className="h-6 w-6 text-green-500" />,
+    description: 'Last 30 days'
+  },
+  {
+    name: "Rejected Videos",
+    value: "12",
+    icon: <XCircle className="h-6 w-6 text-red-500" />,
+    description: 'Last 30 days'
+  },
+  {
+    name: "Active Users",
+    value: "1,234",
+    icon: <Users className="h-6 w-6 text-blue-500" />,
+    description: 'Total registered'
+  }
+];
 
+export default function AdminDashboard() {
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
@@ -97,7 +97,7 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center gap-4">
                 <div className="bg-yellow-500/10 p-2 rounded">
-                  <Clock className="h-4 w-4 text-yellow-500" />
+                  <Clock3 className="h-4 w-4 text-yellow-500" />
                 </div>
                 <div>
                   <p className="font-medium">New Submission</p>
