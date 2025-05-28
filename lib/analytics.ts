@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
+import type { VideoAnalytics } from '@/types/supabase';
 
-export interface VideoAnalytics {
+export interface VideoAnalyticsInput {
   watchDuration: number;
   watchPercentage: number;
   deviceType: string;
@@ -9,7 +10,7 @@ export interface VideoAnalytics {
 
 export async function trackVideoView(
   videoId: string, 
-  analytics: VideoAnalytics
+  analytics: VideoAnalyticsInput
 ) {
   try {
     // Get the video data directly using the UUID
