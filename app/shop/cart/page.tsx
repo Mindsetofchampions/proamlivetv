@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { loadStripe } from '@stripe/stripe-js';
 import { motion } from 'framer-motion';
 import { 
   ShoppingBag,
@@ -11,7 +12,11 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 // Mock cart data
 const cartItems = [
@@ -35,6 +40,7 @@ export default function CartPage() {
   const [items, setItems] = useState(cartItems);
   const [loading, setLoading] = useState(false);
   const [promoCode, setPromoCode] = useState('');
+  const { toast } = useToast();
 
   const subtotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
   const shipping = subtotal > 500 ? 0 : 29.99;
@@ -54,10 +60,33 @@ export default function CartPage() {
   const handleCheckout = async () => {
     try {
       setLoading(true);
-      // In a real app, redirect to Shopify checkout
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const response = await fetch('/api/shop/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: items.map(item => ({
+            id: item.id,
+            quantity: item.quantity
+          }))
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const { url } = await response.json();
+      window.location.href = url;
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process checkout. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -160,58 +189,59 @@ export default function CartPage() {
           </div>
           
           <div>
-            <div className="bg-card border rounded-lg p-6 sticky top-24">
-              <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-              
-              <div className="space-y-4 mb-6">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Shipping</span>
-                  {shipping === 0 ? (
-                    <Badge variant="secondary">Free</Badge>
-                  ) : (
-                    <span>${shipping.toFixed(2)}</span>
-                  )}
-                </div>
-                <div className="pt-4 border-t flex justify-between font-medium">
-                  <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Promo code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                  />
-                  <Button variant="outline">Apply</Button>
+            <Card>
+              <div className="p-6">
+                <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+                
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Shipping</span>
+                    {shipping === 0 ? (
+                      <Badge variant="secondary">Free</Badge>
+                    ) : (
+                      <span>${shipping.toFixed(2)}</span>
+                    )}
+                  </div>
+                  <div className="pt-4 border-t flex justify-between font-medium">
+                    <span>Total</span>
+                    <span>${total.toFixed(2)}</span>
+                  </div>
                 </div>
                 
-                <Button 
-                  className="w-full"
-                  onClick={handleCheckout}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Checkout
-                    </>
-                  )}
-                </Button>
-              
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Promo code"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                    />
+                    <Button variant="outline">Apply</Button>
+                  </div>
+                  
+                  <Button 
+                    className="w-full"
+                    onClick={handleCheckout}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="h-4 w-4 mr-2" />
+                        Checkout
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       </div>
