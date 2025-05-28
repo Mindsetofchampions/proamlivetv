@@ -18,6 +18,26 @@ export const supabase = createClient<Database>(
       persistSession: true,
       detectSessionInUrl: true,
       flowType: 'pkce'
+    },
+    global: {
+      headers: {
+        'X-Client-Info': 'proamtv-web',
+      },
+    },
+    // Add proper error handling and retries
+    httpOptions: {
+      fetch: async (url, options = {}) => {
+        try {
+          const response = await fetch(url, {
+            ...options,
+            credentials: 'include',
+          });
+          return response;
+        } catch (error) {
+          console.error('Supabase fetch error:', error);
+          throw error;
+        }
+      }
     }
   }
 );
