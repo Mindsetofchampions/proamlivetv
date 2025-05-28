@@ -79,16 +79,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       
       if (data.user) {
-        // Create user record
-        const { error: userError } = await supabase
+        // Create user record and get the generated ID
+        const { data: newUserRecord, error: userError } = await supabase
           .from('users')
           .insert({
             auth_id: data.user.id,
             username: email.split('@')[0],
             display_name: email.split('@')[0]
-          });
+          })
+          .select('id')
+          .single();
 
         if (userError) throw userError;
+        if (!newUserRecord) throw new Error('Failed to create user record');
 
         // Get viewer role
         const { data: roleData, error: roleError } = await supabase
@@ -99,11 +102,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (roleError) throw roleError;
 
-        // Assign viewer role
+        // Assign viewer role using the user's database ID
         const { error: roleAssignError } = await supabase
           .from('user_roles')
           .insert({
-            user_id: data.user.id,
+            user_id: newUserRecord.id, // Use the database-generated user ID
             role_id: roleData.id
           });
 
