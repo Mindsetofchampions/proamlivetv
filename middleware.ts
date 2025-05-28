@@ -8,7 +8,27 @@ export default authMiddleware({
     "/shop/(.*)",  // Make shop pages public
     "/api/shop/(.*)",  // Make shop API routes public
     "/login",
-    "/register"
+    "/register",
+    "/videos",
+    "/videos/(.*)",
+    "/categories",
+    "/categories/(.*)",
+    "/shows",
+    "/shows/(.*)",
+    "/live",
+    "/live/(.*)",
+    "/corporate",
+    "/corporate/(.*)",
+    "/sponsors",
+    "/sponsors/(.*)",
+    "/advertise",
+    "/advertise/(.*)",
+    "/ppv",
+    "/ppv/(.*)",
+    "/api/videos/(.*)",
+    "/api/live-events/(.*)",
+    "/api/partners",
+    "/api/sponsors"
   ]
 });
  
