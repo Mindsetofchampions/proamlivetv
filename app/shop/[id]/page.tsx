@@ -26,6 +26,31 @@ const products = {
       power: '650W Gold PSU'
     },
     stock: 5
+  },
+  'monitor-1': {
+    id: 'monitor-1',
+    title: 'Pro Gaming Monitor',
+    price: 299.99,
+    images: [
+      'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg',
+      'https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg',
+      'https://images.pexels.com/photos/777001/pexels-photo-777001.jpeg'
+    ],
+    category: 'Monitors',
+    creator: 'Tech Club',
+    rating: 4.7,
+    reviews: 89,
+    description: 'Professional gaming monitor with high refresh rate and low response time.',
+    specs: {
+      size: '27 inch',
+      resolution: '2560 x 1440',
+      refreshRate: '165Hz',
+      responseTime: '1ms',
+      panel: 'IPS',
+      ports: 'HDMI 2.0, DisplayPort 1.4',
+      features: 'AMD FreeSync Premium'
+    },
+    stock: 8
   }
 };
 
