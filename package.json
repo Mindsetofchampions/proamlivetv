@@ -65,6 +65,7 @@
     "embla-carousel-react": "^8.0.0-rc17",
     "formidable": "^3.5.1",
     "framer-motion": "^10.16.5",
+    "hls.js": "^1.5.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "lucide-react": "^0.292.0",
