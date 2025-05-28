@@ -33,16 +33,11 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import type { Video } from '@/types/supabase';
 
 type VideoStatus = 'PENDING_REVIEW' | 'PROCESSING' | 'APPROVED' | 'REJECTED' | 'FAILED' | 'READY';
 
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  status: VideoStatus;
-  createdAt: string;
+interface VideoWithCreator extends Video {
   creator: {
     firstName: string;
     lastName: string;
@@ -54,7 +49,7 @@ export default function AdminVideosPage() {
   const { user, hasRole } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const [videos, setVideos] = useState<Video[]>([]);
+  const [videos, setVideos] = useState<VideoWithCreator[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<VideoStatus | 'ALL'>('ALL');
   const [rejectionReason, setRejectionReason] = useState('');
@@ -65,13 +60,8 @@ export default function AdminVideosPage() {
       const query = supabase
         .from('videos')
         .select(`
-          id,
-          title,
-          description,
-          thumbnail_url,
-          status,
-          created_at,
-          creator:users!creator_id (
+          *,
+          creator:creator_id (
             first_name,
             last_name,
             email
@@ -113,7 +103,10 @@ export default function AdminVideosPage() {
       setProcessing(true);
       const { error } = await supabase
         .from('videos')
-        .update({ status: 'APPROVED' })
+        .update({ 
+          status: 'APPROVED',
+          published_at: new Date().toISOString()
+        })
         .eq('id', videoId);
 
       if (error) throw error;
@@ -230,7 +223,7 @@ export default function AdminVideosPage() {
                   <div className="flex gap-6">
                     <div className="relative aspect-video w-64 rounded-lg overflow-hidden flex-shrink-0">
                       <Image 
-                        src={video.thumbnailUrl} 
+                        src={video.thumbnail_url || '/placeholder.jpg'} 
                         alt={video.title}
                         fill
                         className="object-cover"
@@ -304,7 +297,7 @@ export default function AdminVideosPage() {
                         )}
                         
                         <Button variant="outline" asChild>
-                          <a href={video.thumbnailUrl} target="_blank" rel="noopener noreferrer">
+                          <a href={video.url || '#'} target="_blank" rel="noopener noreferrer">
                             <Play className="h-4 w-4 mr-2" />
                             Preview
                           </a>
