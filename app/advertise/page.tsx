@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { 
-  Trophy, 
-  BarChart, 
-  Upload, 
-  ArrowRight, 
-  CheckCircle2, 
-  Radio 
+  Play, 
+  Users, 
+  Clock, 
+  Target, 
+  Activity,
+  LineChart,
+  PieChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
