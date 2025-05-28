@@ -42,6 +42,25 @@ const benefits = [
   }
 ];
 
+const steps = [
+  {
+    title: "Initial Inquiry",
+    description: "Submit your partnership interest through our form"
+  },
+  {
+    title: "Strategy Call",
+    description: "Discuss goals and explore partnership opportunities"
+  },
+  {
+    title: "Custom Integration",
+    description: "Design a tailored partnership program"
+  },
+  {
+    title: "Launch & Growth",
+    description: "Implement partnership and track success metrics"
+  }
+];
+
 const tiers = [
   {
     name: "Gold Partner",
@@ -78,25 +97,6 @@ const tiers = [
       "Brand mentions",
       "Basic reporting"
     ]
-  }
-];
-
-const steps = [
-  {
-    title: "Initial Inquiry",
-    description: "Submit your partnership interest through our form"
-  },
-  {
-    title: "Strategy Call",
-    description: "Discuss goals and explore partnership opportunities"
-  },
-  {
-    title: "Custom Integration",
-    description: "Design a tailored partnership program"
-  },
-  {
-    title: "Launch & Growth",
-    description: "Implement partnership and track success metrics"
   }
 ];
 

@@ -2,7 +2,14 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, BarChart, Upload, ArrowRight, CheckCircle2, Radio } from 'lucide-react';
+import { 
+  Trophy, 
+  BarChart, 
+  Upload, 
+  ArrowRight, 
+  CheckCircle2, 
+  Radio 
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -176,9 +183,7 @@ export default function SponsorsPage() {
                         </li>
                       ))}
                     </ul>
-                    <Button className="w-full mt-6" variant={index === 0 ? "default" : "outline"}>
-                      Select {level.name}
-                    </Button>
+                    <Button className="w-full mt-6">Select {level.name}</Button>
                   </div>
                 </Card>
               </motion.div>
