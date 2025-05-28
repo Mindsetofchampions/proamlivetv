@@ -61,14 +61,16 @@ export interface Database {
           url: string | null
           thumbnail_url: string | null
           duration: number | null
-          status: string
-          visibility: string
+          status: VideoStatus
+          visibility: Visibility
           published_at: string | null
           created_at: string
           updated_at: string
           rejection_reason: string | null
           hls_url: string | null
           processing_progress: number
+          category: string | null
+          impressions: number
         }
         Insert: {
           id?: string
@@ -78,14 +80,16 @@ export interface Database {
           url?: string | null
           thumbnail_url?: string | null
           duration?: number | null
-          status?: string
-          visibility?: string
+          status?: VideoStatus
+          visibility?: Visibility
           published_at?: string | null
           created_at?: string
           updated_at?: string
           rejection_reason?: string | null
           hls_url?: string | null
           processing_progress?: number
+          category?: string | null
+          impressions?: number
         }
         Update: {
           id?: string
@@ -95,13 +99,53 @@ export interface Database {
           url?: string | null
           thumbnail_url?: string | null
           duration?: number | null
-          status?: string
-          visibility?: string
+          status?: VideoStatus
+          visibility?: Visibility
           published_at?: string | null
           updated_at?: string
           rejection_reason?: string | null
           hls_url?: string | null
           processing_progress?: number
+          category?: string | null
+          impressions?: number
+        }
+      }
+      video_analytics: {
+        Row: {
+          id: string
+          video_id: string
+          viewer_id: string | null
+          watch_duration: number
+          watch_percentage: number
+          watched_at: string
+          device_type: string | null
+          browser: string | null
+          country: string | null
+          region: string | null
+        }
+        Insert: {
+          id?: string
+          video_id: string
+          viewer_id?: string | null
+          watch_duration: number
+          watch_percentage: number
+          watched_at?: string
+          device_type?: string | null
+          browser?: string | null
+          country?: string | null
+          region?: string | null
+        }
+        Update: {
+          id?: string
+          video_id?: string
+          viewer_id?: string | null
+          watch_duration?: number
+          watch_percentage?: number
+          watched_at?: string
+          device_type?: string | null
+          browser?: string | null
+          country?: string | null
+          region?: string | null
         }
       }
     }
@@ -112,7 +156,13 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      VideoStatus: 'PENDING_REVIEW' | 'PROCESSING' | 'APPROVED' | 'REJECTED' | 'FAILED' | 'READY'
+      Visibility: 'PUBLIC' | 'PRIVATE' | 'UNLISTED'
     }
   }
 }
+
+export type VideoStatus = Database['public']['Enums']['VideoStatus']
+export type Visibility = Database['public']['Enums']['Visibility']
+export type Video = Database['public']['Tables']['videos']['Row']
+export type VideoAnalytics = Database['public']['Tables']['video_analytics']['Row']
