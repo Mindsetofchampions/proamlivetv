@@ -334,7 +334,7 @@ export default function CreatorDashboard() {
             </Tabs>
           </div>
 
-          <div className="space-y-6">
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle>Creator Profile</CardTitle>
@@ -370,28 +370,6 @@ export default function CreatorDashboard() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button variant="outline" className="w-full justify-start" asChild>
-                  <Link href="/creator/upload">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload New Video
-                  </Link>
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Account Settings
-                </Button>
               </CardContent>
             </Card>
           </div>
