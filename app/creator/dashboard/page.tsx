@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 import { 
   Upload, 
@@ -38,82 +40,108 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
 
-const stats = [
-  {
-    name: "Total Videos",
-    value: "24",
-    icon: <Video className="h-6 w-6 text-primary" />
-  },
-  {
-    name: "Total Impressions",
-    value: "45.2K",
-    icon: <Eye className="h-6 w-6 text-primary" />
-  },
-  {
-    name: "Total Earnings",
-    value: "$1,234",
-    icon: <DollarSign className="h-6 w-6 text-primary" />
-  }
-];
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-const pendingVideos = [
-  {
-    id: 1,
-    title: "Urban Dance Championship Finals",
-    thumbnail: "https://images.pexels.com/photos/1701202/pexels-photo-1701202.jpeg",
-    status: "PENDING_REVIEW",
-    uploadedAt: "2025-03-15",
-    duration: "12:34"
-  },
-  {
-    id: 2,
-    title: "Skateboarding Tutorial Series - Episode 1",
-    thumbnail: "https://images.pexels.com/photos/2693208/pexels-photo-2693208.jpeg",
-    status: "PROCESSING",
-    uploadedAt: "2025-03-14",
-    duration: "08:45"
-  }
-];
-
-const approvedVideos = [
-  {
-    id: 3,
-    title: "Street Art Documentary",
-    thumbnail: "https://images.pexels.com/photos/2119706/pexels-photo-2119706.jpeg",
-    status: "APPROVED",
-    publishedAt: "2025-03-10",
-    views: 12543,
-    likes: 856,
-    duration: "15:20"
-  },
-  {
-    id: 4,
-    title: "Music Production Masterclass",
-    thumbnail: "https://images.pexels.com/photos/164693/pexels-photo-164693.jpeg",
-    status: "APPROVED",
-    publishedAt: "2025-03-08",
-    views: 8976,
-    likes: 654,
-    duration: "22:15"
-  }
-];
-
-const creatorProfile = {
-  name: "Alex Thompson",
-  handle: "@alexcreates",
-  avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
-  bio: "Digital creator passionate about urban culture and youth empowerment",
-  stats: {
-    subscribers: "2.5K",
-    totalViews: "45.2K",
-    avgEngagement: "12%"
-  },
-  badges: ["Verified Creator", "Rising Star", "Top Contributor"]
-};
+const CREATOR_RATE = parseFloat(process.env.NEXT_PUBLIC_CREATOR_RATE_PER_IMPRESSION || '0.001');
 
 export default function CreatorDashboard() {
+  const router = useRouter();
+  const { user, hasRole } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [videos, setVideos] = useState([]);
+  const [analytics, setAnalytics] = useState({
+    totalViews: 0,
+    totalEarnings: 0,
+    recentEarnings: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user || !hasRole('creator')) {
+      router.push('/login');
+      return;
+    }
+
+    fetchVideos();
+    fetchAnalytics();
+  }, [user, hasRole, router]);
+
+  const fetchVideos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('videos')
+        .select('*')
+        .eq('creator_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setVideos(data || []);
+    } catch (error) {
+      console.error('Error fetching videos:', error);
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    try {
+      const { data: viewData, error: viewError } = await supabase
+        .from('video_analytics')
+        .select('*')
+        .eq('creator_id', user?.id);
+
+      if (viewError) throw viewError;
+
+      const totalViews = viewData?.length || 0;
+      const totalEarnings = totalViews * CREATOR_RATE;
+
+      // Calculate earnings by date
+      const earningsByDate = viewData?.reduce((acc, view) => {
+        const date = new Date(view.watched_at).toLocaleDateString();
+        acc[date] = (acc[date] || 0) + CREATOR_RATE;
+        return acc;
+      }, {});
+
+      setAnalytics({
+        totalViews,
+        totalEarnings,
+        recentEarnings: Object.entries(earningsByDate || {}).map(([date, amount]) => ({
+          date,
+          amount
+        }))
+      });
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-16">
@@ -122,16 +150,16 @@ export default function CreatorDashboard() {
           <div>
             <h1 className="text-3xl font-bold mb-1">Creator Dashboard</h1>
             <p className="text-muted-foreground">
-              Welcome back, {creatorProfile.name}
+              Manage your content and track performance
             </p>
           </div>
           
           <div className="flex gap-3">
             <Button asChild>
-              <Link href="/creator/upload">
+              <a href="/creator/upload">
                 <Upload className="h-4 w-4 mr-2" />
                 Upload New Video
-              </Link>
+              </a>
             </Button>
             <Button variant="outline">
               <Settings className="h-4 w-4 mr-2" />
@@ -145,116 +173,93 @@ export default function CreatorDashboard() {
             <Tabs defaultValue="overview" className="space-y-8">
               <TabsList>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="pending">Pending</TabsTrigger>
-                <TabsTrigger value="approved">Approved</TabsTrigger>
+                <TabsTrigger value="videos">Videos</TabsTrigger>
                 <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                <TabsTrigger value="earnings">Earnings</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  {stats.map((stat, index) => (
-                    <motion.div
-                      key={stat.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                    >
-                      <Card>
-                        <CardContent className="pt-6">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="bg-primary/10 p-3 rounded-lg">
-                              {stat.icon}
-                            </div>
-                            <BarChart className="h-4 w-4 text-muted-foreground" />
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-sm text-muted-foreground">
-                              {stat.name}
-                            </p>
-                            <p className="text-2xl font-bold">
-                              {stat.value}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="space-y-6">
                   <Card>
-                    <CardHeader>
-                      <CardTitle>Recent Activity</CardTitle>
-                      <CardDescription>Your latest video submissions</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {[...pendingVideos, ...approvedVideos].slice(0, 3).map((video) => (
-                          <div key={video.id} className="flex gap-4 items-center p-4 rounded-lg border">
-                            <div className="relative aspect-video w-40 rounded overflow-hidden flex-shrink-0">
-                              <img 
-                                src={video.thumbnail} 
-                                alt={video.title}
-                                className="object-cover w-full h-full"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-medium mb-1">{video.title}</h3>
-                              <div className="flex items-center gap-2">
-                                <Badge variant={video.status === 'APPROVED' ? 'default' : 'secondary'}>
-                                  {video.status === 'APPROVED' ? (
-                                    <CheckCircle className="h-3 w-3 mr-1" />
-                                  ) : (
-                                    <Clock3 className="h-3 w-3 mr-1" />
-                                  )}
-                                  {video.status.replace('_', ' ')}
-                                </Badge>
-                                <span className="text-sm text-muted-foreground">
-                                  {video.publishedAt || video.uploadedAt}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="bg-primary/10 p-3 rounded-lg">
+                          <Video className="h-6 w-6 text-primary" />
+                        </div>
+                        <BarChart className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm text-muted-foreground">Total Videos</p>
+                        <p className="text-2xl font-bold">{videos.length}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="bg-primary/10 p-3 rounded-lg">
+                          <Eye className="h-6 w-6 text-primary" />
+                        </div>
+                        <BarChart className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm text-muted-foreground">Total Views</p>
+                        <p className="text-2xl font-bold">{analytics.totalViews.toLocaleString()}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="bg-primary/10 p-3 rounded-lg">
+                          <DollarSign className="h-6 w-6 text-primary" />
+                        </div>
+                        <BarChart className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm text-muted-foreground">Total Earnings</p>
+                        <p className="text-2xl font-bold">
+                          ${analytics.totalEarnings.toFixed(2)}
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
                 </div>
-              </TabsContent>
 
-              <TabsContent value="pending">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Pending Videos</CardTitle>
-                    <CardDescription>Videos awaiting review or processing</CardDescription>
+                    <CardTitle>Recent Videos</CardTitle>
+                    <CardDescription>Your latest uploads</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {pendingVideos.map((video) => (
+                      {videos.slice(0, 5).map((video) => (
                         <div key={video.id} className="flex gap-4 items-center p-4 rounded-lg border">
                           <div className="relative aspect-video w-40 rounded overflow-hidden flex-shrink-0">
                             <img 
-                              src={video.thumbnail} 
+                              src={video.thumbnail_url} 
                               alt={video.title}
                               className="object-cover w-full h-full"
                             />
                           </div>
-                          <div className="flex-1">
+                          <div>
                             <h3 className="font-medium mb-1">{video.title}</h3>
                             <div className="flex items-center gap-2">
-                              <Badge variant="secondary">
-                                <Clock3 className="h-3 w-3 mr-1" />
-                                {video.status.replace('_', ' ')}
+                              <Badge variant={video.status === 'APPROVED' ? 'default' : 'secondary'}>
+                                {video.status === 'APPROVED' ? (
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                ) : (
+                                  <Clock3 className="h-3 w-3 mr-1" />
+                                )}
+                                {video.status}
                               </Badge>
                               <span className="text-sm text-muted-foreground">
-                                Uploaded on {video.uploadedAt}
+                                {new Date(video.created_at).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
-                          <Button variant="outline" size="sm">
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
-                          </Button>
                         </div>
                       ))}
                     </div>
@@ -262,49 +267,51 @@ export default function CreatorDashboard() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="approved">
+              <TabsContent value="videos">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Approved Videos</CardTitle>
-                    <CardDescription>Published and available for viewing</CardDescription>
+                    <CardTitle>My Videos</CardTitle>
+                    <CardDescription>Manage your video content</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {approvedVideos.map((video) => (
+                      {videos.map((video) => (
                         <div key={video.id} className="flex gap-4 items-center p-4 rounded-lg border">
                           <div className="relative aspect-video w-40 rounded overflow-hidden flex-shrink-0">
                             <img 
-                              src={video.thumbnail} 
+                              src={video.thumbnail_url} 
                               alt={video.title}
                               className="object-cover w-full h-full"
                             />
                           </div>
                           <div className="flex-1">
                             <h3 className="font-medium mb-1">{video.title}</h3>
-                            <div className="flex items-center gap-2">
-                              <Badge>
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                APPROVED
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge variant={video.status === 'APPROVED' ? 'default' : 'secondary'}>
+                                {video.status === 'APPROVED' ? (
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                ) : (
+                                  <Clock3 className="h-3 w-3 mr-1" />
+                                )}
+                                {video.status}
                               </Badge>
                               <span className="text-sm text-muted-foreground">
-                                Published on {video.publishedAt}
+                                {new Date(video.created_at).toLocaleDateString()}
                               </span>
                             </div>
-                            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                              <span className="flex items-center">
-                                <Eye className="h-3 w-3 mr-1" />
-                                {video.views.toLocaleString()} views
-                              </span>
-                              <span className="flex items-center">
-                                <Heart className="h-3 w-3 mr-1" />
-                                {video.likes.toLocaleString()} likes
-                              </span>
+                            <div className="flex items-center gap-4">
+                              <Button variant="outline" size="sm" asChild>
+                                <a href={`/videos/${video.id}`}>
+                                  <Play className="h-4 w-4 mr-2" />
+                                  Watch
+                                </a>
+                              </Button>
+                              <Button variant="outline" size="sm">
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Button>
                             </div>
                           </div>
-                          <Button variant="outline" size="sm">
-                            <Play className="h-4 w-4 mr-2" />
-                            Watch
-                          </Button>
                         </div>
                       ))}
                     </div>
@@ -315,13 +322,78 @@ export default function CreatorDashboard() {
               <TabsContent value="analytics">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Analytics</CardTitle>
-                    <CardDescription>Track your content performance</CardDescription>
+                    <CardTitle>Performance Analytics</CardTitle>
+                    <CardDescription>Track your content engagement</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground text-center py-8">
-                      Analytics features coming soon
-                    </p>
+                    <div className="h-[300px]">
+                      <Line 
+                        data={{
+                          labels: analytics.recentEarnings.map(e => e.date),
+                          datasets: [{
+                            label: 'Daily Earnings',
+                            data: analytics.recentEarnings.map(e => e.amount),
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              ticks: {
+                                callback: (value) => `$${value}`
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="earnings">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Earnings Overview</CardTitle>
+                    <CardDescription>Your revenue and payouts</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-secondary/20 rounded-lg p-4">
+                          <p className="text-sm text-muted-foreground">Total Earnings</p>
+                          <p className="text-2xl font-bold">${analytics.totalEarnings.toFixed(2)}</p>
+                        </div>
+                        <div className="bg-secondary/20 rounded-lg p-4">
+                          <p className="text-sm text-muted-foreground">This Month</p>
+                          <p className="text-2xl font-bold">
+                            ${analytics.recentEarnings
+                              .reduce((sum, e) => sum + e.amount, 0)
+                              .toFixed(2)}
+                          </p>
+                        </div>
+                        <div className="bg-secondary/20 rounded-lg p-4">
+                          <p className="text-sm text-muted-foreground">Rate Per View</p>
+                          <p className="text-2xl font-bold">${CREATOR_RATE}</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4">Recent Earnings</h3>
+                        <div className="space-y-2">
+                          {analytics.recentEarnings.map((earning, index) => (
+                            <div key={index} className="flex justify-between items-center p-3 bg-secondary/10 rounded-lg">
+                              <span>{earning.date}</span>
+                              <span className="font-medium">${earning.amount.toFixed(2)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -336,31 +408,31 @@ export default function CreatorDashboard() {
               <CardContent>
                 <div className="flex flex-col items-center text-center">
                   <Avatar className="h-24 w-24 mb-4">
-                    <AvatarImage src={creatorProfile.avatar} />
-                    <AvatarFallback>{creatorProfile.name[0]}</AvatarFallback>
+                    <AvatarImage src={user?.user_metadata?.avatar_url} />
+                    <AvatarFallback>{user?.email?.[0]}</AvatarFallback>
                   </Avatar>
-                  <h3 className="text-xl font-semibold">{creatorProfile.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{creatorProfile.handle}</p>
-                  <p className="text-sm mb-4">{creatorProfile.bio}</p>
+                  <h3 className="text-xl font-semibold">{user?.user_metadata?.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-2">{user?.email}</p>
                   
                   <div className="flex gap-2 mb-4">
-                    {creatorProfile.badges.map((badge, index) => (
-                      <Badge key={index} variant="secondary">{badge}</Badge>
-                    ))}
+                    <Badge variant="secondary">Creator</Badge>
+                    <Badge variant="outline">Level 1</Badge>
                   </div>
 
                   <div className="grid grid-cols-3 gap-4 w-full">
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{creatorProfile.stats.subscribers}</p>
-                      <p className="text-xs text-muted-foreground">Subscribers</p>
+                      <p className="text-2xl font-bold">{videos.length}</p>
+                      <p className="text-xs text-muted-foreground">Videos</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{creatorProfile.stats.totalViews}</p>
-                      <p className="text-xs text-muted-foreground">Total Views</p>
+                      <p className="text-2xl font-bold">{analytics.totalViews}</p>
+                      <p className="text-xs text-muted-foreground">Views</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">{creatorProfile.stats.avgEngagement}</p>
-                      <p className="text-xs text-muted-foreground">Engagement</p>
+                      <p className="text-2xl font-bold">
+                        ${analytics.totalEarnings.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Earned</p>
                     </div>
                   </div>
                 </div>
