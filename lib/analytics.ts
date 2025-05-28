@@ -13,31 +13,28 @@ export async function trackVideoView(
   analytics: VideoAnalyticsInput
 ) {
   try {
-    // Get the video data directly using the UUID
-    const { data: videoData } = await supabase
-      .from('videos')
-      .select('id')
-      .eq('id', videoId)
-      .single();
-
-    if (!videoData?.id) {
-      console.error('Video not found:', videoId);
-      return;
-    }
-
-    const { error } = await supabase
+    // Insert analytics record
+    const { error: analyticsError } = await supabase
       .from('video_analytics')
-      .insert([{
-        video_id: videoData.id,
+      .insert({
+        video_id: videoId,
         watch_duration: analytics.watchDuration,
         watch_percentage: analytics.watchPercentage,
         device_type: analytics.deviceType,
-        browser: analytics.browser,
-        country: 'Unknown',
-        region: 'Unknown'
-      }]);
+        browser: analytics.browser
+      });
 
-    if (error) throw error;
+    if (analyticsError) throw analyticsError;
+
+    // Increment video impressions
+    const { error: updateError } = await supabase
+      .from('videos')
+      .update({ 
+        impressions: supabase.rpc('increment', { value: 1 })
+      })
+      .eq('id', videoId);
+
+    if (updateError) throw updateError;
   } catch (error) {
     console.error('Failed to track video view:', error);
   }
@@ -48,24 +45,12 @@ export async function trackEngagement(
   engagementType: 'like' | 'share' | 'comment'
 ) {
   try {
-    // Get the video data directly using the UUID
-    const { data: videoData } = await supabase
-      .from('videos')
-      .select('id')
-      .eq('id', videoId)
-      .single();
-
-    if (!videoData?.id) {
-      console.error('Video not found:', videoId);
-      return;
-    }
-
     const { error } = await supabase
       .from('video_engagement')
-      .insert([{
-        video_id: videoData.id,
+      .insert({
+        video_id: videoId,
         engagement_type: engagementType
-      }]);
+      });
 
     if (error) throw error;
   } catch (error) {
@@ -75,23 +60,11 @@ export async function trackEngagement(
 
 export async function getVideoAnalytics(videoId: string) {
   try {
-    // Get the video data directly using the UUID
-    const { data: videoData } = await supabase
-      .from('videos')
-      .select('id')
-      .eq('id', videoId)
-      .single();
-
-    if (!videoData?.id) {
-      console.error('Video not found:', videoId);
-      return null;
-    }
-
     // Get view count
     const { data: viewData, error: viewError } = await supabase
       .from('video_analytics')
       .select('id')
-      .eq('video_id', videoData.id);
+      .eq('video_id', videoId);
     
     if (viewError) throw viewError;
 
@@ -99,7 +72,7 @@ export async function getVideoAnalytics(videoId: string) {
     const { data: engagementData, error: engagementError } = await supabase
       .from('video_engagement')
       .select('engagement_type')
-      .eq('video_id', videoData.id);
+      .eq('video_id', videoId);
     
     if (engagementError) throw engagementError;
 

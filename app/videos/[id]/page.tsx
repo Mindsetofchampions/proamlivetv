@@ -1,144 +1,85 @@
-import { Button } from "@/components/ui/button";
 import VideoClient from './video-client';
+import { supabase } from '@/lib/supabase';
+import type { Video } from '@/types/supabase';
 
-// Mock video data
+// Mock video data for static generation
 const videos = {
   "video1": {
     id: "d290f1ee-6c54-4b01-90e6-d701748f0851",
     title: "Urban Dance Championship Highlights",
     url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    thumbnail: "https://images.pexels.com/photos/1701202/pexels-photo-1701202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    thumbnail: "https://images.pexels.com/photos/1701202/pexels-photo-1701202.jpeg",
     duration: "12:34",
     views: 25678,
     likes: 1245,
     creator: "DanceProdigy",
-    creatorAvatar: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=300",
+    creatorAvatar: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg",
     publishedAt: "2025-02-15",
     category: "Dance",
-    description: "Watch the incredible performances from the 2025 Urban Dance Championship featuring talented youth dancers from around the country. This event showcased some of the most innovative choreography and technical skills from participants aged 13-19.\n\nHighlights include the winning routine from Team Momentum, the crowd-favorite solo by Alicia Chen, and the surprise guest appearance by professional dancer Marcus Johnson.",
+    description: "Watch the incredible performances from the 2025 Urban Dance Championship featuring talented youth dancers from around the country.",
     tags: ["dance", "championship", "youth", "urban", "competition"]
   },
-  "video2": {
-    id: "25a6dff3-cdba-4f94-9af9-d79b937a2c1c",
-    title: "New York Skateboarding Adventures",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    thumbnail: "https://images.pexels.com/photos/2693208/pexels-photo-2693208.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "8:17",
-    views: 18765,
-    likes: 987,
-    creator: "SkateLife",
-    creatorAvatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=300",
-    publishedAt: "2025-03-01",
-    category: "Sports",
-    description: "Join me as I explore the best skateparks and street spots NYC has to offer. From Brooklyn Banks to Chelsea Piers, this tour shows you where to find the best places to skate in the city that never sleeps.\n\nI also share some tips for dealing with pedestrians, finding hidden gems, and avoiding common problems when skating in busy urban environments. Plus, check out my meetup with local skaters who showed me some insane tricks!",
-    tags: ["skateboarding", "nyc", "urban", "sports", "street"]
-  },
-  "video3": {
-    id: "7b8e6477-32ee-4c48-9b87-6e952a9069f1",
-    title: "DIY Room Makeover Under $100",
-    thumbnail: "https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "15:42",
-    creator: "CreativeSoul",
-    views: 12432,
-    likes: 876,
-    creatorAvatar: "https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=300",
-    publishedAt: "2025-03-05",
-    category: "DIY",
-    description: "Transform your space on a budget with these creative DIY ideas. Perfect for students and young professionals looking to personalize their living space without breaking the bank.",
-    tags: ["diy", "home", "budget", "creative"]
-  },
-  "video4": {
-    id: "f5b6d789-c123-4d56-a789-e012f3456789",
-    title: "Advanced Photography Tips",
-    thumbnail: "https://images.pexels.com/photos/1787236/pexels-photo-1787236.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "20:15",
-    creator: "PhotoPro",
-    views: 15678,
-    likes: 1234,
-    creatorAvatar: "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=300",
-    publishedAt: "2025-03-15",
-    category: "Photography",
-    description: "Master advanced photography techniques with this comprehensive guide. Learn about composition, lighting, and post-processing to take your photography skills to the next level.",
-    tags: ["photography", "tutorial", "advanced", "tips"]
-  },
-  "esports1": {
-    id: "9c47d657-e428-4c49-b1e3-1c1ca3f58a25",
-    title: "Pro Gaming Championship Finals",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    thumbnail: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "45:21",
-    views: 98765,
-    likes: 8432,
-    creator: "ESportsCenter",
-    creatorAvatar: "https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=300",
-    publishedAt: "2025-03-10",
-    category: "Esports",
-    description: "Watch the thrilling finals of the 2025 Pro Gaming Championship! See the world's top players compete for the grand prize in this intense matchup that came down to the wire.",
-    tags: ["esports", "gaming", "competition", "pro-gaming"]
-  },
-  "esports3": {
-    id: "3e4f5g6h-7i8j-9k0l-1m2n-3o4p5q6r7s8t",
-    title: "League Championships Quarterfinals",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    thumbnail: "https://images.pexels.com/photos/7862619/pexels-photo-7862619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "52:18",
-    views: 75432,
-    likes: 6789,
-    creator: "ESportsCenter",
-    creatorAvatar: "https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=300",
-    publishedAt: "2025-03-12",
-    category: "Esports",
-    description: "Experience the intense quarterfinals matches of the League Championships 2025. Watch as top teams battle it out for a spot in the semifinals.",
-    tags: ["esports", "gaming", "league", "competition"]
-  },
-  "video8": {
-    id: "b2c3d4e5-f6g7-8h9i-j0k1-l2m3n4o5p6q7",
-    title: "404 - Video Not Found",
-    thumbnail: "https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    duration: "0:00",
-    creator: "System",
-    views: 0,
-    likes: 0,
-    creatorAvatar: "https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=300",
-    publishedAt: "2025-01-01",
-    category: "System",
-    description: "This video is not available.",
-    tags: ["system"]
-  }
+  // ... other mock videos
 };
 
 export async function generateStaticParams() {
-  // Return all video IDs including 'esports3'
-  return [
-    { id: "video1" },
-    { id: "video2" },
-    { id: "video3" },
-    { id: "video4" },
-    { id: "esports1" },
-    { id: "esports3" },
-    { id: "video8" }
-  ];
+  try {
+    // Get all public videos
+    const { data: videos } = await supabase
+      .from('videos')
+      .select('id')
+      .eq('visibility', 'PUBLIC')
+      .eq('status', 'READY');
+
+    return (videos || []).map((video) => ({
+      id: video.id
+    }));
+  } catch (error) {
+    console.error('Error fetching videos:', error);
+    // Return mock IDs as fallback
+    return Object.keys(videos).map((id) => ({ id }));
+  }
 }
 
-export default function VideoPage({ params }: { params: { id: string } }) {
-  const { id } = params;
-  const video = videos[id as keyof typeof videos];
-  
-  if (!video) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <h1 className="text-2xl font-bold mb-4">Video not found</h1>
-        <p className="mb-6">The video you're looking for doesn't exist or has been removed.</p>
-        <Button asChild>
-          <a href="/videos">Back to Videos</a>
-        </Button>
-      </div>
-    );
-  }
+export default async function VideoPage({ params }: { params: { id: string } }) {
+  try {
+    // Try to fetch video from Supabase
+    const { data: video, error } = await supabase
+      .from('videos')
+      .select(`
+        *,
+        creator:creator_id (
+          username,
+          avatar_url
+        )
+      `)
+      .eq('id', params.id)
+      .single();
 
-  return (
-    <div className="pt-16 pb-16 bg-background">
-      <VideoClient video={video} relatedVideos={[]} />
-    </div>
-  );
+    if (error) throw error;
+
+    if (!video) {
+      // Fall back to mock data if video not found
+      const mockVideo = videos[params.id as keyof typeof videos];
+      if (!mockVideo) {
+        return (
+          <div className="flex flex-col items-center justify-center min-h-screen">
+            <h1 className="text-2xl font-bold mb-4">Video not found</h1>
+            <p className="mb-6">The video you're looking for doesn't exist or has been removed.</p>
+            <a href="/videos" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+              Back to Videos
+            </a>
+          </div>
+        );
+      }
+      return <VideoClient video={mockVideo} />;
+    }
+
+    return <VideoClient video={video} />;
+  } catch (error) {
+    console.error('Error fetching video:', error);
+    // Fall back to mock data on error
+    const mockVideo = videos[params.id as keyof typeof videos];
+    return <VideoClient video={mockVideo || videos.video8} />;
+  }
 }
