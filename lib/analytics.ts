@@ -12,11 +12,11 @@ export async function trackVideoView(
   analytics: VideoAnalytics
 ) {
   try {
-    // Get the UUID from the video data
+    // Get the video data directly using the UUID
     const { data: videoData } = await supabase
       .from('videos')
       .select('id')
-      .eq('legacy_id', videoId)
+      .eq('id', videoId)
       .single();
 
     if (!videoData?.id) {
@@ -47,11 +47,11 @@ export async function trackEngagement(
   engagementType: 'like' | 'share' | 'comment'
 ) {
   try {
-    // Get the UUID from the video data
+    // Get the video data directly using the UUID
     const { data: videoData } = await supabase
       .from('videos')
       .select('id')
-      .eq('legacy_id', videoId)
+      .eq('id', videoId)
       .single();
 
     if (!videoData?.id) {
@@ -74,11 +74,11 @@ export async function trackEngagement(
 
 export async function getVideoAnalytics(videoId: string) {
   try {
-    // Get the UUID from the video data
+    // Get the video data directly using the UUID
     const { data: videoData } = await supabase
       .from('videos')
       .select('id')
-      .eq('legacy_id', videoId)
+      .eq('id', videoId)
       .single();
 
     if (!videoData?.id) {
