@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { motion } from 'framer-motion';
+import { IVS_CONFIG } from '@/lib/ivs';
 import { 
   Calendar,
   Clock,
@@ -153,6 +154,25 @@ export default function LiveEventsPage() {
           Schedule Event
         </Button>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Stream Settings</CardTitle>
+          <CardDescription>Use these settings in your streaming software (OBS/Streamlabs)</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <Label>Ingest URL</Label>
+              <Input value={IVS_CONFIG.ingestEndpoint} readOnly />
+            </div>
+            <div>
+              <Label>Playback URL</Label>
+              <Input value={IVS_CONFIG.playbackUrl} readOnly />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6">
         {events.map((event) => (

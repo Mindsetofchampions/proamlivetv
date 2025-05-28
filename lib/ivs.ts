@@ -1,54 +1,27 @@
-import { IvsClient, CreateChannelCommand, CreateStreamKeyCommand, GetStreamKeyCommand } from '@aws-sdk/client-ivs';
+import { IvsClient, PutMetadataCommand } from '@aws-sdk/client-ivs';
 
-if (!process.env.IVS_ACCESS_KEY_ID || !process.env.IVS_SECRET_ACCESS_KEY || !process.env.AWS_REGION) {
-  throw new Error('Missing AWS IVS credentials');
+if (!process.env.AWS_REGION) {
+  throw new Error('Missing AWS region');
 }
 
 const ivs = new IvsClient({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.IVS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.IVS_SECRET_ACCESS_KEY,
-  }
+  region: process.env.AWS_REGION
 });
 
-export async function createStreamChannel(eventId: string) {
+export const IVS_CONFIG = {
+  channelArn: process.env.IVS_CHANNEL_ARN!,
+  ingestEndpoint: process.env.IVS_INGEST_ENDPOINT!,
+  playbackUrl: process.env.IVS_PLAYBACK_URL!
+};
+
+export async function putMetadata(metadata: any) {
   try {
-    // Create channel
-    const createChannelResponse = await ivs.send(new CreateChannelCommand({
-      name: `event-${eventId}`,
-      latencyMode: 'LOW',
-      type: 'STANDARD'
+    await ivs.send(new PutMetadataCommand({
+      channelArn: IVS_CONFIG.channelArn,
+      metadata: JSON.stringify(metadata)
     }));
-
-    const channelArn = createChannelResponse.channel?.arn;
-    if (!channelArn) throw new Error('Failed to get channel ARN');
-
-    // Create stream key
-    const createKeyResponse = await ivs.send(new CreateStreamKeyCommand({
-      channelArn
-    }));
-
-    return {
-      channelArn,
-      streamKeyValue: createKeyResponse.streamKey?.value,
-      ingestEndpoint: createChannelResponse.channel?.ingestEndpoint,
-      playbackUrl: createChannelResponse.channel?.playbackUrl
-    };
   } catch (error) {
-    console.error('Error creating IVS channel:', error);
-    throw error;
-  }
-}
-
-export async function getStreamKey(streamKeyArn: string) {
-  try {
-    const response = await ivs.send(new GetStreamKeyCommand({
-      arn: streamKeyArn
-    }));
-    return response.streamKey?.value;
-  } catch (error) {
-    console.error('Error getting stream key:', error);
+    console.error('Error putting metadata:', error);
     throw error;
   }
 }
