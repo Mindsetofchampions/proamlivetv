@@ -11,7 +11,6 @@ import {
   PieChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -143,7 +142,7 @@ export default function AdvertisePage() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="bg-primary/10 p-3 rounded-lg">
-                  <BarChart className="h-6 w-6 text-primary" />
+                  <Activity className="h-6 w-6 text-primary" />
                 </div>
                 <LineChart className="h-8 w-8 text-muted-foreground opacity-50" />
               </div>
@@ -158,7 +157,7 @@ export default function AdvertisePage() {
                 <div className="bg-primary/10 p-3 rounded-lg">
                   <Users className="h-6 w-6 text-primary" />
                 </div>
-                <Activity className="h-8 w-8 text-muted-foreground opacity-50" />
+                <LineChart className="h-8 w-8 text-muted-foreground opacity-50" />
               </div>
               <p className="text-sm text-muted-foreground mb-1">Unique Viewers</p>
               <h3 className="text-2xl font-bold">{mockMetrics.uniqueViewers.toLocaleString()}</h3>

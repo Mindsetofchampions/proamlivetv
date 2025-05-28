@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 type VideoStatus = 'PENDING_REVIEW' | 'PROCESSING' | 'APPROVED' | 'REJECTED' | 'FAILED' | 'READY';
 
@@ -59,16 +60,7 @@ export default function AdminVideosPage() {
   const [rejectionReason, setRejectionReason] = useState('');
   const [processing, setProcessing] = useState(false);
 
-  useEffect(() => {
-    if (!user || !hasRole('admin')) {
-      router.push('/login');
-      return;
-    }
-
-    fetchVideos();
-  }, [user, statusFilter]);
-
-  const fetchVideos = async () => {
+  const fetchVideos = useCallback(async () => {
     try {
       const query = supabase
         .from('videos')
@@ -105,7 +97,16 @@ export default function AdminVideosPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, toast]);
+
+  useEffect(() => {
+    if (!user || !hasRole('admin')) {
+      router.push('/login');
+      return;
+    }
+
+    fetchVideos();
+  }, [user, hasRole, router, fetchVideos]);
 
   const handleApprove = async (videoId: string) => {
     try {
@@ -228,10 +229,11 @@ export default function AdminVideosPage() {
                 <div className="p-6">
                   <div className="flex gap-6">
                     <div className="relative aspect-video w-64 rounded-lg overflow-hidden flex-shrink-0">
-                      <img 
+                      <Image 
                         src={video.thumbnailUrl} 
                         alt={video.title}
-                        className="object-cover w-full h-full"
+                        fill
+                        className="object-cover"
                       />
                     </div>
                     
