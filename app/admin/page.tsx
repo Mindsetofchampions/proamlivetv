@@ -1,16 +1,14 @@
 "use client";
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AddAdminDialog } from '@/components/admin/add-admin-dialog';
 import { 
-  Video,
-  Users,
-  Flag,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  Clock3,
+  Users
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -106,16 +104,6 @@ export default function AdminDashboard() {
                   <p className="text-sm text-muted-foreground">Dance Competition 2025</p>
                 </div>
                 <span className="text-sm text-muted-foreground ml-auto">15m ago</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="bg-red-500/10 p-2 rounded">
-                  <Flag className="h-4 w-4 text-red-500" />
-                </div>
-                <div>
-                  <p className="font-medium">Content Reported</p>
-                  <p className="text-sm text-muted-foreground">Inappropriate content flagged</p>
-                </div>
-                <span className="text-sm text-muted-foreground ml-auto">1h ago</span>
               </div>
             </div>
           </CardContent>
