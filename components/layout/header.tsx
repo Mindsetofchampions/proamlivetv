@@ -57,7 +57,7 @@ const Header = () => {
     { name: "Videos", href: "/videos", icon: <Film className="h-4 w-4 mr-2" /> },
     { name: "Shop", href: "/shop", icon: <ShoppingBag className="h-4 w-4 mr-2" /> },
     { name: "Creators", href: "/creators", icon: <Users className="h-4 w-4 mr-2" /> },
-    { name: "Partner Channels", href: "/partner-channels", icon: <Building2 className="h-4 w-4 mr-2" /> },
+    { name: "Channels", href: "/partner-channels", icon: <Building2 className="h-4 w-4 mr-2" /> },
     { 
       name: "Creator Dashboard", 
       href: "/creator/dashboard", 
@@ -130,7 +130,7 @@ const Header = () => {
             <ModeToggle />
             {user ? (
               <div className="flex items-center gap-2">
-                <Button variant="ghost\" size="sm\" asChild>
+                <Button variant="ghost" size="sm" asChild>
                   <Link href={getAccountLink()}>
                     <UserCircle className="h-4 w-4 mr-2" />
                     {hasRole('admin') ? 'Admin Dashboard' : hasRole('creator') ? 'Creator Dashboard' : 'Dashboard'}
@@ -191,7 +191,7 @@ const Header = () => {
               <div className="pt-2 border-t">
                 {user ? (
                   <>
-                    <Button variant="outline\" className="w-full mb-2\" asChild>
+                    <Button variant="outline" className="w-full mb-2" asChild>
                       <Link href={getAccountLink()}>
                         <UserCircle className="h-4 w-4 mr-2" />
                         {hasRole('admin') ? 'Admin Dashboard' : hasRole('creator') ? 'Creator Dashboard' : 'Dashboard'}
