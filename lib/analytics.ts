@@ -26,13 +26,11 @@ export async function trackVideoView(
 
     if (analyticsError) throw analyticsError;
 
-    // Increment video impressions
-    const { error: updateError } = await supabase
-      .from('videos')
-      .update({ 
-        impressions: supabase.rpc('increment', { value: 1 })
-      })
-      .eq('id', videoId);
+    // Increment video impressions atomically
+    const { error: updateError } = await supabase.rpc('increment_impressions', {
+      video_id: videoId,
+      increment_by: 1
+    });
 
     if (updateError) throw updateError;
   } catch (error) {
@@ -60,13 +58,13 @@ export async function trackEngagement(
 
 export async function getVideoAnalytics(videoId: string) {
   try {
-    // Get view count
-    const { data: viewData, error: viewError } = await supabase
+    // Get view count and analytics
+    const { data: analyticsData, error: analyticsError } = await supabase
       .from('video_analytics')
-      .select('id')
+      .select('*')
       .eq('video_id', videoId);
     
-    if (viewError) throw viewError;
+    if (analyticsError) throw analyticsError;
 
     // Get engagement counts
     const { data: engagementData, error: engagementError } = await supabase
@@ -76,17 +74,23 @@ export async function getVideoAnalytics(videoId: string) {
     
     if (engagementError) throw engagementError;
 
-    // Calculate engagement metrics
-    const views = viewData.length;
+    // Calculate metrics
+    const views = analyticsData.length;
     const likes = engagementData.filter(e => e.engagement_type === 'like').length;
     const shares = engagementData.filter(e => e.engagement_type === 'share').length;
     const comments = engagementData.filter(e => e.engagement_type === 'comment').length;
+
+    // Calculate average watch duration and percentage
+    const avgWatchDuration = analyticsData.reduce((acc, curr) => acc + curr.watch_duration, 0) / views || 0;
+    const avgWatchPercentage = analyticsData.reduce((acc, curr) => acc + curr.watch_percentage, 0) / views || 0;
 
     return {
       views,
       likes,
       shares,
       comments,
+      avgWatchDuration,
+      avgWatchPercentage,
       engagementRate: views > 0 ? ((likes + shares + comments) / views) * 100 : 0
     };
   } catch (error) {
