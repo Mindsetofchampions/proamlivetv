@@ -16,7 +16,9 @@ import {
   CheckCircle,
   Clock3,
   Edit,
-  Heart
+  Heart,
+  Video,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -35,82 +37,81 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 
+const stats = [
+  {
+    name: "Total Videos",
+    value: "24",
+    icon: <Video className="h-6 w-6 text-primary" />
+  },
+  {
+    name: "Total Impressions",
+    value: "45.2K",
+    icon: <Eye className="h-6 w-6 text-primary" />
+  },
+  {
+    name: "Total Earnings",
+    value: "$1,234",
+    icon: <DollarSign className="h-6 w-6 text-primary" />
+  }
+];
+
+const pendingVideos = [
+  {
+    id: 1,
+    title: "Urban Dance Championship Finals",
+    thumbnail: "https://images.pexels.com/photos/1701202/pexels-photo-1701202.jpeg",
+    status: "PENDING_REVIEW",
+    uploadedAt: "2025-03-15",
+    duration: "12:34"
+  },
+  {
+    id: 2,
+    title: "Skateboarding Tutorial Series - Episode 1",
+    thumbnail: "https://images.pexels.com/photos/2693208/pexels-photo-2693208.jpeg",
+    status: "PROCESSING",
+    uploadedAt: "2025-03-14",
+    duration: "08:45"
+  }
+];
+
+const approvedVideos = [
+  {
+    id: 3,
+    title: "Street Art Documentary",
+    thumbnail: "https://images.pexels.com/photos/2119706/pexels-photo-2119706.jpeg",
+    status: "APPROVED",
+    publishedAt: "2025-03-10",
+    views: 12543,
+    likes: 856,
+    duration: "15:20"
+  },
+  {
+    id: 4,
+    title: "Music Production Masterclass",
+    thumbnail: "https://images.pexels.com/photos/164693/pexels-photo-164693.jpeg",
+    status: "APPROVED",
+    publishedAt: "2025-03-08",
+    views: 8976,
+    likes: 654,
+    duration: "22:15"
+  }
+];
+
+const creatorProfile = {
+  name: "Alex Thompson",
+  handle: "@alexcreates",
+  avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
+  bio: "Digital creator passionate about urban culture and youth empowerment",
+  stats: {
+    subscribers: "2.5K",
+    totalViews: "45.2K",
+    avgEngagement: "12%"
+  },
+  badges: ["Verified Creator", "Rising Star", "Top Contributor"]
+};
+
 export default function CreatorDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
-  
-  // Placeholder data
-  const stats = [
-    {
-      title: "Total Videos",
-      value: "24",
-      icon: <Video className="h-6 w-6 text-primary" />
-    },
-    {
-      title: "Total Impressions",
-      value: "45.2K",
-      icon: <Eye className="h-6 w-6 text-primary" />
-    },
-    {
-      title: "Total Earnings",
-      value: "$1,234",
-      icon: <DollarSign className="h-6 w-6 text-primary" />
-    }
-  ];
-
-  const pendingVideos = [
-    {
-      id: 1,
-      title: "Urban Dance Championship Finals",
-      thumbnail: "https://images.pexels.com/photos/1701202/pexels-photo-1701202.jpeg",
-      status: "PENDING_REVIEW",
-      uploadedAt: "2025-03-15",
-      duration: "12:34"
-    },
-    {
-      id: 2,
-      title: "Skateboarding Tutorial Series - Episode 1",
-      thumbnail: "https://images.pexels.com/photos/2693208/pexels-photo-2693208.jpeg",
-      status: "PROCESSING",
-      uploadedAt: "2025-03-14",
-      duration: "08:45"
-    }
-  ];
-
-  const approvedVideos = [
-    {
-      id: 3,
-      title: "Street Art Documentary",
-      thumbnail: "https://images.pexels.com/photos/2119706/pexels-photo-2119706.jpeg",
-      status: "APPROVED",
-      publishedAt: "2025-03-10",
-      views: 12543,
-      likes: 856,
-      duration: "15:20"
-    },
-    {
-      id: 4,
-      title: "Music Production Masterclass",
-      thumbnail: "https://images.pexels.com/photos/164693/pexels-photo-164693.jpeg",
-      status: "APPROVED",
-      publishedAt: "2025-03-08",
-      views: 8976,
-      likes: 654,
-      duration: "22:15"
-    }
-  ];
-
-  const creatorProfile = {
-    name: "Alex Thompson",
-    handle: "@alexcreates",
-    avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
-    bio: "Digital creator passionate about urban culture and youth empowerment",
-    stats: {
-      subscribers: "2.5K",
-      totalViews: "45.2K",
-      avgEngagement: "12%"
-    },
-    badges: ["Verified Creator", "Rising Star", "Top Contributor"]
-  };
 
   return (
     <div className="pt-24 pb-16">
@@ -151,7 +152,7 @@ export default function CreatorDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                   {stats.map((stat, index) => (
                     <motion.div
-                      key={stat.title}
+                      key={stat.name}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: index * 0.1 }}
@@ -166,7 +167,7 @@ export default function CreatorDashboard() {
                           </div>
                           <div className="space-y-1">
                             <p className="text-sm text-muted-foreground">
-                              {stat.title}
+                              {stat.name}
                             </p>
                             <p className="text-2xl font-bold">
                               {stat.value}
@@ -181,7 +182,7 @@ export default function CreatorDashboard() {
                 <div className="space-y-6">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Recent Uploads</CardTitle>
+                      <CardTitle>Recent Activity</CardTitle>
                       <CardDescription>Your latest video submissions</CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -194,13 +195,10 @@ export default function CreatorDashboard() {
                                 alt={video.title}
                                 className="object-cover w-full h-full"
                               />
-                              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                                {video.duration}
-                              </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-medium truncate">{video.title}</h4>
-                              <div className="flex items-center gap-2 mt-2">
+                            <div className="flex-1">
+                              <h3 className="font-medium mb-1">{video.title}</h3>
+                              <div className="flex items-center gap-2">
                                 <Badge variant={video.status === 'APPROVED' ? 'default' : 'secondary'}>
                                   {video.status === 'APPROVED' ? (
                                     <CheckCircle className="h-3 w-3 mr-1" />
@@ -238,13 +236,10 @@ export default function CreatorDashboard() {
                               alt={video.title}
                               className="object-cover w-full h-full"
                             />
-                            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                              {video.duration}
-                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium truncate">{video.title}</h4>
-                            <div className="flex items-center gap-2 mt-2">
+                          <div className="flex-1">
+                            <h3 className="font-medium mb-1">{video.title}</h3>
+                            <div className="flex items-center gap-2">
                               <Badge variant="secondary">
                                 <Clock3 className="h-3 w-3 mr-1" />
                                 {video.status.replace('_', ' ')}
@@ -281,13 +276,10 @@ export default function CreatorDashboard() {
                               alt={video.title}
                               className="object-cover w-full h-full"
                             />
-                            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                              {video.duration}
-                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium truncate">{video.title}</h4>
-                            <div className="flex items-center gap-2 mt-2">
+                          <div className="flex-1">
+                            <h3 className="font-medium mb-1">{video.title}</h3>
+                            <div className="flex items-center gap-2">
                               <Badge>
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 APPROVED
