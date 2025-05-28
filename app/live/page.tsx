@@ -131,7 +131,7 @@ export default function LivePage() {
                 
                 {event.isLive ? (
                   <div className="absolute top-4 left-4 flex items-center">
-                    <Badge variant="destructive" className="animate-pulse">
+                    <Badge variant="destructive\" className="animate-pulse">
                       <Radio className="h-3 w-3 mr-1" />
                       LIVE
                     </Badge>
