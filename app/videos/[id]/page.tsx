@@ -76,6 +76,21 @@ const videos = {
     description: "Watch the thrilling finals of the 2025 Pro Gaming Championship! See the world's top players compete for the grand prize in this intense matchup that came down to the wire.",
     tags: ["esports", "gaming", "competition", "pro-gaming"]
   },
+  "esports3": {
+    id: "3e4f5g6h-7i8j-9k0l-1m2n-3o4p5q6r7s8t",
+    title: "League Championships Quarterfinals",
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://images.pexels.com/photos/7862619/pexels-photo-7862619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    duration: "52:18",
+    views: 75432,
+    likes: 6789,
+    creator: "ESportsCenter",
+    creatorAvatar: "https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=300",
+    publishedAt: "2025-03-12",
+    category: "Esports",
+    description: "Experience the intense quarterfinals matches of the League Championships 2025. Watch as top teams battle it out for a spot in the semifinals.",
+    tags: ["esports", "gaming", "league", "competition"]
+  },
   "video8": {
     id: "b2c3d4e5-f6g7-8h9i-j0k1-l2m3n4o5p6q7",
     title: "404 - Video Not Found",
