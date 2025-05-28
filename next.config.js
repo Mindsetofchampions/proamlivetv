@@ -5,9 +5,6 @@ const nextConfig = {
   },
   images: { unoptimized: true },
   webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.cache = false;
-    }
     return config;
   }
 };
