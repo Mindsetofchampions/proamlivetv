@@ -23,8 +23,38 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith(route)
   );
 
+  // Check if trying to access admin routes
+  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
+
   if (isProtectedRoute && !session) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    // Redirect to login if not authenticated
+    const redirectUrl = new URL('/login', request.url);
+    redirectUrl.searchParams.set('redirect', request.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  if (isAdminRoute) {
+    // Get user roles
+    const { data: userData } = await supabase
+      .from('users')
+      .select('id')
+      .eq('auth_id', session?.user?.id)
+      .single();
+
+    if (!userData) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role:roles(name)')
+      .eq('user_id', userData.id)
+      .single();
+
+    // Redirect non-admin users
+    if (!roleData?.role?.name || roleData.role.name !== 'admin') {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
   }
 
   return res;
