@@ -55,6 +55,11 @@ export async function middleware(request: NextRequest) {
     if (!roleData?.role?.name || roleData.role.name !== 'admin') {
       return NextResponse.redirect(new URL('/', request.url));
     }
+
+    // If accessing /admin directly, redirect to dashboard
+    if (request.nextUrl.pathname === '/admin') {
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    }
   }
 
   return res;
