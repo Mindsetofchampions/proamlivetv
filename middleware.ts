@@ -33,12 +33,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (isAdminRoute) {
+  if (isAdminRoute && session) {
     // Get user roles
     const { data: userData } = await supabase
       .from('users')
       .select('id')
-      .eq('auth_id', session?.user?.id)
+      .eq('auth_id', session.user.id)
       .single();
 
     if (!userData) {
